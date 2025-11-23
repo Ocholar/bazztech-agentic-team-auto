@@ -8,8 +8,9 @@ FROM base AS deps
 WORKDIR /app
 
 # Copy package files from src/dashboard
+# Copy package files from src/dashboard
 COPY src/dashboard/package.json src/dashboard/package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -23,7 +24,7 @@ RUN npx prisma generate
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
 ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-ENV DATABASE_URL=$DATABASE_URL
+# ENV DATABASE_URL=$DATABASE_URL
 RUN npm run build
 
 # Production image, copy all the files and run next
