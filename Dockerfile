@@ -7,15 +7,15 @@ RUN apt-get update -y && apt-get install -y openssl
 FROM base AS deps
 WORKDIR /app
 
-# Copy package files
-COPY package.json package-lock.json* ./
+# Copy package files from src/dashboard
+COPY src/dashboard/package.json src/dashboard/package-lock.json* ./
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY src/dashboard ./
 
 # Generate Prisma Client
 RUN npx prisma generate
