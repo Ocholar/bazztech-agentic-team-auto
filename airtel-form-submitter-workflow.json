@@ -1,0 +1,165 @@
+{
+    "name": "Airtel 5G Form Submitter",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 5
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-trigger",
+            "name": "Check Every 5 Minutes",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/leads/qualified",
+                "options": {}
+            },
+            "id": "get-qualified-leads",
+            "name": "Get Qualified Leads",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{ $json.length }}",
+                            "operation": "larger",
+                            "value2": 0
+                        }
+                    ]
+                }
+            },
+            "id": "check-has-leads",
+            "name": "Has Leads?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "leads",
+                "options": {}
+            },
+            "id": "split-leads",
+            "name": "Process Each Lead",
+            "type": "n8n-nodes-base.splitOut",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeCommand",
+                "command": "=const puppeteer = require('puppeteer');\n\nconst lead = $input.item.json;\n\n(async () => {\n  const browser = await puppeteer.launch({ headless: true });\n  const page = await browser.newPage();\n  \n  try {\n    // Navigate to form\n    await page.goto('https://forms.office.com/r/hcrh2wrJDp');\n    \n    // Page 1: Click Start now\n    await page.waitForSelector('button:has-text(\"Start now\")');\n    await page.click('button:has-text(\"Start now\")');\n    await page.waitForTimeout(2000);\n    \n    // Page 2: Fill Agent Details\n    await page.selectOption('[aria-label=\"Agent Type\"]', 'Enterprise');\n    await page.selectOption('[aria-label=\"Enterprise CP\"]', 'BAZZTECH NETWORKS');\n    await page.fill('[aria-label=\"Agent Name\"]', 'Reagan Ochola');\n    await page.fill('[aria-label=\"Agent Mobile Number\"]', '254781751937');\n    \n    // Click Next\n    await page.click('button:has-text(\"Next\")');\n    await page.waitForTimeout(2000);\n    \n    // Page 3: Fill Customer Details\n    await page.selectOption('[aria-label=\"Type of Lead\"]', 'Confirmed');\n    await page.selectOption('[aria-label=\"Type of Connection\"]', 'SmartConnect(5G ODU)');\n    await page.fill('[aria-label=\"Customer Name\"]', lead.name);\n    await page.fill('[aria-label=\"Customer Phone No. (Airtel Number)\"]', lead.phone);\n    await page.fill('[aria-label=\"Customer Alternative Number\"]', lead.alternativePhone || lead.phone);\n    await page.fill('[aria-label=\"Customer Email Address\"]', lead.email || '');\n    \n    // Select package\n    const packageValue = lead.preferredPackage === '5G_30Mbps' \n      ? '5G _30Mbps_30days at Ksh.3999'\n      : '5G _15Mbps_30days at Ksh.2999';\n    await page.selectOption('[aria-label=\"Customer Preferred Package\"]', packageValue);\n    \n    await page.selectOption('[aria-label=\"Customer Installation Town\"]', lead.installationTown || 'Nairobi');\n    await page.fill('[aria-label=\"Specific Delivery Location (Nearest Landmark)\"]', lead.deliveryLocation || 'CBD');\n    \n    //Date\n    const installDate = lead.preferredDate \n      ? new Date(lead.preferredDate).toLocaleDateString('en-US')\n      : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US');\n    await page.fill('[aria-label=\"Preferred Date of Visit/Installation\"]', installDate);\n    \n    await page.selectOption('[aria-label=\"Preferred Time of Visit\"]', lead.preferredTime || 'Morning');\n    \n    // Submit\n    await page.click('button:has-text(\"Submit\")');\n    await page.waitForTimeout(3000);\n    \n    await browser.close();\n    return { success: true, leadId: lead.id, message: 'Form submitted successfully' };\n    \n  } catch (error) {\n    await browser.close();\n    return { success: false, leadId: lead.id, error: error.message };\n  }\n})();"
+            },
+            "id": "submit-form",
+            "name": "Submit to Airtel Form",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1050,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "url": "=https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"type\": \"SUBMISSION_RESULT\",\n  \"data\": {\n    \"leadId\": \"{{ $json.leadId }}\",\n    \"success\": {{ $json.success }},\n    \"response\": {{ $json }}\n  }\n}",
+                "options": {}
+            },
+            "id": "update-dashboard",
+            "name": "Update Dashboard",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1250,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Check Every 5 Minutes": {
+            "main": [
+                [
+                    {
+                        "node": "Get Qualified Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Qualified Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Has Leads?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Leads?": {
+            "main": [
+                [
+                    {
+                        "node": "Process Each Lead",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process Each Lead": {
+            "main": [
+                [
+                    {
+                        "node": "Submit to Airtel Form",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Submit to Airtel Form": {
+            "main": [
+                [
+                    {
+                        "node": "Update Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "1"
+}

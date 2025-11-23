@@ -11,10 +11,16 @@ export async function POST(req: Request) {
                 data: {
                     name: data.name,
                     phone: data.phone,
+                    alternativePhone: data.alternativePhone,
                     email: data.email,
                     source: data.source,
                     status: 'NEW',
                     tags: data.tags,
+                    preferredPackage: data.preferredPackage,
+                    installationTown: data.installationTown,
+                    deliveryLocation: data.deliveryLocation,
+                    preferredDate: data.preferredDate ? new Date(data.preferredDate) : null,
+                    preferredTime: data.preferredTime,
                 },
             });
             return NextResponse.json({ success: true, id: lead.id });
