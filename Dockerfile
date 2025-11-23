@@ -46,7 +46,7 @@ COPY --from=builder /app/prisma ./prisma
 # Fix permissions for nextjs user to allow prisma db push
 USER root
 RUN chown -R nextjs:nodejs /app
-USER nextjs
+# USER nextjs
 
 EXPOSE 3000
 
