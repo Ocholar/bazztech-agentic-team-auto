@@ -1,0 +1,306 @@
+{
+  "name": "Lead Qualification Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger (Every 2 Hours)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://3000-ilmh2gwtz732qy0hy5dso-4229c999.manusvm.computer/api/trpc/leads.getByStatus?status=new",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-new-leads",
+      "name": "Fetch New Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "loop-leads",
+      "name": "Loop Through Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "conversation-prompt",
+              "name": "conversationPrompt",
+              "value": "=You are a sales agent for Airtel Kenya 5G ODU. Your goal is to:\n1. Collect: Customer Name, Airtel Number, Alternative Number, Email, Installation Town, Delivery Location, Preferred Date/Time\n2. AGGRESSIVELY upsell the 30Mbps package (KES 3,500/month) over 15Mbps (KES 2,500/month)\n3. Emphasize: Speed (30Mbps = 4K streaming, video calls, gaming; 15Mbps = basic browsing), reliability, future-proofing\n4. Frame 15Mbps as \"basic\" option for light users only\n5. Be conversational, friendly, but persistent\n\nLead Information:\nName: {{ $json.customerName || 'Unknown' }}\nPhone: {{ $json.customerAirtelNumber || 'Unknown' }}\nEmail: {{ $json.customerEmail || 'Unknown' }}\nSource: {{ $json.source }}\nTag: {{ $json.tag }}\n\nStart the conversation by greeting the lead and introducing Airtel 5G ODU.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-llm-prompt",
+      "name": "Prepare LLM Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MANUS_LLM_API_URL }}/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.MANUS_LLM_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"{{ $json.conversationPrompt }}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Start the conversation\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 500\n}",
+        "options": {}
+      },
+      "id": "llm-conversation",
+      "name": "LLM Conversational Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/whatsapp/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $node['Loop Through Leads'].json.customerAirtelNumber }}\",\n  \"message\": \"{{ $json.choices[0].message.content }}\"\n}",
+        "options": {}
+      },
+      "id": "send-whatsapp",
+      "name": "Send WhatsApp Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract collected data from LLM response\nconst llmResponse = $input.item.json.choices[0].message.content;\nconst leadData = $node['Loop Through Leads'].json;\n\n// Simple regex-based extraction (in production, use more robust parsing)\nconst extractField = (text, pattern) => {\n  const match = text.match(pattern);\n  return match ? match[1].trim() : null;\n};\n\n// Extract customer data\nconst customerName = extractField(llmResponse, /Name:\\s*([^\\n]+)/) || leadData.customerName;\nconst airtelNumber = extractField(llmResponse, /Airtel Number:\\s*([^\\n]+)/) || leadData.customerAirtelNumber;\nconst alternateNumber = extractField(llmResponse, /Alternative Number:\\s*([^\\n]+)/);\nconst email = extractField(llmResponse, /Email:\\s*([^\\n]+)/) || leadData.customerEmail;\nconst preferredPackage = extractField(llmResponse, /Package:\\s*([^\\n]+)/);\nconst installationTown = extractField(llmResponse, /Town:\\s*([^\\n]+)/);\nconst deliveryLocation = extractField(llmResponse, /Location:\\s*([^\\n]+)/);\nconst installationDate = extractField(llmResponse, /Date:\\s*([^\\n]+)/);\nconst installationTime = extractField(llmResponse, /Time:\\s*([^\\n]+)/);\n\n// Determine if lead is qualified (all required fields collected)\nconst isQualified = customerName && airtelNumber && email && preferredPackage && installationTown && deliveryLocation && installationDate && installationTime;\n\nreturn {\n  leadId: leadData.id,\n  customerName,\n  customerAirtelNumber: airtelNumber,\n  customerAlternateNumber: alternateNumber,\n  customerEmail: email,\n  preferredPackage,\n  installationTown,\n  deliveryLocation,\n  installationDate,\n  installationTime,\n  status: isQualified ? 'qualified' : 'contacted',\n  conversationHistory: llmResponse\n};"
+      },
+      "id": "extract-data",
+      "name": "Extract Collected Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://3000-ilmh2gwtz732qy0hy5dso-4229c999.manusvm.computer/api/trpc/leads.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": {{ $json.leadId }},\n  \"customerName\": \"{{ $json.customerName }}\",\n  \"customerAirtelNumber\": \"{{ $json.customerAirtelNumber }}\",\n  \"customerAlternateNumber\": \"{{ $json.customerAlternateNumber }}\",\n  \"customerEmail\": \"{{ $json.customerEmail }}\",\n  \"preferredPackage\": \"{{ $json.preferredPackage }}\",\n  \"installationTown\": \"{{ $json.installationTown }}\",\n  \"deliveryLocation\": \"{{ $json.deliveryLocation }}\",\n  \"installationDate\": \"{{ $json.installationDate }}\",\n  \"installationTime\": \"{{ $json.installationTime }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"conversationHistory\": \"{{ $json.conversationHistory }}\"\n}",
+        "options": {}
+      },
+      "id": "update-lead",
+      "name": "Update Lead in Dashboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lead Qualification Agent\n\n**Objective**: Qualify leads, collect required data, aggressively upsell 30Mbps\n\n**Method**: LLM-powered conversational agent\n\n**Schedule**: Every 2 hours (12 times daily)\n\n**Target Output**: 50+ qualified leads/day\n\n**Configuration Notes**:\n1. Set MANUS_LLM_API_URL and MANUS_LLM_API_KEY in environment variables\n2. Replace WhatsApp API URL with actual endpoint\n3. Configure WhatsApp credentials\n4. Adjust LLM prompt for upselling aggressiveness\n5. Monitor conversation quality and adjust temperature\n\n**Upselling Strategy**:\n- Emphasize 30Mbps benefits (speed, reliability, future-proofing)\n- Frame 15Mbps as \"basic\" option\n- Use limited-time offers\n- Target: 70%+ 30Mbps conversion",
+        "height": 544.7942430703599,
+        "width": 389.0838407016758,
+        "color": 5
+      },
+      "id": "sticky-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -100
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Every 2 Hours)": {
+      "main": [
+        [
+          {
+            "node": "Fetch New Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch New Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Through Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Through Leads": {
+      "main": [
+        [
+          {
+            "node": "Prepare LLM Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare LLM Prompt": {
+      "main": [
+        [
+          {
+            "node": "LLM Conversational Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Conversational Agent": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Extract Collected Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Collected Data": {
+      "main": [
+        [
+          {
+            "node": "Update Lead in Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead in Dashboard": {
+      "main": [
+        [
+          {
+            "node": "Loop Through Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bazztech-n8n-agentic-team"
+  },
+  "id": "lead-qualification-agent",
+  "tags": []
+}

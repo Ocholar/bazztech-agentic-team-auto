@@ -1,0 +1,411 @@
+{
+  "name": "Lead Generation Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger (Every 6 Hours)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/linkedin/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "business owners IT managers Nairobi Kenya"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "linkedin-scraper",
+      "name": "LinkedIn Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/google-maps/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "businesses in Nairobi Kenya"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "google-maps-scraper",
+      "name": "Google Maps Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tag-field",
+              "name": "tag",
+              "value": "high_value",
+              "type": "string"
+            },
+            {
+              "id": "source-field",
+              "name": "source",
+              "value": "={{ $node[\"LinkedIn Scraper\"].json[\"source\"] || $node[\"Google Maps Scraper\"].json[\"source\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "tag-high-value",
+      "name": "Tag High-Value Leads",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/whatsapp/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "business groups Kenya"
+            },
+            {
+              "name": "limit",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "whatsapp-scraper",
+      "name": "WhatsApp Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/facebook/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "business groups marketplace Kenya"
+            },
+            {
+              "name": "limit",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "facebook-scraper",
+      "name": "Facebook Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tag-field",
+              "name": "tag",
+              "value": "high_volume",
+              "type": "string"
+            },
+            {
+              "id": "source-field",
+              "name": "source",
+              "value": "={{ $node[\"WhatsApp Scraper\"].json[\"source\"] || $node[\"Facebook Scraper\"].json[\"source\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "tag-high-volume",
+      "name": "Tag High-Volume Leads",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        650,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "merge-leads",
+      "name": "Merge All Leads",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        850,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://3000-ilmh2gwtz732qy0hy5dso-4229c999.manusvm.computer/api/trpc/leads.create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source\": \"{{ $json.source }}\",\n  \"tag\": \"{{ $json.tag }}\",\n  \"customerName\": \"{{ $json.name }}\",\n  \"customerAirtelNumber\": \"{{ $json.phone }}\",\n  \"customerEmail\": \"{{ $json.email }}\",\n  \"rawData\": \"{{ JSON.stringify($json) }}\"\n}",
+        "options": {}
+      },
+      "id": "store-leads",
+      "name": "Store Leads in Dashboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1050,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lead Generation Agent\n\n**Objective**: Acquire 600+ leads/month from zero-cost channels\n\n**Allocation**:\n- 60% High-Value (LinkedIn, Google Maps)\n- 40% High-Volume (WhatsApp, Facebook)\n\n**Schedule**: Every 6 hours (4 times daily)\n\n**Target Output**: 20+ leads per run → 80+ leads/day\n\n**Configuration Notes**:\n1. Replace API URLs with actual scraper endpoints\n2. Configure credentials for each scraper\n3. Adjust query parameters for target audience\n4. Monitor lead quality and adjust allocation",
+        "height": 464.79424307036,
+        "width": 389.0838407016758,
+        "color": 4
+      },
+      "id": "sticky-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -100
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Every 6 Hours)": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Maps Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WhatsApp Scraper",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Scraper": {
+      "main": [
+        [
+          {
+            "node": "Tag High-Value Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Maps Scraper": {
+      "main": [
+        [
+          {
+            "node": "Tag High-Value Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag High-Value Leads": {
+      "main": [
+        [
+          {
+            "node": "Merge All Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Scraper": {
+      "main": [
+        [
+          {
+            "node": "Tag High-Volume Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Scraper": {
+      "main": [
+        [
+          {
+            "node": "Tag High-Volume Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag High-Volume Leads": {
+      "main": [
+        [
+          {
+            "node": "Merge All Leads",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All Leads": {
+      "main": [
+        [
+          {
+            "node": "Store Leads in Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bazztech-n8n-agentic-team"
+  },
+  "id": "lead-generation-agent",
+  "tags": []
+}

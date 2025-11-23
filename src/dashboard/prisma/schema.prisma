@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  source    String
+  status    String   @default("NEW") // NEW, QUALIFIED, SUBMITTED, FAILED
+  tags      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  submissions Submission[]
+}
+
+model Submission {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  status    String
+  response  String?
+  createdAt DateTime @default(now())
+}
+
+model Config {
+  key       String   @id
+  value     String
+}
+
+model Analytics {
+  id        String   @id @default(uuid())
+  date      DateTime @default(now())
+  metric    String
+  value     Float
+}

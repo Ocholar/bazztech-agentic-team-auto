@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Dashboard
+      uses: docker/build-push-action@v5
+      with:
+        context: ./src/dashboard
+        push: false
+        tags: bazztech-dashboard:latest
+        
+    - name: Build n8n
+      uses: docker/build-push-action@v5
+      with:
+        context: ./src/n8n
+        push: false
+        tags: bazztech-n8n:latest

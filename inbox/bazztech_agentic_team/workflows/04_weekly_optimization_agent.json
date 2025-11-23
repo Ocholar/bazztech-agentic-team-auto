@@ -1,0 +1,231 @@
+{
+  "name": "Weekly Optimization Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger (Every Monday 9 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://3000-ilmh2gwtz732qy0hy5dso-4229c999.manusvm.computer/api/trpc/analytics.getRecent?days=7",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-analytics",
+      "name": "Fetch Last 7 Days Analytics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Calculate weekly KPIs from analytics data\nconst analytics = $input.all();\n\n// Sum up metrics for the week\nlet totalGAs = 0;\nlet totalLeads = 0;\nlet totalSubmissions = 0;\nlet successfulSubmissions = 0;\nlet package30MbpsSales = 0;\nlet package15MbpsSales = 0;\nlet totalCommission = 0;\n\nanalytics.forEach(day => {\n  const data = day.json;\n  totalGAs += data.totalGAs || 0;\n  totalLeads += data.totalLeads || 0;\n  totalSubmissions += data.totalSubmissions || 0;\n  successfulSubmissions += data.successfulSubmissions || 0;\n  package30MbpsSales += data.package30MbpsSales || 0;\n  package15MbpsSales += data.package15MbpsSales || 0;\n  totalCommission += (data.avgCommissionPerGA || 0) * (data.totalGAs || 0);\n});\n\n// Calculate KPIs\nconst conversionRate = totalLeads > 0 ? (totalGAs / totalLeads * 100).toFixed(2) : 0;\nconst submissionSuccessRate = totalSubmissions > 0 ? (successfulSubmissions / totalSubmissions * 100).toFixed(2) : 0;\nconst package30MbpsMix = (package30MbpsSales + package15MbpsSales) > 0 ? (package30MbpsSales / (package30MbpsSales + package15MbpsSales) * 100).toFixed(2) : 0;\nconst avgCommissionPerGA = totalGAs > 0 ? (totalCommission / totalGAs).toFixed(2) : 0;\n\n// Identify bottlenecks\nconst bottlenecks = [];\nif (totalGAs < 100) {\n  bottlenecks.push({\n    issue: 'Low Gross Adds',\n    current: totalGAs,\n    target: 100,\n    action: 'Increase lead generation frequency to every 4 hours, expand to new channels'\n  });\n}\n\nif (parseFloat(conversionRate) < 20) {\n  bottlenecks.push({\n    issue: 'Low Conversion Rate',\n    current: `${conversionRate}%`,\n    target: '20%+',\n    action: 'Improve qualification script, add urgency triggers, A/B test LLM prompts'\n  });\n}\n\nif (parseFloat(package30MbpsMix) < 70) {\n  bottlenecks.push({\n    issue: 'Low 30Mbps Package Mix',\n    current: `${package30MbpsMix}%`,\n    target: '70%+',\n    action: 'Strengthen upselling tactics, increase price gap emphasis, add limited-time offers'\n  });\n}\n\nif (parseFloat(submissionSuccessRate) < 97) {\n  bottlenecks.push({\n    issue: 'Low Submission Success Rate',\n    current: `${submissionSuccessRate}%`,\n    target: '97%+',\n    action: 'Debug form submission logic, improve payload validation, check Microsoft Forms API'\n  });\n}\n\nreturn {\n  weeklyKPIs: {\n    totalGAs,\n    totalLeads,\n    conversionRate: `${conversionRate}%`,\n    package30MbpsMix: `${package30MbpsMix}%`,\n    avgCommissionPerGA: `KES ${avgCommissionPerGA}`,\n    submissionSuccessRate: `${submissionSuccessRate}%`\n  },\n  bottlenecks,\n  weekStart: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n  weekEnd: new Date().toISOString().split('T')[0]\n};"
+      },
+      "id": "calculate-kpis",
+      "name": "Calculate Weekly KPIs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "report-prompt",
+              "name": "reportPrompt",
+              "value": "=Generate a comprehensive weekly performance report for the Bazztech n8n Agentic Team based on the following data:\n\n**Week**: {{ $json.weekStart }} to {{ $json.weekEnd }}\n\n**Weekly KPIs**:\n- Total Gross Adds: {{ $json.weeklyKPIs.totalGAs }} (Target: 100+)\n- Total Leads: {{ $json.weeklyKPIs.totalLeads }}\n- Conversion Rate: {{ $json.weeklyKPIs.conversionRate }} (Target: 20%+)\n- 30Mbps Package Mix: {{ $json.weeklyKPIs.package30MbpsMix }} (Target: 70%+)\n- Avg Commission per GA: {{ $json.weeklyKPIs.avgCommissionPerGA }} (Target: KES 2,500+)\n- Submission Success Rate: {{ $json.weeklyKPIs.submissionSuccessRate }} (Target: 97%+)\n\n**Bottlenecks Identified**:\n{{ JSON.stringify($json.bottlenecks, null, 2) }}\n\nProvide:\n1. Executive summary of performance\n2. Detailed analysis of each KPI\n3. Specific actionable recommendations for each bottleneck\n4. Projected impact of recommended actions\n5. Next week's focus areas\n\nFormat the report in a professional, data-driven style suitable for business stakeholders.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-report-prompt",
+      "name": "Prepare Report Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MANUS_LLM_API_URL }}/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.MANUS_LLM_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a business analyst specializing in sales and marketing automation. Generate detailed, actionable performance reports.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.reportPrompt }}\"\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 1500\n}",
+        "options": {}
+      },
+      "id": "generate-report",
+      "name": "Generate Report with LLM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://3000-ilmh2gwtz732qy0hy5dso-4229c999.manusvm.computer/api/trpc/system.notifyOwner",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"Weekly Performance Report - Bazztech n8n Agentic Team\",\n  \"content\": \"{{ $json.choices[0].message.content }}\"\n}",
+        "options": {}
+      },
+      "id": "send-notification",
+      "name": "Send Notification to Owner",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Weekly Optimization Agent\n\n**Objective**: Automated weekly performance review and optimization\n\n**Schedule**: Every Monday at 9:00 AM (Kenya time)\n\n**Workflow**:\n1. Fetch last 7 days of analytics data\n2. Calculate weekly KPIs\n3. Identify bottlenecks\n4. Generate natural language report with LLM\n5. Send notification to project owner\n\n**KPIs Tracked**:\n- Total Gross Adds (target: 100+/week)\n- Conversion Rate (target: 20%+)\n- 30Mbps Package Mix (target: 70%+)\n- Avg Commission per GA (target: KES 2,500+)\n- Submission Success Rate (target: 97%+)\n\n**Bottleneck Detection**:\n- Low GAs → Increase lead gen frequency\n- Low Conversion → Improve qualification script\n- Low 30Mbps Mix → Strengthen upselling\n- Low Submission Success → Debug form logic\n\n**Configuration Notes**:\n1. Set MANUS_LLM_API_URL and MANUS_LLM_API_KEY\n2. Verify cron expression for Monday 9 AM Kenya time\n3. Adjust KPI targets as needed\n4. Customize report format in LLM prompt",
+        "height": 624.7942430703599,
+        "width": 389.0838407016758,
+        "color": 7
+      },
+      "id": "sticky-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -100
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Every Monday 9 AM)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Last 7 Days Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Last 7 Days Analytics": {
+      "main": [
+        [
+          {
+            "node": "Calculate Weekly KPIs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Weekly KPIs": {
+      "main": [
+        [
+          {
+            "node": "Prepare Report Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Report Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Report with LLM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Report with LLM": {
+      "main": [
+        [
+          {
+            "node": "Send Notification to Owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bazztech-n8n-agentic-team"
+  },
+  "id": "weekly-optimization-agent",
+  "tags": []
+}
