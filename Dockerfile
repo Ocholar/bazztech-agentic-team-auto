@@ -43,6 +43,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/prisma ./prisma
 
+# Fix permissions for nextjs user to allow prisma db push
+USER root
+RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 EXPOSE 3000
