@@ -21,7 +21,14 @@ The autonomous sales & marketing system has been successfully bootstrapped.
    Open [http://localhost:5678](http://localhost:5678)
 
 ## ☁️ Deployment (Railway)
-1. Push this repo to GitHub.
+1. **Push to GitHub**:
+   ```bash
+   # I have already initialized the repo and committed the code.
+   # Just run this to push to your account:
+   git push -u origin main
+   ```
+   *Target Repo*: [https://github.com/Ocholar/bazztech-agentic-team-auto](https://github.com/Ocholar/bazztech-agentic-team-auto)
+
 2. Connect Railway to the repo.
 3. Railway will automatically detect the `Dockerfile` in `src/dashboard`.
 4. Add a PostgreSQL service in Railway.
