@@ -1,5 +1,7 @@
 import { getDashboardStats, getRecentLeads } from './actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
+
+export const dynamic = 'force-dynamic';
 import { Users, CheckCircle, Send, TrendingUp } from 'lucide-react';
 
 export default async function Home() {
