@@ -1,23 +1,43 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bazztech
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   dashboard:
     image: node:20
     working_dir: /app
     volumes:
       - ./dashboard:/app
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/bazztech
     ports:
       - "3000:3000"
-    command: npm run dev
-    tty: true
+    depends_on:
+      - postgres
+    command: sh -c "npm install && npx prisma generate && npx prisma db push && npm run dev"
 
   n8n:
     image: docker.n8n.io/n8nio/n8n
     ports:
       - "5678:5678"
-    volumes:
-      - ./n8n:/home/node/.n8n
     environment:
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
+      - NODE_ENV=development
+      - WEBHOOK_URL=http://dashboard:3000/api/webhook
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  postgres_data:
+  n8n_data:
