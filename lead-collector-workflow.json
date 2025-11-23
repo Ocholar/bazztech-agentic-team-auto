@@ -1,0 +1,137 @@
+{
+    "name": "Lead Collector - Airtel 5G",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "new-lead",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "webhook-trigger",
+            "name": "New Lead Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"type\": \"NEW_LEAD\",\n  \"data\": {\n    \"name\": \"{{ $json.name }}\",\n    \"phone\": \"{{ $json.phone }}\",\n    \"email\": \"{{ $json.email || '' }}\",\n    \"source\": \"{{ $json.source || 'manual' }}\",\n    \"tags\": \"{{ $json.tags || '' }}\"\n  }\n}",
+                "options": {}
+            },
+            "id": "save-to-dashboard",
+            "name": "Save to Dashboard",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.phone }}",
+                            "operation": "isNotEmpty"
+                        },
+                        {
+                            "value1": "={{ $json.name }}",
+                            "operation": "isNotEmpty"
+                        }
+                    ]
+                }
+            },
+            "id": "validate-lead",
+            "name": "Validate Lead",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "={{ { \"success\": true, \"message\": \"Lead saved\", \"id\": $json.id } }}",
+                "options": {}
+            },
+            "id": "respond-success",
+            "name": "Success Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "={{ { \"success\": false, \"error\": \"Invalid lead data\" } }}",
+                "options": {
+                    "responseCode": 400
+                }
+            },
+            "id": "respond-error",
+            "name": "Error Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                850,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "New Lead Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Save to Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save to Dashboard": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Lead",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validate Lead": {
+            "main": [
+                [
+                    {
+                        "node": "Success Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Error Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {},
+    "versionId": "1"
+}
