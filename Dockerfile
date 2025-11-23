@@ -38,7 +38,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Install Prisma globally to ensure npx prisma works
-RUN npm install -g prisma
+RUN npm install -g prisma@5.22.0
 
 # Copy built application
 COPY --from=builder /app/public ./public
