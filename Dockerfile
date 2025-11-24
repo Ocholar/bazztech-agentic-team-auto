@@ -1,27 +1,32 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
-# Install Chromium for Puppeteer (Alpine version - lightweight)
-# Cache buster: 2025-11-24T14:38:00+03:00
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont
-
-# Set Puppeteer to use installed Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-# Copy airtel-submitter files
-COPY airtel-submitter/package*.json ./
-COPY airtel-submitter/index.js ./
+# Copy package files from the dashboard directory
+COPY src/dashboard/package.json src/dashboard/package-lock.json* ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm install
 
-# Run the service
-CMD ["npm", "start"]
+# Copy application code
+COPY src/dashboard ./
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build Next.js
+ENV NEXT_TELEMETRY_DISABLED=1
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+RUN npm run build
+
+# Production setup
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npx prisma db push && npm start"]
