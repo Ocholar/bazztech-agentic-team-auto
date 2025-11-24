@@ -27,20 +27,12 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 WORKDIR /app
 
-# Copy package files
+# Copy ONLY the airtel-submitter files
 COPY package*.json ./
+COPY index.js ./
 
 # Install dependencies
 RUN npm install --production
 
-# Copy application code
-COPY . .
-
-# Run as non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser \
-    && chown -R appuser:appuser /app
-
-USER appuser
-
-# Start the service
+# Run the service
 CMD ["npm", "start"]

@@ -1,0 +1,12 @@
+# Ignore parent project files
+../src/
+../.env
+../node_modules/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Environment
+.env
+.env.local
