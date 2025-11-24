@@ -262,16 +262,34 @@ async function processQualifiedLeads() {
     console.log('\n✅ Batch processing complete!');
 }
 
-// Schedule the job
-console.log('🚀 Airtel Form Submitter Service Started');
-console.log(`📅 Schedule: ${CHECK_INTERVAL}`);
-console.log(`🌐 Dashboard URL: ${DASHBOARD_URL}`);
-console.log('='.repeat(60));
+// Main execution wrapper
+async function main() {
+    try {
+        console.log('🚀 Airtel Form Submitter Service Started');
+        console.log(`📅 Schedule: ${CHECK_INTERVAL}`);
+        console.log(`🌐 Dashboard URL: ${DASHBOARD_URL}`);
+        console.log('='.repeat(60));
 
-// Run immediately on startup
-processQualifiedLeads();
+        // Run immediately on startup
+        await processQualifiedLeads();
 
-// Then run on schedule
-cron.schedule(CHECK_INTERVAL, () => {
-    processQualifiedLeads();
+        // Then run on schedule
+        cron.schedule(CHECK_INTERVAL, () => {
+            processQualifiedLeads().catch(err => {
+                console.error('❌ Scheduled job error:', err);
+            });
+        });
+
+        console.log('✅ Service running - press Ctrl+C to stop');
+
+    } catch (error) {
+        console.error('❌ Fatal error during startup:', error);
+        process.exit(1);
+    }
+}
+
+// Start the service
+main().catch(err => {
+    console.error('❌ Failed to start service:', err);
+    process.exit(1);
 });
