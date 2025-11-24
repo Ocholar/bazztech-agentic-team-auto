@@ -1,0 +1,169 @@
+{
+    "name": "4. Analytics & Monitoring",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 24
+                        }
+                    ]
+                }
+            },
+            "name": "Schedule Daily",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/leads",
+                "options": {}
+            },
+            "name": "Fetch All Leads",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                470,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Calculate analytics\nconst leads = $json.leads || [];\n\nconst analytics = {\n  totalLeads: leads.length,\n  newLeads: leads.filter(l => l.status === 'NEW').length,\n  qualifiedLeads: leads.filter(l => l.status === 'QUALIFIED').length,\n  submittedLeads: leads.filter(l => l.status === 'SUBMITTED').length,\n  conversionRate: leads.length > 0 ? (leads.filter(l => l.status === 'SUBMITTED').length / leads.length * 100).toFixed(2) : 0,\n  sources: {},\n  packages: {},\n  locations: {}\n};\n\n// Group by source\nleads.forEach(lead => {\n  analytics.sources[lead.source] = (analytics.sources[lead.source] || 0) + 1;\n  analytics.packages[lead.preferredPackage] = (analytics.packages[lead.preferredPackage] || 0) + 1;\n  analytics.locations[lead.installationTown] = (analytics.locations[lead.installationTown] || 0) + 1;\n});\n\nreturn { json: analytics };"
+            },
+            "name": "Calculate Analytics",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                690,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/analytics",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Save Analytics",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                910,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{ $json.newLeads }}",
+                            "operation": "larger",
+                            "value2": 10
+                        }
+                    ]
+                }
+            },
+            "name": "IF > 10 New Leads",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1130,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "text": "=🚨 *High Lead Volume Alert*\\n\\nNew Leads: {{ $json.newLeads }}\\nQualified: {{ $json.qualifiedLeads }}\\nSubmitted: {{ $json.submittedLeads }}\\nConversion Rate: {{ $json.conversionRate }}%\\n\\nAction: Review and prioritize qualified leads.",
+                "additionalFields": {}
+            },
+            "name": "Send Alert (Placeholder)",
+            "type": "n8n-nodes-base.noOp",
+            "typeVersion": 1,
+            "position": [
+                1350,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Schedule Daily": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch All Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch All Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Calculate Analytics",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Calculate Analytics": {
+            "main": [
+                [
+                    {
+                        "node": "Save Analytics",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Analytics": {
+            "main": [
+                [
+                    {
+                        "node": "IF > 10 New Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF > 10 New Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Send Alert (Placeholder)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

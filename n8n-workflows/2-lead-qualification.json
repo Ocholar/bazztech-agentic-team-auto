@@ -1,0 +1,258 @@
+{
+    "name": "2. Lead Qualification - AI Scoring",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "qualify-lead",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook - New Lead",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "qualify-lead-webhook"
+        },
+        {
+            "parameters": {
+                "model": "gpt-4",
+                "messages": {
+                    "values": [
+                        {
+                            "role": "system",
+                            "content": "You are a lead qualification AI for Airtel Kenya 5G ODU sales. Score leads from 0-100 based on: business size, location accessibility, budget indicators, and urgency signals. Return JSON with: {score: number, qualification: 'HOT'|'WARM'|'COLD', reasoning: string, recommendedPackage: string}"
+                        },
+                        {
+                            "role": "user",
+                            "content": "=Qualify this lead:\\n{{ JSON.stringify($json.data) }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "temperature": 0.3
+                }
+            },
+            "name": "OpenAI - Qualify Lead",
+            "type": "@n8n/n8n-nodes-langchain.openAi",
+            "typeVersion": 1,
+            "position": [
+                470,
+                300
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "2",
+                    "name": "OpenAI API"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse AI response and update lead\nconst aiResponse = JSON.parse($json.choices[0].message.content);\nconst lead = $('Webhook - New Lead').item.json.data;\n\nconst qualifiedLead = {\n  ...lead,\n  qualificationScore: aiResponse.score,\n  status: aiResponse.score >= 70 ? 'QUALIFIED' : 'NEW',\n  tags: [...(lead.tags || []), aiResponse.qualification],\n  preferredPackage: aiResponse.recommendedPackage,\n  aiReasoning: aiResponse.reasoning\n};\n\nreturn { json: qualifiedLead };"
+            },
+            "name": "Process AI Score",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                690,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{ $json.qualificationScore }}",
+                            "operation": "largerEqual",
+                            "value2": 70
+                        }
+                    ]
+                }
+            },
+            "name": "IF Score >= 70",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                910,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"type\": \"UPDATE_STATUS\", \"leadId\": $json.id, \"status\": \"QUALIFIED\", \"data\": $json}",
+                "options": {}
+            },
+            "name": "Mark as QUALIFIED",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1130,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $('Webhook - New Lead').item.json.callbackUrl }}",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"success\": true, \"qualified\": true, \"score\": $json.qualificationScore}",
+                "options": {}
+            },
+            "name": "Trigger Form Submission",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1350,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"type\": \"UPDATE_STATUS\", \"leadId\": $json.id, \"status\": \"NURTURE\"}",
+                "options": {}
+            },
+            "name": "Mark as NURTURE",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1130,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {success: true, qualified: $json.qualificationScore >= 70, score: $json.qualificationScore} }}",
+                "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1570,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook - New Lead": {
+            "main": [
+                [
+                    {
+                        "node": "OpenAI - Qualify Lead",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI - Qualify Lead": {
+            "main": [
+                [
+                    {
+                        "node": "Process AI Score",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process AI Score": {
+            "main": [
+                [
+                    {
+                        "node": "IF Score >= 70",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF Score >= 70": {
+            "main": [
+                [
+                    {
+                        "node": "Mark as QUALIFIED",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Mark as NURTURE",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark as QUALIFIED": {
+            "main": [
+                [
+                    {
+                        "node": "Trigger Form Submission",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Trigger Form Submission": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark as NURTURE": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

@@ -1,0 +1,169 @@
+{
+    "name": "1. Lead Generation - Apify Scraper",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 6
+                        }
+                    ]
+                }
+            },
+            "name": "Schedule Every 6 Hours",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.apify.com/v2/acts/apify~linkedin-company-scraper/runs",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "startUrls",
+                            "value": "=[{\"url\": \"https://www.linkedin.com/search/results/companies/?keywords=kenya%205G%20internet\"}]"
+                        },
+                        {
+                            "name": "maxResults",
+                            "value": "50"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Apify - Scrape LinkedIn Companies",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                470,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "1",
+                    "name": "Apify API Key"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "GET",
+                "url": "={{ $json.data.defaultDatasetId }}/items",
+                "options": {}
+            },
+            "name": "Get Scraped Data",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                690,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Transform Apify data to lead format\nconst leads = [];\n\nfor (const item of $input.all()) {\n  const company = item.json;\n  \n  // Extract contact info\n  const lead = {\n    name: company.name || 'Unknown Company',\n    phone: company.phone || '+254700000000',\n    alternativePhone: company.alternativePhone || '',\n    email: company.email || `contact@${company.name?.toLowerCase().replace(/\\s+/g, '')}.com`,\n    source: 'APIFY_LINKEDIN',\n    tags: ['5G_PROSPECT', 'KENYA'],\n    preferredPackage: '5G_30Mbps',\n    installationTown: company.location || 'Nairobi',\n    deliveryLocation: company.address || 'CBD',\n    preferredDate: null,\n    preferredTime: 'Morning'\n  };\n  \n  leads.push({ json: lead });\n}\n\nreturn leads;"
+            },
+            "name": "Transform to Lead Format",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                910,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"type\": \"NEW_LEAD\", \"data\": $json}",
+                "options": {}
+            },
+            "name": "Send to Dashboard",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1130,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Schedule Every 6 Hours": {
+            "main": [
+                [
+                    {
+                        "node": "Apify - Scrape LinkedIn Companies",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Apify - Scrape LinkedIn Companies": {
+            "main": [
+                [
+                    {
+                        "node": "Get Scraped Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Scraped Data": {
+            "main": [
+                [
+                    {
+                        "node": "Transform to Lead Format",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Transform to Lead Format": {
+            "main": [
+                [
+                    {
+                        "node": "Send to Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

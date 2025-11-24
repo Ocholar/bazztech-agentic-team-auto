@@ -1,0 +1,201 @@
+{
+    "name": "3. Airtel Form Submission - Puppeteer",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "submit-to-airtel",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook - Qualified Lead",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "submit-airtel-webhook"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://airtel-form-submitter:3000/submit",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ $json.data }}",
+                "options": {
+                    "timeout": 60000
+                }
+            },
+            "name": "Call Puppeteer Service",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                470,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json.success }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "IF Submission Success",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                690,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"type\": \"SUBMISSION_RESULT\", \"leadId\": $('Webhook - Qualified Lead').item.json.data.id, \"success\": true, \"submittedAt\": new Date().toISOString(), \"confirmationNumber\": $json.confirmationNumber}",
+                "options": {}
+            },
+            "name": "Update Dashboard - SUCCESS",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                910,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://bazztech-agentic-team-auto-production-047d.up.railway.app/api/webhook",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"type\": \"SUBMISSION_RESULT\", \"leadId\": $('Webhook - Qualified Lead').item.json.data.id, \"success\": false, \"error\": $json.error}",
+                "options": {}
+            },
+            "name": "Update Dashboard - FAILED",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                910,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1130,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook - Qualified Lead": {
+            "main": [
+                [
+                    {
+                        "node": "Call Puppeteer Service",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Call Puppeteer Service": {
+            "main": [
+                [
+                    {
+                        "node": "IF Submission Success",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "IF Submission Success": {
+            "main": [
+                [
+                    {
+                        "node": "Update Dashboard - SUCCESS",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Update Dashboard - FAILED",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Dashboard - SUCCESS": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Dashboard - FAILED": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}
