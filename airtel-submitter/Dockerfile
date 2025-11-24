@@ -1,6 +1,7 @@
 FROM node:20-alpine
 
 # Install Chromium for Puppeteer (Alpine version - much lighter)
+# Cache buster: 2025-11-24T14:30:43+03:00
 RUN apk add --no-cache \
     chromium \
     nss \
