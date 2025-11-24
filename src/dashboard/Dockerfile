@@ -5,13 +5,13 @@ RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files (Relative to src/dashboard context)
 COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (Use npm install to fix lockfile mismatch)
+RUN npm install
 
-# Copy application code
+# Copy application code (Relative to src/dashboard context)
 COPY . ./
 
 # Generate Prisma Client

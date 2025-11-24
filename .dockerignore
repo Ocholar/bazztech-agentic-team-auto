@@ -1,0 +1,4 @@
+# Allow all files
+!src/dashboard
+!package.json
+!package-lock.json

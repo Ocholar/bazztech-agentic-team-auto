@@ -9,7 +9,7 @@ WORKDIR /app
 COPY src/dashboard/package.json src/dashboard/package-lock.json* ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy application code
 COPY src/dashboard ./
