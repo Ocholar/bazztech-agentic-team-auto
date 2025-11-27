@@ -1,59 +1,43 @@
 const https = require('https');
 
-const leads = [
-    {
-        type: 'NEW_LEAD',
-        data: {
-            name: 'John Doe',
-            phone: '+254712345678',
-            alternativePhone: '+254722345678',
-            email: 'john.doe@example.com',
-            source: 'MANUAL_TEST',
-            preferredPackage: '5G_30Mbps',
-            installationTown: 'Nairobi',
-            deliveryLocation: 'Westlands',
-            preferredTime: 'Morning'
-        }
-    },
-    {
-        type: 'NEW_LEAD',
-        data: {
-            name: 'Jane Smith',
-            phone: '+254733345678',
-            alternativePhone: '+254744345678',
-            email: 'jane.smith@example.com',
-            source: 'MANUAL_TEST',
-            preferredPackage: '5G_15Mbps',
-            installationTown: 'Mombasa',
-            deliveryLocation: 'Nyali',
-            preferredTime: 'Afternoon'
-        }
+const data = JSON.stringify({
+    type: "NEW_LEAD",
+    data: {
+        name: "Sarp Tecimer",
+        phone: "+254700000000",
+        email: "contact@sarptecimer.com",
+        source: "APIFY_LINKEDIN",
+        tags: "DEBUG_INFO_KEYS, fullname, first_name, last_name, headline, public_identifier, profile_url, profile_picture_url, about, location, creator_hashtags, is_creator, is_influencer, is_premium, open_to_work, created_timestamp",
+        preferredPackage: "5G_30Mbps",
+        installationTown: "Nairobi",
+        deliveryLocation: "Unknown Company",
+        preferredDate: null,
+        preferredTime: "Morning"
     }
-];
-
-const url = 'https://bazztech-agentic-team-auto.up.railway.app/api/webhook'; // Best guess URL
-
-leads.forEach((lead, index) => {
-    const data = JSON.stringify(lead);
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        }
-    };
-
-    const req = https.request(url, options, (res) => {
-        console.log(`Lead ${index + 1} Status: ${res.statusCode}`);
-        res.on('data', (d) => {
-            process.stdout.write(d);
-        });
-    });
-
-    req.on('error', (e) => {
-        console.error(`Lead ${index + 1} Error: ${e.message}`);
-    });
-
-    req.write(data);
-    req.end();
 });
+
+const options = {
+    hostname: 'bazztech-agentic-team-auto-production-047d.up.railway.app',
+    port: 443,
+    path: '/api/webhook',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length
+    }
+};
+
+const req = https.request(options, (res) => {
+    console.log(`statusCode: ${res.statusCode}`);
+
+    res.on('data', (d) => {
+        process.stdout.write(d);
+    });
+});
+
+req.on('error', (error) => {
+    console.error(error);
+});
+
+req.write(data);
+req.end();

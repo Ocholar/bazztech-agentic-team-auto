@@ -16,79 +16,93 @@
             "type": "n8n-nodes-base.scheduleTrigger",
             "typeVersion": 1.1,
             "position": [
-                250,
-                300
-            ]
+                0,
+                0
+            ],
+            "id": "c8c149f1-d973-44c4-92a1-7d8b48608dcc"
         },
         {
             "parameters": {
-                "method": "POST",
-                "url": "https://api.apify.com/v2/acts/apify~linkedin-company-scraper/runs",
-                "authentication": "genericCredentialType",
-                "genericAuthType": "httpHeaderAuth",
-                "sendHeaders": true,
-                "headerParameters": {
-                    "parameters": [
-                        {
-                            "name": "Content-Type",
-                            "value": "application/json"
-                        }
-                    ]
+                "actorSource": "store",
+                "actorId": {
+                    "__rl": true,
+                    "value": "VhxlqQXRwhW8H5hNV",
+                    "mode": "list",
+                    "cachedResultName": "Linkedin Profile Details Scraper + EMAIL (No Cookies Required) (apimaestro/linkedin-profile-detail)",
+                    "cachedResultUrl": "https://console.apify.com/actors/VhxlqQXRwhW8H5hNV/input"
                 },
-                "sendBody": true,
-                "bodyParameters": {
-                    "parameters": [
-                        {
-                            "name": "startUrls",
-                            "value": "=[{\"url\": \"https://www.linkedin.com/search/results/companies/?keywords=kenya%205G%20internet\"}]"
-                        },
-                        {
-                            "name": "maxResults",
-                            "value": "50"
-                        }
-                    ]
-                },
-                "options": {}
+                "customBody": "{\n  \"search_queries\": [\n    \"IT Manager in Kenya\",\n    \"Business Owner in Kenya\",\n    \"CEO in Kenya\"\n  ],\n  \"max_profiles\": 50\n}\n",
+                "timeout": {}
             },
-            "name": "Apify - Scrape LinkedIn Companies",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.1,
+            "type": "@apify/n8n-nodes-apify.apify",
+            "typeVersion": 1,
             "position": [
-                470,
-                300
+                224,
+                0
             ],
+            "id": "6ea131cf-4c9e-4421-9db0-197e4a1b23a0",
+            "name": "Run an Actor and get dataset",
             "credentials": {
-                "httpHeaderAuth": {
-                    "id": "1",
-                    "name": "Apify API Key"
+                "apifyApi": {
+                    "id": "gflfNAm3QNKTSDds",
+                    "name": "Apify account"
                 }
             }
         },
         {
             "parameters": {
-                "method": "GET",
-                "url": "={{ $json.data.defaultDatasetId }}/items",
+                "amount": 15,
+                "unit": "seconds"
+            },
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                440,
+                0
+            ],
+            "id": "wait-node",
+            "name": "Wait 15s"
+        },
+        {
+            "parameters": {
+                "url": "=https://api.apify.com/v2/datasets/{{ $json.defaultDatasetId }}/items?token={{ $credentials.apifyApi.token }}",
                 "options": {}
             },
             "name": "Get Scraped Data",
             "type": "n8n-nodes-base.httpRequest",
             "typeVersion": 4.1,
             "position": [
-                690,
-                300
-            ]
+                660,
+                0
+            ],
+            "id": "29ec302d-6c3d-4f0f-8671-5a5d084f37d1"
         },
         {
             "parameters": {
-                "jsCode": "// Transform Apify data to lead format\nconst leads = [];\n\nfor (const item of $input.all()) {\n  const company = item.json;\n  \n  // Extract contact info\n  const lead = {\n    name: company.name || 'Unknown Company',\n    phone: company.phone || '+254700000000',\n    alternativePhone: company.alternativePhone || '',\n    email: company.email || `contact@${company.name?.toLowerCase().replace(/\\s+/g, '')}.com`,\n    source: 'APIFY_LINKEDIN',\n    tags: ['5G_PROSPECT', 'KENYA'],\n    preferredPackage: '5G_30Mbps',\n    installationTown: company.location || 'Nairobi',\n    deliveryLocation: company.address || 'CBD',\n    preferredDate: null,\n    preferredTime: 'Morning'\n  };\n  \n  leads.push({ json: lead });\n}\n\nreturn leads;"
+                "jsCode": "// Transform Apify data to lead format\nconst leads = [];\n\nfor (const item of $input.all()) {\n  const profile = item.json;\n  \n  // Access nested basic_info if available\n  const info = profile.basic_info || profile;\n  \n  // Correct mapping: fullname, first_name, last_name\n  let name = info.fullname;\n  if (!name && info.first_name && info.last_name) {\n      name = `${info.first_name} ${info.last_name}`;\n  }\n  \n  // Construct tags string\n  const tagList = ['APIFY', 'LINKEDIN'];\n  if (info.headline) tagList.push(info.headline.substring(0, 50));\n  if (info.location) tagList.push(info.location);\n  const tagsString = tagList.join(', ');\n\n  // Generate email from name if missing\n  const safeName = (name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '');\n  const email = info.email || `${safeName}@linkedin.com`;\n\n  const lead = {\n    name: name || 'Unknown Name',\n    phone: '+254700000000',\n    alternativePhone: '',\n    email: email,\n    source: 'APIFY_LINKEDIN',\n    tags: tagsString,\n    preferredPackage: '5G_30Mbps',\n    installationTown: info.location || 'Nairobi',\n    deliveryLocation: info.headline || 'Unknown Company',\n    preferredDate: null,\n    preferredTime: 'Morning'\n  };\n  \n  leads.push({ json: lead });\n}\n\nreturn leads;\n"
             },
             "name": "Transform to Lead Format",
             "type": "n8n-nodes-base.code",
             "typeVersion": 2,
             "position": [
-                910,
-                300
-            ]
+                880,
+                0
+            ],
+            "id": "46573faf-6101-44e4-a29e-0879d818ca9b"
+        },
+        {
+            "parameters": {
+                "batchSize": 1,
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                1100,
+                0
+            ],
+            "id": "split-batch-node",
+            "name": "Split into Single Items"
         },
         {
             "parameters": {
@@ -105,16 +119,17 @@
                 },
                 "sendBody": true,
                 "specifyBody": "json",
-                "jsonBody": "={\"type\": \"NEW_LEAD\", \"data\": $json}",
+                "jsonBody": "={{ { type: 'NEW_LEAD', data: $json } }}",
                 "options": {}
             },
             "name": "Send to Dashboard",
             "type": "n8n-nodes-base.httpRequest",
             "typeVersion": 4.1,
             "position": [
-                1130,
-                300
-            ]
+                1320,
+                0
+            ],
+            "id": "c9ee5593-cf08-4a4e-999f-9ccbe6416b74"
         }
     ],
     "connections": {
@@ -122,14 +137,25 @@
             "main": [
                 [
                     {
-                        "node": "Apify - Scrape LinkedIn Companies",
+                        "node": "Run an Actor and get dataset",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Apify - Scrape LinkedIn Companies": {
+        "Run an Actor and get dataset": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 15s",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 15s": {
             "main": [
                 [
                     {
@@ -155,7 +181,29 @@
             "main": [
                 [
                     {
+                        "node": "Split into Single Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split into Single Items": {
+            "main": [
+                [
+                    {
                         "node": "Send to Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send to Dashboard": {
+            "main": [
+                [
+                    {
+                        "node": "Split into Single Items",
                         "type": "main",
                         "index": 0
                     }
