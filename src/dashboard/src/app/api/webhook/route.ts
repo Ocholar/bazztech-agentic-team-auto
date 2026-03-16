@@ -1,60 +1,65 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
+/**
+ * POST /api/webhook
+ *
+ * Central webhook called by n8n workflows to update lead/CRM data.
+ * Supports three event types:
+ *   - NEW_LEAD:     Create a new lead in the CRM.
+ *   - UPDATE_STAGE: Progress a lead through the funnel (LEAD -> SALE).
+ */
 export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { type, data } = body;
 
         if (type === 'NEW_LEAD') {
+            // Find the client's userId via the webhookId so leads are attributed correctly
+            const config = await db.productConfig.findUnique({
+                where: { webhookId: data.webhookId },
+                select: { userId: true },
+            });
+
+            if (!config) {
+                return NextResponse.json({ error: 'Invalid webhookId' }, { status: 404 });
+            }
+
             const lead = await db.lead.create({
                 data: {
+                    userId: config.userId,
                     name: data.name,
                     phone: data.phone,
-                    alternativePhone: data.alternativePhone,
                     email: data.email,
-                    source: data.source,
-                    status: 'NEW',
-                    tags: data.tags,
-                    preferredPackage: data.preferredPackage,
-                    installationTown: data.installationTown,
-                    deliveryLocation: data.deliveryLocation,
-                    preferredDate: data.preferredDate ? new Date(data.preferredDate) : null,
-                    preferredTime: data.preferredTime,
+                    source: data.source || 'WhatsApp',
+                    stage: 'LEAD',
+                    lastMessage: data.lastMessage,
                 },
             });
-            return NextResponse.json({ success: true, id: lead.id });
+            return NextResponse.json({ success: true, leadId: lead.id });
         }
 
-        if (type === 'UPDATE_STATUS') {
+        if (type === 'UPDATE_STAGE') {
+            // Valid stages defined in the Prisma schema: LEAD, CONTACTED, PROSPECTIVE, SALE
+            const allowedStages = ['LEAD', 'CONTACTED', 'PROSPECTIVE', 'SALE'];
+            if (!allowedStages.includes(data.stage)) {
+                return NextResponse.json({ error: `Invalid stage: ${data.stage}` }, { status: 400 });
+            }
+
             const lead = await db.lead.update({
-                where: { id: data.id },
-                data: { status: data.status },
-            });
-            return NextResponse.json({ success: true, id: lead.id });
-        }
-
-        if (type === 'SUBMISSION_RESULT') {
-            await db.submission.create({
+                where: { id: data.leadId },
                 data: {
-                    leadId: data.leadId,
-                    status: data.success ? 'SUCCESS' : 'FAILURE',
-                    response: JSON.stringify(data.response),
+                    stage: data.stage,
+                    lastMessage: data.lastMessage,
                 },
             });
-
-            // Also update lead status
-            await db.lead.update({
-                where: { id: data.leadId },
-                data: { status: data.success ? 'SUBMITTED' : 'FAILED' },
-            });
-
-            return NextResponse.json({ success: true });
+            return NextResponse.json({ success: true, leadId: lead.id, newStage: lead.stage });
         }
 
-        return NextResponse.json({ error: 'Unknown event type' }, { status: 400 });
+        return NextResponse.json({ error: 'Unknown event type. Use NEW_LEAD or UPDATE_STAGE.' }, { status: 400 });
+
     } catch (error) {
-        console.error('Webhook error:', error);
+        console.error('[webhook] Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

@@ -1,0 +1,220 @@
+{
+    "name": "Bazz-Connect Master (Multi-Tenant WhatsApp AI)",
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "node-webhook-trigger",
+            "name": "WhatsApp Webhook Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "bazz-connect-master",
+            "notes": "Receives incoming WhatsApp messages from the Business API. The body should contain: { webhookId, from, message }"
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.DASHBOARD_URL }}/api/client-config?webhookId={{ $json.body.webhookId }}",
+                "options": {}
+            },
+            "id": "node-fetch-client-config",
+            "name": "Fetch Client AI Config",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                450,
+                300
+            ],
+            "notes": "Pulls the unique System Prompt and Knowledge Base for this specific business client from our central database. This is the core of the multi-tenant architecture."
+        },
+        {
+            "parameters": {
+                "jsCode": "// Check if the config fetch was successful\nconst config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\n// Merge the incoming message data with the client config for the AI node\nconst incoming = $('WhatsApp Webhook Trigger').first().json.body;\n\nreturn [{\n  json: {\n    webhookId: config.webhookId,\n    product: config.product,\n    businessName: config.businessName,\n    systemPrompt: config.systemPrompt,\n    knowledgeBase: config.knowledgeBase,\n    userMessage: incoming.message,\n    userPhone: incoming.from\n  }\n}];"
+            },
+            "id": "node-prepare-context",
+            "name": "Prepare AI Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ],
+            "notes": "Merges the client's dynamic prompt with the incoming user message."
+        },
+        {
+            "parameters": {
+                "resource": "chat",
+                "operation": "complete",
+                "model": "gpt-4o-mini",
+                "messages": {
+                    "values": [
+                        {
+                            "role": "system",
+                            "content": "={{ $json.systemPrompt }}\n\n## Your Knowledge Base:\n{{ $json.knowledgeBase }}\n\n## Your business name: {{ $json.businessName }}\n\nAlways be helpful, concise, and professional. If you capture a lead's interest, make sure to get their email or preferred contact time."
+                        },
+                        {
+                            "role": "user",
+                            "content": "={{ $json.userMessage }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-openai",
+            "name": "OpenAI AI Response",
+            "type": "@n8n/n8n-nodes-langchain.openAi",
+            "typeVersion": 1,
+            "position": [
+                950,
+                300
+            ],
+            "notes": "The AI node that generates the response. Its 'brain' is fully dynamic — powered by the client's custom system prompt fetched in the previous step."
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.DASHBOARD_URL }}/api/webhook",
+                "method": "POST",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "type",
+                            "value": "UPDATE_STAGE"
+                        },
+                        {
+                            "name": "data.leadId",
+                            "value": "={{ $json.leadId }}"
+                        },
+                        {
+                            "name": "data.stage",
+                            "value": "CONTACTED"
+                        },
+                        {
+                            "name": "data.lastMessage",
+                            "value": "={{ $('OpenAI AI Response').first().json.choices[0].message.content.substring(0, 200) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-update-crm",
+            "name": "Update CRM Stage → CONTACTED",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                1200,
+                300
+            ],
+            "notes": "After every AI response, update the lead's stage in the central CRM database. A real implementation would include logic to escalate from CONTACTED -> PROSPECTIVE -> SALE based on AI's analysis of the conversation."
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.WHATSAPP_API_URL }}/messages",
+                "method": "POST",
+                "authentication": "headerAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer {{ $env.WHATSAPP_TOKEN }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "to",
+                            "value": "={{ $('Prepare AI Context').first().json.userPhone }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "text.body",
+                            "value": "={{ $('OpenAI AI Response').first().json.choices[0].message.content }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-send-whatsapp-reply",
+            "name": "Send WhatsApp Reply",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                1200,
+                500
+            ],
+            "notes": "Sends the AI-generated response back to the user via the WhatsApp Business API."
+        }
+    ],
+    "connections": {
+        "WhatsApp Webhook Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Client AI Config",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Client AI Config": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare AI Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare AI Context": {
+            "main": [
+                [
+                    {
+                        "node": "OpenAI AI Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI AI Response": {
+            "main": [
+                [
+                    {
+                        "node": "Update CRM Stage → CONTACTED",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Send WhatsApp Reply",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "errorWorkflow": "Autonomous_Sales_Agent",
+        "saveManualExecutions": true
+    },
+    "staticData": null,
+    "tags": [
+        "bazz-connect",
+        "multi-tenant",
+        "whatsapp",
+        "ai"
+    ]
+}

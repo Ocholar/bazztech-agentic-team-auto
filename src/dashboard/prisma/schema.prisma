@@ -8,42 +8,119 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// -------------------------------------------------------------
+// USER & AUTHENTICATION (Multi-Tenant SaaS)
+// -------------------------------------------------------------
+model User {
+  id            String         @id @default(uuid())
+  name          String?
+  email         String         @unique
+  passwordHash  String?
+  companyName   String?
+  role          UserRole       @default(CLIENT)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  // Relations
+  subscriptions Subscription[]
+  leads         Lead[]
+  configs       ProductConfig[]
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+// -------------------------------------------------------------
+// SUBSCRIPTIONS & PRODUCTS (Purchased via IntaSend)
+// -------------------------------------------------------------
+model Subscription {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  productType     ProductType
+  status          SubStatus   @default(ACTIVE)
+  
+  // IntaSend tracking
+  intaSendRef     String?     @unique
+  amountPaid      Float?
+  
+  startDate       DateTime    @default(now())
+  expiresAt       DateTime?
+  
+  // Relations
+  config          ProductConfig?
+}
+
+enum ProductType {
+  BAZZ_CONNECT
+  BAZZ_FLOW
+  BAZZ_DOC
+  BAZZ_LEAD
+}
+
+enum SubStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+// -------------------------------------------------------------
+// DYNAMIC AI CONFIGURE (Central n8n pulls from here)
+// -------------------------------------------------------------
+model ProductConfig {
+  id              String       @id @default(uuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  subscriptionId  String       @unique
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  // Multi-Tenant Webhook Routing Identifier
+  webhookId       String       @unique @default(uuid())
+  
+  // AI Agent Dynamic "Brain"
+  systemPrompt    String?      @db.Text
+  knowledgeBase   String?      @db.Text // Can hold raw text or URLs to docs
+  
+  updatedAt       DateTime     @updatedAt
+}
+
+// -------------------------------------------------------------
+// AUTONOMOUS SALES CRM (Tracked by Master n8n workflow)
+// -------------------------------------------------------------
 model Lead {
-  id                    String   @id @default(uuid())
-  name                  String
-  phone                 String   // Customer Phone (Airtel Number)
-  alternativePhone      String?  // Customer Alternative Number
-  email                 String?
-  source                String
-  status                String   @default("NEW") // NEW, QUALIFIED, SUBMITTED, FAILED
-  tags                  String?
+  id              String       @id @default(uuid())
+  userId          String       // The Client this lead belongs to
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  // Airtel Form Fields
-  preferredPackage      String?  // 5G_15Mbps or 5G_30Mbps
-  installationTown      String?
-  deliveryLocation      String?  // Nearest Landmark
-  preferredDate         DateTime?
-  preferredTime         String?  // Morning, Afternoon, Evening
+  name            String?
+  phone           String?
+  email           String?
+  source          String?      // e.g., 'Website Form', 'WhatsApp', 'Facebook'
   
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  submissions           Submission[]
+  stage           LeadStage    @default(LEAD)
+  
+  // Conversation payload dumps
+  lastMessage     String?      @db.Text
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
-model Submission {
-  id        String   @id @default(uuid())
-  leadId    String
-  lead      Lead     @relation(fields: [leadId], references: [id])
-  status    String
-  response  String?
-  createdAt DateTime @default(now())
+enum LeadStage {
+  LEAD          // Newly fetched or submitted
+  CONTACTED     // Agent sent standard outreach
+  PROSPECTIVE   // Agent confirmed interest / qualified
+  SALE          // Transaction completed
 }
 
-model Config {
-  key       String   @id
-  value     String
-}
-
+// -------------------------------------------------------------
+// SYSTEM METRICS
+// -------------------------------------------------------------
 model Analytics {
   id        String   @id @default(uuid())
   date      DateTime @default(now())
