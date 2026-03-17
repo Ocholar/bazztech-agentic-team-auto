@@ -11,6 +11,11 @@ import { NextResponse } from 'next/server';
  */
 export async function POST(req: Request) {
     try {
+        const apiKey = req.headers.get('x-api-key');
+        if (apiKey !== process.env.INTERNAL_API_KEY) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await req.json();
         const { type, data } = body;
 

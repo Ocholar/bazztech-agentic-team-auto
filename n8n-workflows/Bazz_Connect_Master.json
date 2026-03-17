@@ -17,6 +17,15 @@
         {
             "parameters": {
                 "url": "={{ $env.DASHBOARD_URL }}/api/client-config?webhookId={{ $json.body.webhookId }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        }
+                    ]
+                },
                 "options": {}
             },
             "id": "node-fetch-client-config",
@@ -77,6 +86,15 @@
                 "url": "={{ $env.DASHBOARD_URL }}/api/webhook",
                 "method": "POST",
                 "sendBody": true,
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        }
+                    ]
+                },
                 "bodyParameters": {
                     "parameters": [
                         {

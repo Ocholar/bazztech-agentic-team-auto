@@ -10,9 +10,10 @@ export default async function middleware(req: NextRequest) {
     const publicPaths = ['/login', '/register', '/api/auth'];
     const isPublic = publicPaths.some((p) => pathname.startsWith(p));
 
-    // Internal API routes protected by a shared secret, not session
+    // Internal API routes protected by a shared secret (x-api-key), not session
     const isInternalApi = pathname.startsWith('/api/client-config') ||
-        pathname.startsWith('/api/webhook');
+        pathname.startsWith('/api/webhook') ||
+        pathname.startsWith('/api/leads');
 
     if (isPublic || isInternalApi) return NextResponse.next();
 

@@ -10,6 +10,11 @@ import { NextResponse } from 'next/server';
  */
 export async function GET(req: Request) {
     try {
+        const apiKey = req.headers.get('x-api-key');
+        if (apiKey !== process.env.INTERNAL_API_KEY) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { searchParams } = new URL(req.url);
         const stage = searchParams.get('stage') || 'LEAD';
         const limit = parseInt(searchParams.get('limit') || '20', 10);
