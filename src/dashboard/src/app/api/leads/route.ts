@@ -1,22 +1,39 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+/**
+ * GET /api/leads?stage=LEAD&limit=20
+ *
+ * This endpoint is used by the Autonomous Sales Agent (n8n workflow)
+ * to fetch a list of leads that need to be contacted.
+ * It is protected by a simple API key (in a real app, use a strong shared secret).
+ */
+export async function GET(req: Request) {
     try {
-        const allLeads = await db.lead.findMany({
-            orderBy: {
-                createdAt: 'desc',
+        const { searchParams } = new URL(req.url);
+        const stage = searchParams.get('stage') || 'LEAD';
+        const limit = parseInt(searchParams.get('limit') || '20', 10);
+
+        // Ensure stage is a valid enum value to prevent malicious queries
+        const validStages = ['LEAD', 'CONTACTED', 'PROSPECTIVE', 'SALE'];
+        if (!validStages.includes(stage)) {
+            return NextResponse.json({ error: 'Invalid stage parameter.' }, { status: 400 });
+        }
+
+        const leads = await db.lead.findMany({
+            where: {
+                stage: stage as any, // Cast to any to satisfy Prisma enum matching
             },
-            take: 50,
+            take: limit,
+            orderBy: {
+                createdAt: 'asc', // Process oldest uncontacted leads first
+            },
         });
 
-        return NextResponse.json({
-            success: true,
-            count: allLeads.length,
-            leads: allLeads
-        });
+        return NextResponse.json(leads);
+
     } catch (error) {
-        console.error('Error fetching leads:', error);
+        console.error('[leads-api] GET Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
