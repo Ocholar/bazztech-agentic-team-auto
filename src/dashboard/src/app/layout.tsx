@@ -6,8 +6,8 @@ import { Sidebar } from "@/components/sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Bazztech Agentic Dashboard",
-  description: "Autonomous Sales & Marketing System",
+  title: "Bazz AI | Client Portal",
+  description: "Manage your AI automation products — Bazz-Connect, Bazz-Flow, Bazz-Doc, Bazz-Lead",
 };
 
 export default function RootLayout({
