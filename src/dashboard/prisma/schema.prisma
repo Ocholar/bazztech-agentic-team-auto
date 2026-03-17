@@ -33,7 +33,7 @@ enum UserRole {
 }
 
 // -------------------------------------------------------------
-// SUBSCRIPTIONS & PRODUCTS (Purchased via IntaSend)
+// SUBSCRIPTIONS & PRODUCTS (Purchased via M-Pesa)
 // -------------------------------------------------------------
 model Subscription {
   id              String      @id @default(uuid())
@@ -43,8 +43,10 @@ model Subscription {
   productType     ProductType
   status          SubStatus   @default(ACTIVE)
   
-  // IntaSend tracking
-  intaSendRef     String?     @unique
+  // M-Pesa (Daraja API) tracking
+  mpesaReceipt    String?     @unique
+  checkoutRequestId String?   @unique
+  mpesaPhone      String?
   amountPaid      Float?
   
   startDate       DateTime    @default(now())

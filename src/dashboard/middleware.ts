@@ -7,7 +7,7 @@ export default async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
     // Public routes — always accessible
-    const publicPaths = ['/login', '/register', '/api/auth'];
+    const publicPaths = ['/login', '/register', '/api/auth', '/api/mpesa/webhook'];
     const isPublic = publicPaths.some((p) => pathname.startsWith(p));
 
     // Internal API routes protected by a shared secret (x-api-key), not session
