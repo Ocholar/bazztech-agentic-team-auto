@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // -------------------------------------------------------------
@@ -87,6 +88,11 @@ model ProductConfig {
   // AI Agent Dynamic "Brain"
   systemPrompt    String?      @db.Text
   knowledgeBase   String?      @db.Text // Can hold raw text or URLs to docs
+  
+  // Custom WhatsApp Integration
+  whatsappPhoneId    String?   // Meta Phone ID or Evolution API Instance Name
+  whatsappUrl        String?   // Evolution API URL (e.g. https://api.client.com)
+  whatsappToken      String?   // Auth token to send messages on behalf of this client
   
   updatedAt       DateTime     @updatedAt
 }

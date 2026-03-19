@@ -4,8 +4,8 @@ import { db } from '@/lib/db';
 
 export async function getDashboardStats() {
     const totalLeads = await db.lead.count();
-    const qualifiedLeads = await db.lead.count({ where: { status: 'QUALIFIED' } });
-    const submittedLeads = await db.lead.count({ where: { status: 'SUBMITTED' } });
+    const prospectiveLeads = await db.lead.count({ where: { stage: 'PROSPECTIVE' } });
+    const salesLeads = await db.lead.count({ where: { stage: 'SALE' } });
     const grossAdds = await db.analytics.aggregate({
         where: { metric: 'gross_adds' },
         _sum: { value: true },
@@ -13,8 +13,8 @@ export async function getDashboardStats() {
 
     return {
         totalLeads,
-        qualifiedLeads,
-        submittedLeads,
+        qualifiedLeads: prospectiveLeads,
+        submittedLeads: salesLeads,
         grossAdds: grossAdds._sum.value || 0,
     };
 }
@@ -38,40 +38,4 @@ export async function getAnalyticsHistory() {
         date: h.date.toISOString().split('T')[0],
         value: h.value
     }));
-}
-
-export async function getSubmissions() {
-    return await db.submission.findMany({
-        take: 50,
-        orderBy: { createdAt: 'desc' },
-        include: {
-            lead: {
-                select: { name: true, phone: true }
-            }
-        }
-    });
-}
-
-export async function getConfig() {
-    const config = await db.config.findMany();
-    return config.reduce((acc, curr) => {
-        acc[curr.key] = curr.value;
-        return acc;
-    }, {} as Record<string, string>);
-}
-
-export async function updateConfig(formData: FormData) {
-    const rawData = Object.fromEntries(formData.entries());
-
-    for (const [key, value] of Object.entries(rawData)) {
-        if (typeof value === 'string') {
-            await db.config.upsert({
-                where: { key },
-                update: { value },
-                create: { key, value },
-            });
-        }
-    }
-
-    return { success: true };
 }

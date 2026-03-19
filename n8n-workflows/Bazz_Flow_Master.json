@@ -1,18 +1,18 @@
 {
-    "name": "Bazz-Connect Master (Advanced Multi-Tenant AI Agent)",
+    "name": "Bazz-Flow Master (M-Pesa AI Acknowledgement)",
     "nodes": [
         {
             "parameters": {},
-            "id": "node-webhook-trigger",
-            "name": "WhatsApp Webhook Trigger",
+            "id": "node-webhook-mpesa",
+            "name": "M-Pesa Webhook Trigger",
             "type": "n8n-nodes-base.webhook",
             "typeVersion": 1,
             "position": [
                 200,
                 300
             ],
-            "webhookId": "bazz-connect-master",
-            "notes": "Receives incoming WhatsApp messages from the Meta API. The body should contain: { webhookId, from, message }"
+            "webhookId": "bazz-flow-master",
+            "notes": "Receives Daraja API or IntaSend callback payloads indicating a successful payment."
         },
         {
             "parameters": {
@@ -36,45 +36,43 @@
                 400,
                 300
             ],
-            "notes": "Pulls the unique System Prompt, Knowledge Base, and Meta Token for this specific business client from our central database."
+            "notes": "Pulls the custom payment receipt instructions and Meta connection for this business."
         },
         {
             "parameters": {
-                "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\nconst incoming = $('WhatsApp Webhook Trigger').first().json.body;\n\nreturn [{\n  json: {\n    webhookId: config.webhookId,\n    product: config.product,\n    businessName: config.businessName,\n    systemPrompt: config.systemPrompt,\n    knowledgeBase: config.knowledgeBase,\n    whatsappPhoneId: config.whatsapp.phoneId,\n    whatsappToken: config.whatsapp.token,\n    userMessage: incoming.message,\n    userPhone: incoming.from,\n    sessionId: incoming.from // Use phone number as the memory session ID\n  }\n}];"
+                "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\nconst payment = $('M-Pesa Webhook Trigger').first().json.body;\n\nreturn [{\n  json: {\n    amount: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'Amount').Value,\n    phone: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'PhoneNumber').Value,\n    receipt: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'MpesaReceiptNumber').Value,\n    businessName: config.businessName,\n    systemPrompt: config.systemPrompt,\n    whatsappPhoneId: config.whatsapp.phoneId,\n    whatsappToken: config.whatsapp.token\n  }\n}];"
             },
-            "id": "node-prepare-context",
-            "name": "Prepare AI Context",
+            "id": "node-prepare-payment-context",
+            "name": "Format M-Pesa Payload",
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
                 600,
                 300
-            ],
-            "notes": "Merges the client's dynamic prompt with the incoming user message."
+            ]
         },
         {
             "parameters": {
                 "promptType": "define",
-                "text": "={{ $json.userMessage }}",
+                "text": "A new payment has just been received over M-Pesa. Please generate a highly personalized, warm, and professional WhatsApp receipt message for this customer.\n\nAmount Paid: {{ $json.amount }} KES\nCustomer Phone: {{ $json.phone }}\nM-Pesa Receipt Number: {{ $json.receipt }}",
                 "options": {
-                    "systemMessage": "={{ $json.systemPrompt }}\n\n## Your Knowledge Base:\n{{ $json.knowledgeBase }}\n\n## Your business name: {{ $json.businessName }}\n\nAlways be helpful, concise, and professional."
+                    "systemMessage": "You are the automated billing assistant for {{ $json.businessName }}.\n\n{{ $json.systemPrompt }}\n\nAlways sound appreciative and confirm exactly how much was paid and the receipt number."
                 }
             },
             "id": "node-ai-agent",
-            "name": "Advanced AI Agent",
+            "name": "Payment AI Agent",
             "type": "@n8n/n8n-nodes-langchain.agent",
             "typeVersion": 1,
             "position": [
                 850,
                 300
-            ],
-            "notes": "LangChain ReAct Agent that manages memory and tools internally."
+            ]
         },
         {
             "parameters": {
-                "model": "gpt-4o",
+                "model": "gpt-4o-mini",
                 "options": {
-                    "temperature": 0.3
+                    "temperature": 0.5
                 }
             },
             "id": "node-ai-model",
@@ -88,21 +86,7 @@
         },
         {
             "parameters": {
-                "contextWindowLength": 10,
-                "sessionId": "={{ $('Prepare AI Context').first().json.sessionId }}"
-            },
-            "id": "node-ai-memory",
-            "name": "Window Buffer Memory",
-            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-            "typeVersion": 1,
-            "position": [
-                1000,
-                500
-            ]
-        },
-        {
-            "parameters": {
-                "url": "={{ $env.WHATSAPP_API_URL }}/{{ $('Prepare AI Context').first().json.whatsappPhoneId }}/messages",
+                "url": "={{ $env.WHATSAPP_API_URL }}/{{ $('Format M-Pesa Payload').first().json.whatsappPhoneId }}/messages",
                 "method": "POST",
                 "authentication": "headerAuth",
                 "sendHeaders": true,
@@ -110,7 +94,7 @@
                     "parameters": [
                         {
                             "name": "Authorization",
-                            "value": "Bearer {{ $('Prepare AI Context').first().json.whatsappToken }}"
+                            "value": "Bearer {{ $('Format M-Pesa Payload').first().json.whatsappToken }}"
                         }
                     ]
                 },
@@ -127,7 +111,7 @@
                         },
                         {
                             "name": "to",
-                            "value": "={{ $('Prepare AI Context').first().json.userPhone }}"
+                            "value": "={{ $('Format M-Pesa Payload').first().json.phone }}"
                         },
                         {
                             "name": "type",
@@ -141,19 +125,18 @@
                 },
                 "options": {}
             },
-            "id": "node-send-whatsapp-reply",
-            "name": "Send Multi-Tenant WhatsApp Reply",
+            "id": "node-send-whatsapp-receipt",
+            "name": "Send WhatsApp Receipt",
             "type": "n8n-nodes-base.httpRequest",
             "typeVersion": 3,
             "position": [
                 1150,
                 300
-            ],
-            "notes": "Sends the AI-generated response back to the user via the client's specific WhatsApp Business setup."
+            ]
         }
     ],
     "connections": {
-        "WhatsApp Webhook Trigger": {
+        "M-Pesa Webhook Trigger": {
             "main": [
                 [
                     {
@@ -168,29 +151,29 @@
             "main": [
                 [
                     {
-                        "node": "Prepare AI Context",
+                        "node": "Format M-Pesa Payload",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Prepare AI Context": {
+        "Format M-Pesa Payload": {
             "main": [
                 [
                     {
-                        "node": "Advanced AI Agent",
+                        "node": "Payment AI Agent",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Advanced AI Agent": {
+        "Payment AI Agent": {
             "main": [
                 [
                     {
-                        "node": "Send Multi-Tenant WhatsApp Reply",
+                        "node": "Send WhatsApp Receipt",
                         "type": "main",
                         "index": 0
                     }
@@ -201,19 +184,8 @@
             "ai_languageModel": [
                 [
                     {
-                        "node": "Advanced AI Agent",
+                        "node": "Payment AI Agent",
                         "type": "ai_languageModel",
-                        "index": 0
-                    }
-                ]
-            ]
-        },
-        "Window Buffer Memory": {
-            "ai_memory": [
-                [
-                    {
-                        "node": "Advanced AI Agent",
-                        "type": "ai_memory",
                         "index": 0
                     }
                 ]
@@ -224,9 +196,9 @@
         "saveManualExecutions": true
     },
     "tags": [
-        "bazz-connect",
-        "multi-tenant",
-        "whatsapp",
+        "bazz-flow",
+        "m-pesa",
+        "payments",
         "ai-agent"
     ]
 }

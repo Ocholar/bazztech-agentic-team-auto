@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui-card';
-import { Bot, MessageSquare, FileText, Zap, Settings, Activity, ArrowRight } from 'lucide-react';
+import { Bot, MessageSquare, FileText, Zap, Settings, Activity, ArrowRight, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -165,5 +165,4 @@ export default async function Home() {
 
     </main>
   );
-}
 }

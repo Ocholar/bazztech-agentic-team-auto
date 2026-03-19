@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        // Fetch leads that are "QUALIFIED" but not yet submitted
+        // Fetch leads that are "PROSPECTIVE" but not yet submitted
         const qualifiedLeads = await db.lead.findMany({
             where: {
-                status: 'QUALIFIED',
+                stage: 'PROSPECTIVE',
             },
             orderBy: {
                 createdAt: 'asc',
@@ -28,17 +28,17 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { leadId, status } = body;
+        const { leadId, stage } = body;
 
-        // Update lead status (called manually to mark as qualified)
+        // Update lead stage (called manually to mark as prospective)
         const lead = await db.lead.update({
             where: { id: leadId },
-            data: { status: status || 'QUALIFIED' },
+            data: { stage: stage || 'PROSPECTIVE' },
         });
 
         return NextResponse.json({ success: true, lead });
     } catch (error) {
-        console.error('Error updating lead status:', error);
+        console.error('Error updating lead stage:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

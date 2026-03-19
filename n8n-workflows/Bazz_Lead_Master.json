@@ -1,0 +1,243 @@
+{
+    "name": "Bazz-Lead Master (Internal CRM Sales Agent)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 1
+                        }
+                    ]
+                }
+            },
+            "id": "node-cron-trigger",
+            "name": "Hourly Schedule Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "notes": "Triggers every hour to review the CRM pipeline and autonomously follow up with leads."
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.DASHBOARD_URL }}/api/leads",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-fetch-leads",
+            "name": "Fetch Leads Pipeline",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                400,
+                300
+            ],
+            "notes": "Pulls all leads grouped by stage (LEAD, CONTACTED, PROSPECTIVE)."
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "Review these newly acquired leads and determine the best approach to follow up with them via WhatsApp. For any lead that requires reaching out, use your WhatsApp tool to message them. For any lead that looks like a qualified prospect, use your CRM tool to move them to PROSPECTIVE.\n\nLeads Data:\n{{ $json.leads }}",
+                "options": {
+                    "systemMessage": "You are Bazz-Lead, the autonomous AI Sales Manager for Bazztech Networks. Your job is to analyze the internal CRM pipeline, identify leads that need follow-up, send them messages via WhatsApp, and manage their status in the CRM."
+                }
+            },
+            "id": "node-ai-sales-agent",
+            "name": "Bazz-Lead CRM Agent",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ],
+            "notes": "LangChain ReAct Agent that manages our pipeline autonomously by invoking its assigned tools."
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "options": {
+                    "temperature": 0.2
+                }
+            },
+            "id": "node-ai-model",
+            "name": "OpenAI Chat Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                650,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "name": "Update_CRM_Lead_Stage",
+                "description": "Call this tool to update the stage of a lead in the Bazztech CRM. Required inputs: leadId (string), stage (one of: LEAD, CONTACTED, PROSPECTIVE, SALE).",
+                "url": "={{ $env.DASHBOARD_URL }}/api/webhook",
+                "method": "POST",
+                "sendBody": true,
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        }
+                    ]
+                },
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "type",
+                            "value": "UPDATE_STAGE"
+                        },
+                        {
+                            "name": "data.leadId",
+                            "value": "={{ $fromAI('leadId') }}"
+                        },
+                        {
+                            "name": "data.stage",
+                            "value": "={{ $fromAI('stage') }}"
+                        }
+                    ]
+                }
+            },
+            "id": "node-tool-update-crm",
+            "name": "Tool: Update CRM Stage",
+            "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+            "typeVersion": 1,
+            "position": [
+                850,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "name": "Send_WhatsApp_Message",
+                "description": "Call this tool to send a WhatsApp message to a lead. Required inputs: phone (string, must include country code 254), message (string).",
+                "url": "={{ $env.WHATSAPP_API_URL }}/messages",
+                "method": "POST",
+                "authentication": "headerAuth",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer {{ $env.WHATSAPP_TOKEN }}"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "messaging_product",
+                            "value": "whatsapp"
+                        },
+                        {
+                            "name": "recipient_type",
+                            "value": "individual"
+                        },
+                        {
+                            "name": "to",
+                            "value": "={{ $fromAI('phone') }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "text.body",
+                            "value": "={{ $fromAI('message') }}"
+                        }
+                    ]
+                }
+            },
+            "id": "node-tool-whatsapp-send",
+            "name": "Tool: Send WhatsApp Message",
+            "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+            "typeVersion": 1,
+            "position": [
+                950,
+                500
+            ]
+        }
+    ],
+    "connections": {
+        "Hourly Schedule Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Leads Pipeline",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Leads Pipeline": {
+            "main": [
+                [
+                    {
+                        "node": "Bazz-Lead CRM Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Bazz-Lead CRM Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Tool: Update CRM Stage": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "Bazz-Lead CRM Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Tool: Send WhatsApp Message": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "Bazz-Lead CRM Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "saveManualExecutions": true
+    },
+    "tags": [
+        "bazz-lead",
+        "crm",
+        "sales",
+        "ai-agent"
+    ]
+}

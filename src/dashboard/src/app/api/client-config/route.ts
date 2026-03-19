@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server';
  *   - systemPrompt: The custom instructions defining the agent's persona.
  *   - knowledgeBase: Specific business facts, pricing, FAQs, etc.
  *   - businessName: The client's business name.
+ *   - whatsapp: The client's specific Meta API connection credentials.
  */
 export async function GET(req: Request) {
     try {
@@ -50,6 +51,11 @@ export async function GET(req: Request) {
             businessName: config.user.companyName || config.user.name,
             systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
             knowledgeBase: config.knowledgeBase || '',
+            whatsapp: {
+                phoneId: config.whatsappPhoneId || null,
+                url: config.whatsappUrl || 'https://graph.facebook.com/v17.0', // Default Meta URL
+                token: config.whatsappToken || null,
+            }
         });
     } catch (error) {
         console.error('[client-config] Error:', error);

@@ -1,0 +1,192 @@
+{
+    "name": "Bazz-Doc Master (AI Document OCR & Extraction)",
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "node-webhook-upload",
+            "name": "Document Upload Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "bazz-doc-master",
+            "notes": "Triggered when a file is uploaded via WhatsApp or Web."
+        },
+        {
+            "parameters": {
+                "url": "={{ $env.DASHBOARD_URL }}/api/client-config?webhookId={{ $json.body.webhookId }}",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-fetch-client-config",
+            "name": "Fetch Client Extraction Rules",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                400,
+                300
+            ],
+            "notes": "Pulls the specific extraction rules and JSON schema the client wants for this document type."
+        },
+        {
+            "parameters": {
+                "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\nreturn [{\n  json: {\n    systemPrompt: config.systemPrompt,\n    businessName: config.businessName,\n    knowledgeBase: config.knowledgeBase\n  }\n}];"
+            },
+            "id": "node-prepare-doc-context",
+            "name": "Prepare Document Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "Extract all relevant information from the attached document based on your system instructions.",
+                "options": {
+                    "systemMessage": "You are Bazz-Doc, the highly accurate document extraction AI for {{ $json.businessName }}.\n\nYour task:\n{{ $json.systemPrompt }}\n\nReference Material:\n{{ $json.knowledgeBase }}\n\nPlease output the extracted data in strict JSON format."
+                }
+            },
+            "id": "node-ai-doc-agent",
+            "name": "Document AI Agent",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "options": {
+                    "temperature": 0.0
+                }
+            },
+            "id": "node-ai-model",
+            "name": "OpenAI Vision Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                850,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "name": "readDocument",
+                "binaryPropertyName": "data"
+            },
+            "id": "node-doc-plugin",
+            "name": "Read Document File",
+            "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return [{ json: { extractedData: JSON.parse($input.first().json.output) } }];"
+            },
+            "id": "node-parse-json",
+            "name": "Parse Extracted JSON",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1150,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Document Upload Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Client Extraction Rules",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Client Extraction Rules": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Document Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Document Context": {
+            "main": [
+                [
+                    {
+                        "node": "Document AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Document AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Extracted JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Vision Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Document AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read Document File": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "Document AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "saveManualExecutions": true
+    },
+    "tags": [
+        "bazz-doc",
+        "ocr",
+        "documents",
+        "ai-agent"
+    ]
+}
