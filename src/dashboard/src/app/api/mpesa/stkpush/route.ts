@@ -6,7 +6,9 @@ import { NextResponse } from 'next/server';
 const DARAJA_CONSUMER_KEY = process.env.DARAJA_CONSUMER_KEY!;
 const DARAJA_CONSUMER_SECRET = process.env.DARAJA_CONSUMER_SECRET!;
 const DARAJA_PASSKEY = process.env.DARAJA_PASSKEY!;
-const DARAJA_BUSINESS_SHORTCODE = process.env.DARAJA_BUSINESS_SHORTCODE!;
+// Equity Bank Paybill: 247247 | Account: 0714929790
+const DARAJA_BUSINESS_SHORTCODE = process.env.DARAJA_BUSINESS_SHORTCODE || '247247';
+const EQUITY_ACCOUNT_NUMBER = process.env.EQUITY_ACCOUNT_NUMBER || '0714929790';
 // Test API URL vs Prod URL
 const DARAJA_API_URL = process.env.NODE_ENV === 'production'
     ? 'https://api.safaricom.co.ke'
@@ -54,19 +56,20 @@ export async function POST(req: Request) {
             `${DARAJA_BUSINESS_SHORTCODE}${DARAJA_PASSKEY}${timestamp}`
         ).toString('base64');
 
-        // Formulate STK Push Request
+        // Formulate STK Push Request — routes to Equity Paybill 247247
         const stkPayload = {
             BusinessShortCode: DARAJA_BUSINESS_SHORTCODE,
             Password: password,
             Timestamp: timestamp,
-            TransactionType: 'CustomerPayBillOnline', // or CustomerBuyGoodsOnline depending on shortcode
+            TransactionType: 'CustomerPayBillOnline',
             Amount: amount,
             PartyA: formattedPhone,
             PartyB: DARAJA_BUSINESS_SHORTCODE,
             PhoneNumber: formattedPhone,
             CallBackURL: `${process.env.NEXTAUTH_URL}/api/mpesa/webhook`,
-            AccountReference: `Bazztech ${productType}`,
-            TransactionDesc: `Subscription for ${productType}`
+            // AccountReference MUST match an Equity account for Paybill 247247
+            AccountReference: EQUITY_ACCOUNT_NUMBER,
+            TransactionDesc: `BazzAI ${productType} Subscription`
         };
 
         const pushReq = await fetch(`${DARAJA_API_URL}/mpesa/stkpush/v1/processrequest`, {
