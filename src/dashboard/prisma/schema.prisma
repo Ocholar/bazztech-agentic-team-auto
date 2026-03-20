@@ -44,18 +44,30 @@ model Subscription {
   productType           ProductType
   status                SubStatus   @default(INACTIVE)
   
+  // New Pricing Model (One-Time + 20% Monthly Maintenance)
+  businessSizeTier      BusinessTier @default(MICRO)
+  oneTimeFee            Float?       // KES 1500 - 5000
+  monthlyMaintenanceRate Float?      @default(0.20) // 20% of oneTimeFee
+  lastMaintenanceBillDate DateTime?
+  
   // Equity Bank / Jenga API tracking
   paymentReference      String?     @unique  // Client's unique reference for matching
   equityTransactionId   String?     @unique  // Jenga transactionId once matched
   paidPhone             String?              // Phone number that made the payment
   amountPaid            Float?
-  amountExpected        Float?               // Expected subscription price
+  amountExpected        Float?               // Expected payment amount (One-time or Maintenance)
   
   startDate             DateTime    @default(now())
   expiresAt             DateTime?
   
   // Relations
   config                ProductConfig?
+}
+
+enum BusinessTier {
+  MICRO    // 1-5 employees (KES 1500)
+  SMALL    // 6-20 employees (KES 3000)
+  MEDIUM   // 21-50 employees (KES 5000)
 }
 
 enum ProductType {

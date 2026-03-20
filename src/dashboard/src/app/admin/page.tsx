@@ -1,0 +1,98 @@
+import { db } from '@/lib/db';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
+import { Shield, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+
+export default async function AdminDashboard() {
+    const subscriptions = await db.subscription.findMany({
+        include: { user: true },
+        orderBy: { startDate: 'desc' }
+    });
+
+    const auditLogs = await db.auditLog.findMany({
+        take: 10,
+        orderBy: { createdAt: 'desc' }
+    });
+
+    return (
+        <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
+            <div className="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <Shield className="text-red-600" />
+                        Admin Oversight
+                    </h1>
+                    <p className="text-sm text-gray-500 mt-1">Manual overrides and system audit logs</p>
+                </div>
+            </div>
+
+            {/* Subscriptions Overrides */}
+            <Card className="mb-8">
+                <CardHeader>
+                    <CardTitle>Client Subscriptions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <table className="w-full border-collapse">
+                        <thead>
+                            <tr className="border-b text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th className="pb-3 px-2">Client / Company</th>
+                                <th className="pb-3 px-2">Product</th>
+                                <th className="pb-3 px-2">Status</th>
+                                <th className="pb-3 px-2">Ref Code</th>
+                                <th className="pb-3 px-2">Tier</th>
+                                <th className="pb-3 px-2 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-sm">
+                            {subscriptions.map((sub) => (
+                                <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50 last:border-0">
+                                    <td className="py-4 px-2">
+                                        <div className="font-medium text-slate-900">{sub.user.name || sub.user.email}</div>
+                                        <div className="text-xs text-slate-500">{sub.user.companyName}</div>
+                                    </td>
+                                    <td className="py-4 px-2 font-medium">{sub.productType}</td>
+                                    <td className="py-4 px-2">
+                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                                            sub.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 
+                                            sub.status === 'SUSPENDED' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'
+                                        }`}>
+                                            {sub.status}
+                                        </span>
+                                    </td>
+                                    <td className="py-4 px-2 font-mono text-[10px] text-slate-400">{sub.paymentReference}</td>
+                                    <td className="py-4 px-2 text-xs text-slate-600">{sub.businessSizeTier}</td>
+                                    <td className="py-4 px-2 text-right space-x-4">
+                                        <button className="text-xs font-bold text-green-600 hover:text-green-700">Activate</button>
+                                        <button className="text-xs font-bold text-red-600 hover:text-red-700">Suspend</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </CardContent>
+            </Card>
+
+            {/* Audit Logs */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Global System Audit</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {auditLogs.map((log) => (
+                            <div key={log.id} className="flex items-start gap-3 border-b border-slate-100 pb-3 last:border-0">
+                                <AlertCircle size={16} className="mt-1 text-slate-400" />
+                                <div>
+                                    <div className="text-sm font-semibold">{log.event}</div>
+                                    <div className="text-xs text-slate-500">{log.detail}</div>
+                                    <div className="text-[10px] text-slate-400 mt-1">{new Date(log.createdAt).toLocaleString()}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+        </main>
+    );
+}
