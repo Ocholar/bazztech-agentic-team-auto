@@ -1,204 +1,512 @@
 {
-    "name": "Bazz-Flow Master (M-Pesa AI Acknowledgement)",
+    "name": "Bazz-Flow: Jenga API Polling Engine",
     "nodes": [
         {
-            "parameters": {},
-            "id": "node-webhook-mpesa",
-            "name": "M-Pesa Webhook Trigger",
-            "type": "n8n-nodes-base.webhook",
-            "typeVersion": 1,
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 15
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-15min",
+            "name": "Every 15 Minutes",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
             "position": [
-                200,
-                300
-            ],
-            "webhookId": "bazz-flow-master",
-            "notes": "Receives Daraja API or IntaSend callback payloads indicating a successful payment."
+                0,
+                0
+            ]
         },
         {
             "parameters": {
-                "url": "={{ $env.DASHBOARD_URL }}/api/client-config?webhookId={{ $json.body.webhookId }}",
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "hoursInterval": 24
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-daily",
+            "name": "Daily 08:00 EAT",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                0,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.DASHBOARD_URL }}/api/jenga/poll",
                 "sendHeaders": true,
                 "headerParameters": {
                     "parameters": [
                         {
                             "name": "x-api-key",
                             "value": "={{ $env.INTERNAL_API_KEY }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 30000,
+                    "redirect": {
+                        "redirect": {
+                            "followRedirects": true
+                        }
+                    }
+                }
+            },
+            "id": "poll-jenga",
+            "name": "Poll Equity Statement",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                300,
+                0
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 60000
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "poll-success",
+                            "leftValue": "={{ $json.success }}",
+                            "rightValue": true,
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "equals"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-poll-success",
+            "name": "Poll Succeeded?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                550,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "status",
+                            "value": "success"
+                        },
+                        {
+                            "name": "polledAt",
+                            "value": "={{ $json.summary.polledAt }}"
+                        },
+                        {
+                            "name": "matched",
+                            "value": "={{ $json.summary.matched }}"
+                        },
+                        {
+                            "name": "newRecords",
+                            "value": "={{ $json.summary.newRecords }}"
+                        },
+                        {
+                            "name": "skipped",
+                            "value": "={{ $json.summary.skipped }}"
                         }
                     ]
                 },
                 "options": {}
             },
-            "id": "node-fetch-client-config",
-            "name": "Fetch Client AI Config",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 3,
+            "id": "log-success",
+            "name": "Log Poll Result",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
             "position": [
-                400,
-                300
-            ],
-            "notes": "Pulls the custom payment receipt instructions and Meta connection for this business."
-        },
-        {
-            "parameters": {
-                "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\nconst payment = $('M-Pesa Webhook Trigger').first().json.body;\n\nreturn [{\n  json: {\n    amount: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'Amount').Value,\n    phone: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'PhoneNumber').Value,\n    receipt: payment.Body.stkCallback.CallbackMetadata.Item.find(i => i.Name === 'MpesaReceiptNumber').Value,\n    businessName: config.businessName,\n    systemPrompt: config.systemPrompt,\n    whatsappPhoneId: config.whatsapp.phoneId,\n    whatsappToken: config.whatsapp.token\n  }\n}];"
-            },
-            "id": "node-prepare-payment-context",
-            "name": "Format M-Pesa Payload",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 1,
-            "position": [
-                600,
-                300
+                800,
+                -50
             ]
         },
         {
             "parameters": {
-                "promptType": "define",
-                "text": "A new payment has just been received over M-Pesa. Please generate a highly personalized, warm, and professional WhatsApp receipt message for this customer.\n\nAmount Paid: {{ $json.amount }} KES\nCustomer Phone: {{ $json.phone }}\nM-Pesa Receipt Number: {{ $json.receipt }}",
-                "options": {
-                    "systemMessage": "You are the automated billing assistant for {{ $json.businessName }}.\n\n{{ $json.systemPrompt }}\n\nAlways sound appreciative and confirm exactly how much was paid and the receipt number."
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "has-matches",
+                            "leftValue": "={{ $json.summary.matched }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ]
                 }
             },
-            "id": "node-ai-agent",
-            "name": "Payment AI Agent",
-            "type": "@n8n/n8n-nodes-langchain.agent",
-            "typeVersion": 1,
+            "id": "check-matches",
+            "name": "Any Matches?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
             "position": [
-                850,
-                300
+                800,
+                100
             ]
         },
         {
             "parameters": {
-                "model": "gpt-4o-mini",
-                "options": {
-                    "temperature": 0.5
-                }
-            },
-            "id": "node-ai-model",
-            "name": "OpenAI Chat Model",
-            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-            "typeVersion": 1,
-            "position": [
-                850,
-                500
-            ]
-        },
-        {
-            "parameters": {
-                "url": "={{ $env.WHATSAPP_API_URL }}/{{ $('Format M-Pesa Payload').first().json.whatsappPhoneId }}/messages",
                 "method": "POST",
-                "authentication": "headerAuth",
+                "url": "={{ $env.DASHBOARD_URL }}/api/jenga/notify",
                 "sendHeaders": true,
                 "headerParameters": {
                     "parameters": [
                         {
-                            "name": "Authorization",
-                            "value": "Bearer {{ $('Format M-Pesa Payload').first().json.whatsappToken }}"
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
                         }
                     ]
                 },
                 "sendBody": true,
-                "bodyParameters": {
-                    "parameters": [
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"type\": \"PAYMENT_RECEIVED\",\n  \"userId\": \"{{ $json.summary.matchedUserId }}\",\n  \"subscriptionId\": \"{{ $json.summary.matchedSubId }}\"\n}"
+            },
+            "id": "notify-payment",
+            "name": "Send Payment Confirmation",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                1050,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
                         {
-                            "name": "messaging_product",
-                            "value": "whatsapp"
+                            "name": "status",
+                            "value": "failed"
                         },
                         {
-                            "name": "recipient_type",
-                            "value": "individual"
-                        },
-                        {
-                            "name": "to",
-                            "value": "={{ $('Format M-Pesa Payload').first().json.phone }}"
-                        },
-                        {
-                            "name": "type",
-                            "value": "text"
-                        },
-                        {
-                            "name": "text.body",
-                            "value": "={{ $json.output }}"
+                            "name": "error",
+                            "value": "={{ $json.error }}"
                         }
                     ]
                 },
                 "options": {}
             },
-            "id": "node-send-whatsapp-receipt",
-            "name": "Send WhatsApp Receipt",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 3,
+            "id": "log-failure",
+            "name": "Log Poll Failure",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
             "position": [
-                1150,
-                300
+                800,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.DASHBOARD_URL }}/api/jenga/subscriptions/check",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 30000
+                }
+            },
+            "id": "lifecycle-check",
+            "name": "Check Subscriptions",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                300,
+                400
+            ],
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 60000
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "has-renewals",
+                            "leftValue": "={{ $json.renewalReminders.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-renewals",
+            "name": "Any Renewals?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                550,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.DASHBOARD_URL }}/api/jenga/notify",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"type\": \"RENEWAL_DUE\",\n  \"userId\": \"{{ $json.renewalReminders[0].userId }}\",\n  \"subscriptionId\": \"{{ $json.renewalReminders[0].subscriptionId }}\"\n}"
+            },
+            "id": "notify-renewal",
+            "name": "Send Renewal Reminder",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                800,
+                350
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "strict"
+                    },
+                    "conditions": [
+                        {
+                            "id": "has-suspended",
+                            "leftValue": "={{ $json.suspended.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-suspended",
+            "name": "Any Suspended?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                550,
+                550
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "={{ $env.DASHBOARD_URL }}/api/jenga/notify",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{ $env.INTERNAL_API_KEY }}"
+                        },
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\n  \"type\": \"SUSPENDED\",\n  \"userId\": \"{{ $json.suspended[0] }}\",\n  \"subscriptionId\": \"\"\n}"
+            },
+            "id": "notify-suspended",
+            "name": "Send Suspension Notice",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                800,
+                550
             ]
         }
     ],
     "connections": {
-        "M-Pesa Webhook Trigger": {
+        "Every 15 Minutes": {
             "main": [
                 [
                     {
-                        "node": "Fetch Client AI Config",
+                        "node": "Poll Equity Statement",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Fetch Client AI Config": {
+        "Poll Equity Statement": {
             "main": [
                 [
                     {
-                        "node": "Format M-Pesa Payload",
+                        "node": "Poll Succeeded?",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Format M-Pesa Payload": {
+        "Poll Succeeded?": {
             "main": [
                 [
                     {
-                        "node": "Payment AI Agent",
+                        "node": "Log Poll Result",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Any Matches?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Log Poll Failure",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "Payment AI Agent": {
+        "Any Matches?": {
             "main": [
                 [
                     {
-                        "node": "Send WhatsApp Receipt",
+                        "node": "Send Payment Confirmation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                []
+            ]
+        },
+        "Daily 08:00 EAT": {
+            "main": [
+                [
+                    {
+                        "node": "Check Subscriptions",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "OpenAI Chat Model": {
-            "ai_languageModel": [
+        "Check Subscriptions": {
+            "main": [
                 [
                     {
-                        "node": "Payment AI Agent",
-                        "type": "ai_languageModel",
+                        "node": "Any Renewals?",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Any Suspended?",
+                        "type": "main",
                         "index": 0
                     }
                 ]
+            ]
+        },
+        "Any Renewals?": {
+            "main": [
+                [
+                    {
+                        "node": "Send Renewal Reminder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                []
+            ]
+        },
+        "Any Suspended?": {
+            "main": [
+                [
+                    {
+                        "node": "Send Suspension Notice",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                []
             ]
         }
     },
     "settings": {
-        "saveManualExecutions": true
+        "executionOrder": "v1"
     },
     "tags": [
-        "bazz-flow",
-        "m-pesa",
-        "payments",
-        "ai-agent"
+        {
+            "name": "bazztech"
+        },
+        {
+            "name": "jenga"
+        },
+        {
+            "name": "payments"
+        }
     ]
 }

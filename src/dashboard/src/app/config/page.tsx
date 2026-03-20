@@ -21,7 +21,7 @@ export default function ConfigPage() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm text-gray-600">
-                        Once a bundle is fully activated via M-Pesa, you'll be able to inject its specific "AI Brain" directly into the centralized n8n engine.
+                        Once a bundle is fully activated via Equity Bank, you'll be able to inject its specific "AI Brain" directly into the centralized n8n engine.
                     </p>
                 </CardContent>
             </Card>

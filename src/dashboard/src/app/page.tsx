@@ -106,7 +106,7 @@ export default async function Home() {
               <Zap size={20} />
             </div>
             <CardTitle>Bazz-Flow</CardTitle>
-            <CardDescription>M-Pesa & System Sync</CardDescription>
+            <CardDescription>Equity Bank Payment Sync</CardDescription>
           </CardHeader>
           <CardContent>
             <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">

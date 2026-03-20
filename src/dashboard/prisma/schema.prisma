@@ -34,27 +34,28 @@ enum UserRole {
 }
 
 // -------------------------------------------------------------
-// SUBSCRIPTIONS & PRODUCTS (Purchased via M-Pesa)
+// SUBSCRIPTIONS & PRODUCTS (Purchased via Equity Bank / Jenga API)
 // -------------------------------------------------------------
 model Subscription {
-  id              String      @id @default(uuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String      @id @default(uuid())
+  userId                String
+  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  productType     ProductType
-  status          SubStatus   @default(ACTIVE)
+  productType           ProductType
+  status                SubStatus   @default(INACTIVE)
   
-  // M-Pesa (Daraja API) tracking
-  mpesaReceipt    String?     @unique
-  checkoutRequestId String?   @unique
-  mpesaPhone      String?
-  amountPaid      Float?
+  // Equity Bank / Jenga API tracking
+  paymentReference      String?     @unique  // Client's unique reference for matching
+  equityTransactionId   String?     @unique  // Jenga transactionId once matched
+  paidPhone             String?              // Phone number that made the payment
+  amountPaid            Float?
+  amountExpected        Float?               // Expected subscription price
   
-  startDate       DateTime    @default(now())
-  expiresAt       DateTime?
+  startDate             DateTime    @default(now())
+  expiresAt             DateTime?
   
   // Relations
-  config          ProductConfig?
+  config                ProductConfig?
 }
 
 enum ProductType {
@@ -69,6 +70,7 @@ enum SubStatus {
   INACTIVE
   CANCELLED
   PAST_DUE
+  SUSPENDED
 }
 
 // -------------------------------------------------------------
@@ -134,4 +136,26 @@ model Analytics {
   date      DateTime @default(now())
   metric    String
   value     Float
+}
+
+// -------------------------------------------------------------
+// JENGA API TRANSACTION DEDUPLICATION
+// -------------------------------------------------------------
+model ProcessedTransaction {
+  id            String   @id @default(uuid())
+  transactionId String   @unique   // Jenga bank statement transactionId
+  amount        Float
+  reference     String?
+  narration     String?  @db.Text
+  processedAt   DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// AUDIT LOG (Tracks all payment-related system events)
+// -------------------------------------------------------------
+model AuditLog {
+  id        String   @id @default(uuid())
+  event     String   // e.g. "JENGA_POLL", "PAYMENT_MATCHED", "SUB_SUSPENDED"
+  detail    String?  @db.Text
+  createdAt DateTime @default(now())
 }

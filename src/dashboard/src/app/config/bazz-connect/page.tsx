@@ -9,51 +9,28 @@ export default function BazzConnectConfig() {
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [isActive, setIsActive] = useState(false);
     const [configData, setConfigData] = useState<any>(null);
+    const [paymentReference, setPaymentReference] = useState("BAZZ-101"); // This would be unique per user
 
-    // Payment State
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [checkoutRequestId, setCheckoutRequestId] = useState<string | null>(null);
-    const [paymentError, setPaymentError] = useState("");
+    // Note: In a real app we'd fetch this from a protected route
+    // Simulate initial load
+    useState(() => {
+        setTimeout(() => {
+            setIsLoadingData(false);
+            // setIsActive(true); // Toggle this to test the "Active" view locally
+        }, 1000);
+    });
 
-    const handleCheckout = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsProcessing(true);
-        setPaymentError("");
-
-        try {
-            const res = await fetch("/api/mpesa/stkpush", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    phoneNumber,
-                    amount: "2500", // Monthly subscription fee KES
-                    productType: "BAZZ_CONNECT"
-                })
-            });
-
-            const data = await res.json();
-
-            if (res.ok && data.checkoutRequestId) {
-                setCheckoutRequestId(data.checkoutRequestId);
-            } else {
-                setPaymentError(data.error || "Failed to initiate M-Pesa prompt.");
-            }
-        } catch (err) {
-            setPaymentError("A network error occurred. Please try again.");
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
-    // Note: In a real app we'd fetch this from a protected GET /api/dashboard/config route
-    // But for this mockup, we are simulating the fetch based on whether the M-Pesa webhook succeeded
-    // The webhook creates the ProductConfig, so if we can fetch it via /api/client-config, they paid!
-
-    // Form handlers
     const handleSaveConfig = () => {
         alert("Configuration saved to database. Your Bazz-Connect agent is updated instantly.");
     };
+
+    if (isLoadingData) {
+        return (
+            <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-zinc-900">
+                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            </div>
+        );
+    }
 
     return (
         <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
@@ -70,77 +47,62 @@ export default function BazzConnectConfig() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {/* --- M-PESA CHECKOUT PORTAL (HIDDEN IF ACTIVE) --- */}
+                {/* --- EQUITY BANK PAYMENT INSTRUCTIONS --- */}
                 {!isActive && (
                     <div className="md:col-span-1 lg:col-span-1 space-y-6">
-                        <Card className="border-green-600 shadow-sm">
-                            <CardHeader className="bg-green-50/50 border-b border-green-100">
-                                <CardTitle className="flex items-center gap-2 text-green-800">
+                        <Card className="border-red-600 shadow-sm overflow-hidden">
+                            <CardHeader className="bg-red-50/50 border-b border-red-100">
+                                <CardTitle className="flex items-center gap-2 text-red-800">
                                     <Smartphone size={20} />
-                                    M-Pesa Express Checkout
+                                    Equity Bank / M-Pesa Payment
                                 </CardTitle>
                                 <CardDescription>
                                     Activate Bazz-Connect for KES 2,500 / month.
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="pt-6">
-                                {checkoutRequestId ? (
-                                    <div className="text-center space-y-4 py-4">
-                                        <div className="mx-auto w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                            <Loader2 className="text-green-600 animate-spin" size={24} />
-                                        </div>
-                                        <h3 className="font-semibold text-lg text-gray-900">Check your phone!</h3>
-                                        <p className="text-sm text-gray-600">
-                                            We sent an M-Pesa prompt to {phoneNumber}. Enter your PIN to complete the subscription.
-                                        </p>
-                                        <p className="text-xs text-green-700 font-medium bg-green-50 p-2 rounded">
-                                            This page will unlock automatically once Safaricom verifies the payment.
-                                        </p>
+                            <CardContent className="pt-6 space-y-4">
+                                <div className="p-4 bg-slate-900 rounded-lg text-white space-y-3 font-mono text-sm">
+                                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                                        <span className="text-slate-400">Paybill:</span>
+                                        <span className="font-bold">247247</span>
                                     </div>
-                                ) : (
-                                    <form onSubmit={handleCheckout} className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium leading-none">Safaricom Phone Number</label>
-                                            <input
-                                                type="tel"
-                                                required
-                                                placeholder="e.g. 0712345678"
-                                                value={phoneNumber}
-                                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
-                                            />
-                                            <p className="text-xs text-gray-500">Ensure the phone is unlocked to receive the prompt.</p>
-                                        </div>
+                                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                                        <span className="text-slate-400">Account:</span>
+                                        <span className="font-bold text-red-400">0714929790</span>
+                                    </div>
+                                    <div className="flex justify-between border-b border-slate-700 pb-2">
+                                        <span className="text-slate-400">Reference:</span>
+                                        <span className="font-bold text-green-400">{paymentReference}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-slate-400">Amount:</span>
+                                        <span className="font-bold">KES 2,500</span>
+                                    </div>
+                                </div>
 
-                                        {paymentError && (
-                                            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                                                {paymentError}
-                                            </div>
-                                        )}
+                                <div className="text-center py-2">
+                                    <div className="inline-flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        Checking for payment...
+                                    </div>
+                                </div>
 
-                                        <button
-                                            type="submit"
-                                            disabled={isProcessing || !phoneNumber}
-                                            className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white h-10 rounded-md font-medium transition-colors disabled:opacity-50"
-                                        >
-                                            {isProcessing ? <Loader2 className="animate-spin" size={18} /> : "Pay KES 2,500"}
-                                        </button>
-                                    </form>
-                                )}
+                                <p className="text-xs text-gray-500 italic text-center">
+                                    Our system polls Equity Bank every 15 minutes. Your dashboard will unlock automatically once the transaction is detected.
+                                </p>
                             </CardContent>
                         </Card>
 
-                        {/* Pending State Blocker Info */}
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
                             <h4 className="font-semibold text-blue-900 mb-2">How it works</h4>
                             <p className="text-sm text-blue-800 mb-3">
-                                1. Enter your M-Pesa number and authorize the payment.
+                                1. Open your M-Pesa or Equity Mobile App.
                             </p>
                             <p className="text-sm text-blue-800 mb-3">
-                                2. Your WhatsApp AI Brain will be unlocked instantly.
+                                2. Pay KES 2,500 to Paybill 247247 and use <b>{paymentReference}</b> as the account name.
                             </p>
                             <p className="text-sm text-blue-800">
-                                3. You can then configure the Custom Prompt and Knowledge Base!
+                                3. Once detected, your WhatsApp AI Brain will be unlocked instantly.
                             </p>
                         </div>
                     </div>
