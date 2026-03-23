@@ -1,4 +1,3 @@
-```javascript
 "use client";
 
 import { useState } from 'react';
@@ -27,7 +26,7 @@ export default function LandingPage() {
                     </nav>
 
                     {/* Mobile Menu Toggle */}
-                    <button 
+                    <button
                         className="md:hidden p-2 text-slate-600 hover:text-red-600 transition-colors"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
@@ -208,11 +207,11 @@ export default function LandingPage() {
                             Bazz<span className="text-red-600">AI</span>
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed mb-8 mx-auto md:mx-0 max-w-xs md:max-w-none">
-                            Your trusted partner for AI Automation in Kenya. We provide ready-to-deploy, 
+                            Your trusted partner for AI Automation in Kenya. We provide ready-to-deploy,
                             productized automation solutions built on n8n.
                         </p>
                     </div>
-                    
+
                     <div>
                         <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-red-500">Quick Links</h4>
                         <ul className="space-y-4 text-slate-400 text-sm">
@@ -247,7 +246,7 @@ export default function LandingPage() {
                         </ul>
                     </div>
                 </div>
-                
+
                 <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] md:text-xs text-slate-500 text-center md:text-left">
                     <div>
                         © 2024 Bazztech Networks. All rights reserved.
