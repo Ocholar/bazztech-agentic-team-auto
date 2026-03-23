@@ -143,6 +143,13 @@
                         "type": "main",
                         "index": 0
                     }
+                ],
+                [
+                    {
+                        "node": "Read Document File",
+                        "type": "main",
+                        "index": 0
+                    }
                 ]
             ]
         },
