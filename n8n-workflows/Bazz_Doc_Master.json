@@ -108,8 +108,49 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                1150,
+                1250,
                 300
+            ]
+        },
+        {
+            "parameters": {
+                "name": "readDocument",
+                "binaryPropertyName": "data"
+            },
+            "id": "node-doc-loader",
+            "name": "Read Document File",
+            "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "chunkSize": 1000,
+                "chunkOverlap": 100
+            },
+            "id": "node-text-splitter",
+            "name": "Recursive Character Text Splitter",
+            "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                650
+            ]
+        },
+        {
+            "parameters": {
+                "sessionId": "={{ $json.businessName }}"
+            },
+            "id": "node-doc-memory",
+            "name": "Window Buffer Memory",
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1,
+            "position": [
+                1100,
+                500
             ]
         }
     ],
@@ -182,6 +223,28 @@
                     {
                         "node": "Document AI Agent",
                         "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Recursive Character Text Splitter": {
+            "ai_textSplitter": [
+                [
+                    {
+                        "node": "Read Document File",
+                        "type": "ai_textSplitter",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Window Buffer Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "Document AI Agent",
+                        "type": "ai_memory",
                         "index": 0
                     }
                 ]
