@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-type NotifyType = 'PAYMENT_RECEIVED' | 'RENEWAL_DUE' | 'SUSPENDED';
+type NotifyType = 'PAYMENT_RECEIVED' | 'SETUP_RECEIVED' | 'MAINTENANCE_RECEIVED' | 'RENEWAL_DUE' | 'SUSPENDED';
 
 /**
  * POST /api/jenga/notify
@@ -11,9 +11,6 @@ type NotifyType = 'PAYMENT_RECEIVED' | 'RENEWAL_DUE' | 'SUSPENDED';
  * Called by n8n after poll or lifecycle check triggers an event.
  *
  * Body: { type: NotifyType, userId: string, subscriptionId: string, extra?: object }
- *
- * For now: logs the notification event. In production, integrate with
- * SendGrid, Resend, or Gmail SMTP for actual email delivery.
  */
 export async function POST(req: Request) {
     try {
@@ -49,19 +46,25 @@ export async function POST(req: Request) {
         const paybillInfo = 'Paybill: 247247 | Account: 0714929790';
 
         switch (type) {
+            case 'SETUP_RECEIVED':
             case 'PAYMENT_RECEIVED':
-                subject = '✅ Payment Received — Your BazzAI Portal is Active';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour payment has been confirmed. Your subscription is now ACTIVE.\n\nThank you for choosing BazzAI!\n\n— Bazztech Networks`;
+                subject = '✅ Welcome to BazzAI — Your Portal is now Active';
+                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour setup payment has been confirmed. Your AI Agentic workflows are now ACTIVE.\n\nLogin here: https://portal.bazztech.co.ke/login\n\nThank you for choosing Bazztech!\n\n— Bazztech Networks`;
+                break;
+
+            case 'MAINTENANCE_RECEIVED':
+                subject = '✅ Maintenance Confirmed — BazzAI';
+                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour monthly maintenance payment has been received. Your subscription has been extended by 30 days.\n\nThank you for your continued partnership.\n\n— Bazztech Networks`;
                 break;
 
             case 'RENEWAL_DUE':
                 subject = '⏰ Subscription Renewal Due — BazzAI';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription is expiring soon.\n\nTo continue uninterrupted service, please make your renewal payment:\n${paybillInfo}\n\nAmount: KES ${extra?.amount || 'as agreed'}\n\nThank you!\n\n— Bazztech Networks`;
+                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription is expiring soon.\n\nTo continue uninterrupted service, please make your maintenance payment:\n${paybillInfo}\n\nAmount: KES ${extra?.amount || 'as agreed'}\n\nThank you!\n\n— Bazztech Networks`;
                 break;
 
             case 'SUSPENDED':
                 subject = '⚠️ Subscription Suspended — BazzAI';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription has been suspended due to non-payment.\n\nTo reactivate, please make your payment:\n${paybillInfo}\n\nYour portal will be reactivated within 15 minutes of payment.\n\n— Bazztech Networks`;
+                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription has been suspended due to non-payment.\n\nTo reactivate, please make your payment:\n${paybillInfo}\n\nYour portal will be reactivated within 15 minutes of payment confirmed.\n\n— Bazztech Networks`;
                 break;
         }
 

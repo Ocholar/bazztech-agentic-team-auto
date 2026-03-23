@@ -67,6 +67,7 @@ export async function POST(req: Request) {
         let matched = 0;
         let skipped = 0;
         let newRecords = 0;
+        const matchDetails: { subId: string, userId: string, type: 'SETUP' | 'MAINTENANCE' }[] = [];
 
         for (const tx of transactions) {
             const txId = tx.transactionId || tx.chequeNumber || tx.reference;
@@ -103,7 +104,7 @@ export async function POST(req: Request) {
             // AND the expected amount matches
             const pendingSubs = await db.subscription.findMany({
                 where: {
-                    status: 'INACTIVE',
+                    status: { in: ['INACTIVE', 'ACTIVE', 'PAST_DUE'] },
                     paymentReference: { not: null },
                 },
             });
@@ -113,13 +114,17 @@ export async function POST(req: Request) {
                     txRef.toLowerCase().includes(sub.paymentReference!.toLowerCase()) ||
                     sub.paymentReference!.toLowerCase().includes(txRef.toLowerCase());
 
-                const amountMatch =
-                    !sub.amountExpected || Math.abs(txAmount - sub.amountExpected) < 1;
+                if (!refMatch) continue;
 
-                if (refMatch && amountMatch) {
-                    // Step 3d: Activate the subscription!
+                // Determine if this is a SETUP fee or MAINTENANCE fee
+                const isSetup = Math.abs(txAmount - (sub.oneTimeFee || sub.amountExpected || 0)) < 1;
+                const expectedMaintenance = (sub.oneTimeFee || 0) * (sub.monthlyMaintenanceRate || 0.2);
+                const isMaintenance = Math.abs(txAmount - expectedMaintenance) < 1;
+
+                if (isSetup) {
+                    // ACTIVATE: Setup fee received
                     const expiresAt = new Date();
-                    expiresAt.setMonth(expiresAt.getMonth() + 1); // 30-day subscription
+                    expiresAt.setMonth(expiresAt.getMonth() + 1);
 
                     await db.subscription.update({
                         where: { id: sub.id },
@@ -129,24 +134,57 @@ export async function POST(req: Request) {
                             amountPaid: txAmount,
                             startDate: new Date(),
                             expiresAt,
+                            lastMaintenanceBillDate: new Date(),
                         },
                     });
 
                     await db.auditLog.create({
                         data: {
-                            event: 'PAYMENT_MATCHED',
+                            event: 'PAYMENT_MATCHED_SETUP',
                             detail: JSON.stringify({
-                                subscriptionId: sub.id,
-                                transactionId: txId,
+                                subId: sub.id,
                                 amount: txAmount,
-                                reference: txRef,
-                                productType: sub.productType,
+                                tier: sub.businessSizeTier,
                             }),
                         },
                     });
-
+                    matchDetails.push({
+                        subId: sub.id,
+                        userId: sub.userId,
+                        type: 'SETUP'
+                    });
                     matched++;
-                    break; // One transaction can only match one subscription
+                    break;
+                } else if (isMaintenance) {
+                    // EXTEND: Maintenance fee received
+                    const currentExpiry = sub.expiresAt || new Date();
+                    const newExpiry = new Date(currentExpiry.getTime());
+                    newExpiry.setMonth(newExpiry.getMonth() + 1);
+
+                    await db.subscription.update({
+                        where: { id: sub.id },
+                        data: {
+                            status: 'ACTIVE',
+                            equityTransactionId: String(txId),
+                            amountPaid: txAmount,
+                            expiresAt: newExpiry,
+                            lastMaintenanceBillDate: new Date(),
+                        },
+                    });
+
+                    await db.auditLog.create({
+                        data: {
+                            event: 'PAYMENT_MATCHED_MAINTENANCE',
+                            detail: JSON.stringify({
+                                subId: sub.id,
+                                amount: txAmount,
+                                newExpiry,
+                            }),
+                        },
+                    });
+                    matchDetails.push({ subId: sub.id, userId: sub.userId, type: 'MAINTENANCE' });
+                    matched++;
+                    break;
                 }
             }
         }
@@ -166,6 +204,7 @@ export async function POST(req: Request) {
             },
         });
 
+        // Step 4: Return summary to n8n
         return NextResponse.json({
             success: true,
             summary: {
@@ -174,6 +213,7 @@ export async function POST(req: Request) {
                 newRecords,
                 matched,
                 skipped,
+                details: matchDetails
             },
         });
     } catch (error: any) {

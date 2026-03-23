@@ -195,14 +195,28 @@
                 },
                 "sendBody": true,
                 "specifyBody": "json",
-                "jsonBody": "={\n  \"type\": \"PAYMENT_RECEIVED\",\n  \"userId\": \"{{ $json.summary.matchedUserId }}\",\n  \"subscriptionId\": \"{{ $json.summary.matchedSubId }}\"\n}"
+                "jsonBody": "={\n  \"type\": \"{{ $json.type === 'SETUP' ? 'SETUP_RECEIVED' : 'MAINTENANCE_RECEIVED' }}\",\n  \"userId\": \"{{ $json.userId }}\",\n  \"subscriptionId\": \"{{ $json.subId }}\"\n}"
             },
             "id": "notify-payment",
             "name": "Send Payment Confirmation",
             "type": "n8n-nodes-base.httpRequest",
             "typeVersion": 4.2,
             "position": [
-                1050,
+                1100,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "summary.details",
+                "options": {}
+            },
+            "id": "split-matches",
+            "name": "Split Matches",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 3,
+            "position": [
+                950,
                 100
             ]
         },
@@ -435,12 +449,23 @@
             "main": [
                 [
                     {
-                        "node": "Send Payment Confirmation",
+                        "node": "Split Matches",
                         "type": "main",
                         "index": 0
                     }
                 ],
                 []
+            ]
+        },
+        "Split Matches": {
+            "main": [
+                [
+                    {
+                        "node": "Send Payment Confirmation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
             ]
         },
         "Daily 08:00 EAT": {

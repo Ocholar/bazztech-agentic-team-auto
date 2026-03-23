@@ -15,6 +15,29 @@ export default async function AdminDashboard() {
         orderBy: { createdAt: 'desc' }
     });
 
+    // Calculate KPIs
+    const activeSubs = await db.subscription.findMany({
+        where: { status: 'ACTIVE' },
+        select: { oneTimeFee: true, monthlyMaintenanceRate: true }
+    });
+
+    const mrr = activeSubs.reduce((acc, sub) => {
+        const rate = sub.monthlyMaintenanceRate || 0.2;
+        const fee = sub.oneTimeFee || 0;
+        return acc + (fee * rate);
+    }, 0);
+
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const newSignups = await db.user.count({
+        where: {
+            role: 'CLIENT',
+            createdAt: { gte: startOfMonth }
+        }
+    });
+
     return (
         <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
             <div className="mb-8 flex items-center justify-between">
@@ -24,6 +47,16 @@ export default async function AdminDashboard() {
                         Admin Oversight
                     </h1>
                     <p className="text-sm text-gray-500 mt-1">Manual overrides and system audit logs</p>
+                </div>
+                <div className="flex gap-4">
+                    <Card className="px-6 py-2 border-slate-200">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Est. MRR</div>
+                        <div className="text-xl font-black text-red-600">KES {mrr.toLocaleString()}</div>
+                    </Card>
+                    <Card className="px-6 py-2 border-slate-200">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Monthly Signups</div>
+                        <div className="text-xl font-black text-slate-900">{newSignups}</div>
+                    </Card>
                 </div>
             </div>
 
@@ -53,10 +86,9 @@ export default async function AdminDashboard() {
                                     </td>
                                     <td className="py-4 px-2 font-medium">{sub.productType}</td>
                                     <td className="py-4 px-2">
-                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                                            sub.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 
-                                            sub.status === 'SUSPENDED' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'
-                                        }`}>
+                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${sub.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                                                sub.status === 'SUSPENDED' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'
+                                            }`}>
                                             {sub.status}
                                         </span>
                                     </td>
