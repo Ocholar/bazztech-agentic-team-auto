@@ -1,15 +1,16 @@
-# Bazztech Agentic Team
+# Bazztech AI: Agentic SaaS Platform
 
-## Overview
-Autonomous Sales & Marketing system for Airtel Kenya 5G ODU.
+Automated AI Service platform for Kenyan MSMEs. This repository contains the Next.js/Supabase dashboard and the corresponding n8n workflows for autonomous business operations.
 
-## Stack
-- **Dashboard**: Next.js 14, Tailwind CSS, tRPC (in `src/dashboard`)
-- **Automation**: n8n (in `src/n8n`)
-- **Infrastructure**: Docker / Railway
+## Features
 
-## Getting Started
-1. Ensure Docker is installed.
-2. Run `docker compose up` in `src/`.
-3. Open `http://localhost:3000` for the Dashboard.
-4. Open `http://localhost:5678` for n8n.
+- **3-Step Onboarding**: Automated AI configuration and WhatsApp API linking.
+- **Jenga API Integration**: Automated bank statement polling for KES payments.
+- **Tiered Pricing**: MSME-focused billing (Micro/Small/Medium).
+- **Admin Oversight**: Dashboard for manual subscription overrides.
+
+## Deployment
+
+- **Dashboard**: Vercel
+- **Database**: Supabase
+- **AI Engine**: n8n (Hosted on PikaPods)
