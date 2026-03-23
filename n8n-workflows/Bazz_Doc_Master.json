@@ -87,14 +87,15 @@
         {
             "parameters": {
                 "name": "readDocument",
+                "description": "Reads and parses the uploaded document (PDF/Image/Text)",
                 "binaryPropertyName": "data"
             },
             "id": "node-doc-plugin",
             "name": "Read Document File",
-            "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+            "type": "@n8n/n8n-nodes-langchain.toolDocumentLoader",
             "typeVersion": 1,
             "position": [
-                1050,
+                1000,
                 500
             ]
         },
