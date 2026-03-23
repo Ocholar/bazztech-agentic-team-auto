@@ -1,168 +1,122 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui-card';
-import { Bot, MessageSquare, FileText, Zap, Settings, Activity, ArrowRight, Users } from 'lucide-react';
+"use client";
+
+import { useState } from 'react';
+import { Bot, MessageSquare, Zap, FileText, ArrowRight, Check, Users, Globe, Shield, Phone, Mail, MapPin, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function Home() {
-  // Temporary mock data until we rewrite actions.ts to pull from our new Prisma SaaS schema
-  const userStats = {
-    activeAgents: 2,
-    totalConversations: 1245,
-    leadsGenerated: 48,
-    systemUptime: '99.9%'
-  };
+export default function PortalLanding() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const activeSubscriptions = [
-    { id: 'sub-1', product: 'Bazz-Connect', status: 'ACTIVE', lastActive: '2 mins ago' },
-    { id: 'sub-2', product: 'Bazz-Lead', status: 'ACTIVE', lastActive: '1 hr ago' }
-  ];
+    return (
+        <div className="flex min-h-screen flex-col bg-white text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 overflow-x-hidden">
+            {/* Simple Portal Navigation */}
+            <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <Link href="/" className="text-2xl font-black tracking-tighter hover:opacity-80">
+                        Bazz<span className="text-red-600">AI</span> <span className="text-sm font-bold text-slate-400">Portal</span>
+                    </Link>
+                    <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                        <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
+                        <Link href="/login" className="px-5 py-2 rounded-full border border-slate-200 font-bold hover:bg-slate-50 transition-all">Client Login</Link>
+                        <Link href="https://admin.bazztech.co.ke" className="text-red-600 font-bold hover:underline">Admin</Link>
+                    </nav>
+                </div>
+            </header>
 
-  return (
-    <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Client Portal</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your Bazz AI Agentic Workflows</p>
+            {/* Hero Section - "Hire Your First AI Digital Employee" (Matches Screenshot 4) */}
+            <section className="pt-32 md:pt-40 pb-16 md:pb-24 px-6 relative overflow-hidden bg-slate-50/50">
+                <div className="max-w-7xl mx-auto text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-6 animate-fade-in">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        NOW LIVE IN KENYA 🇰🇪
+                    </div>
+                    <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.1] mb-8">
+                        Hire Your First <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">AI Digital Employee.</span>
+                    </h1>
+                    <p className="max-w-2xl mx-auto text-base md:text-xl text-slate-600 mb-8 md:mb-12 leading-relaxed">
+                        Automate your sales, accounting, and customer service with autonomous AI Agentic workflows built specifically for Kenyan MSMEs.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link href="#assessment" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-red-600 text-white font-bold text-lg hover:bg-red-700 shadow-xl shadow-red-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                            Start Free Trial <ArrowRight size={20} />
+                        </Link>
+                        <Link href="/login" className="w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-200 font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center text-slate-900 bg-white">
+                            Member Access
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Assessment Form Section - Matches Screenshot 5 */}
+            <section id="assessment" className="py-16 md:py-24 px-4 md:px-6 bg-white">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-5xl font-black mb-4">Free AI Automation Readiness Assessment</h2>
+                        <p className="text-slate-500 text-sm md:text-lg">Fill out the form and our agentic automations will qualify your request instantly.</p>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-100 p-6 md:p-12 rounded-[30px] md:rounded-[40px] shadow-sm">
+                        <form className="grid md:grid-cols-2 gap-4 md:gap-6" action="/register">
+                            <div className="space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Full Name *</label>
+                                <input type="text" placeholder="John Doe" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
+                            </div>
+                            <div className="space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Phone Number *</label>
+                                <input type="tel" placeholder="0712345678" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
+                            </div>
+                            <div className="md:col-span-2 space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Email Address</label>
+                                <input type="email" placeholder="john@example.com" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" />
+                            </div>
+                            <div className="space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Industry & Location *</label>
+                                <input type="text" placeholder="e.g. Real Estate in Nairobi" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
+                            </div>
+                            <div className="space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Interested Bundle ^</label>
+                                <select className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors bg-white text-sm font-bold">
+                                    <option>Bazz-Connect (WhatsApp)</option>
+                                    <option>Bazz-Flow (M-Pesa / Jenga)</option>
+                                    <option>Bazz-Doc (AI OCR)</option>
+                                    <option>Full Agentic Suite</option>
+                                </select>
+                            </div>
+                            <div className="md:col-span-2 space-y-2 text-left">
+                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Additional Information</label>
+                                <textarea placeholder="Tell us about your specific needs..." className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors min-h-[120px] text-sm font-bold"></textarea>
+                            </div>
+                            <div className="md:col-span-2 mt-6">
+                                <button type="submit" className="w-full py-5 bg-red-600 text-white font-black text-xl rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-200">
+                                    Submit Request
+                                </button>
+                                <p className="text-center text-[10px] text-slate-400 mt-6 font-bold">
+                                    Submitting this form redirects you to the registration page for account setup.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            {/* Simple Footer */}
+            <footer className="py-12 border-t border-slate-100 bg-white">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="text-slate-400 text-xs font-bold uppercase tracking-tight">
+                        © 2026 Bazztech Networks. All rights reserved.
+                    </div>
+                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        <Link href="/privacy" className="hover:text-red-600">Privacy</Link>
+                        <Link href="/terms" className="hover:text-red-600">Terms</Link>
+                        <Link href="mailto:info@bazztech.co.ke" className="hover:text-red-600">Support</Link>
+                    </div>
+                </div>
+            </footer>
         </div>
-        <div className="text-sm text-gray-500 font-medium">Logged in as: Demo Client</div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Agents</CardTitle>
-            <Bot className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userStats.activeAgents} / 4</div>
-            <p className="text-xs text-muted-foreground">Deployed Workflows</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Conversations</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userStats.totalConversations}</div>
-            <p className="text-xs text-muted-foreground">Across all channels</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Leads Captured</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userStats.leadsGenerated}</div>
-            <p className="text-xs text-muted-foreground">This month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Uptime</CardTitle>
-            <Zap className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userStats.systemUptime}</div>
-            <p className="text-xs text-muted-foreground">n8n Orchestration</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Product Catalog / Active Subscriptions */}
-      <div className="mb-4">
-        <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-4">Your AI Automations</h2>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        {/* Bazz-Connect */}
-        <Card className="border-red-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <div className="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center mb-2">
-              <MessageSquare size={20} />
-            </div>
-            <CardTitle>Bazz-Connect</CardTitle>
-            <CardDescription>WhatsApp FrontDesk Bot</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
-              Active
-            </span>
-          </CardContent>
-          <CardFooter>
-            <Link href="/config/bazz-connect" className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-              <Settings size={16} /> Configure Prompt
-            </Link>
-          </CardFooter>
-        </Card>
-
-        {/* Bazz-Flow */}
-        <Card className="border-slate-200">
-          <CardHeader>
-            <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center mb-2">
-              <Zap size={20} />
-            </div>
-            <CardTitle>Bazz-Flow</CardTitle>
-            <CardDescription>Equity Bank Payment Sync</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-              Unsubscribed
-            </span>
-          </CardContent>
-          <CardFooter>
-            <button disabled className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-400">
-              Upgrade to Access
-            </button>
-          </CardFooter>
-        </Card>
-
-        {/* Bazz-Doc */}
-        <Card className="border-slate-200">
-          <CardHeader>
-            <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center mb-2">
-              <FileText size={20} />
-            </div>
-            <CardTitle>Bazz-Doc</CardTitle>
-            <CardDescription>AI Document Extraction</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-              Unsubscribed
-            </span>
-          </CardContent>
-          <CardFooter>
-            <button disabled className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-400">
-              Upgrade to Access
-            </button>
-          </CardFooter>
-        </Card>
-
-        {/* Bazz-Lead */}
-        <Card className="border-red-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader>
-            <div className="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center mb-2">
-              <Users size={20} />
-            </div>
-            <CardTitle>Bazz-Lead</CardTitle>
-            <CardDescription>Autonomous CRM Agent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
-              Active
-            </span>
-          </CardContent>
-          <CardFooter>
-            <Link href="/crm" className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-white border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-              View Pipeline <ArrowRight size={16} />
-            </Link>
-          </CardFooter>
-        </Card>
-      </div>
-
-    </main>
-  );
+    );
 }
