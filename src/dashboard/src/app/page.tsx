@@ -165,7 +165,7 @@ export default function LandingPage() {
                                         <span className="text-white/60">{s.label}</span>
                                         <span className="font-mono text-green-400">{s.val}</span>
                                     </div>
-                                head))}
+                                ))}
                             </div>
                             <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10 text-xs text-white/40 italic">
                                 "Our Jenga polling engine automatically activated 45 new MSME subscriptions today."
