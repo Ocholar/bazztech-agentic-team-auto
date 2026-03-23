@@ -1,4 +1,4 @@
-import { Bot, MessageSquare, Zap, FileText, ArrowRight, Check, Users, Globe, Shield } from 'lucide-react';
+import { Bot, MessageSquare, Zap, FileText, ArrowRight, Check, Users, Globe, Shield, Phone, Mail, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -15,8 +15,8 @@ export default function LandingPage() {
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
                         <Link href="#features" className="hover:text-red-600 transition-colors">Features</Link>
                         <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
-                        <Link href="https://portal.bazztech.co.ke/login" className="px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 transition-all">Client Login</Link>
-                        <Link href="/register" className="px-5 py-2 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all hover:-translate-y-0.5 active:translate-y-0">Get Started</Link>
+                        <Link href="https://admin.bazztech.co.ke" className="px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-50 transition-all font-bold">Admin</Link>
+                        <Link href="https://portal.bazztech.co.ke/register" className="px-5 py-2 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all hover:-translate-y-0.5 active:translate-y-0">Get Started</Link>
                     </nav>
                 </div>
             </header>
@@ -40,12 +40,63 @@ export default function LandingPage() {
                         Automate your sales, accounting, and customer service with autonomous AI Agentic workflows built specifically for Kenyan MSMEs.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/register" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-red-600 text-white font-bold text-lg hover:bg-red-700 shadow-xl shadow-red-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                        <Link href="https://portal.bazztech.co.ke/register" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-red-600 text-white font-bold text-lg hover:bg-red-700 shadow-xl shadow-red-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                             Start Free Trial <ArrowRight size={20} />
                         </Link>
                         <Link href="https://portal.bazztech.co.ke" className="w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-200 font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center">
-                            Member Portal
+                            Client Portal
                         </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Assessment Form Section */}
+            <section id="assessment" className="py-24 px-6 bg-white">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4">Free AI Automation Readiness Assessment</h2>
+                        <p className="text-slate-600">Fill out the form and our agentic automations will qualify your request instantly.</p>
+                    </div>
+                    <div className="bg-slate-50 border border-slate-100 p-8 md:p-12 rounded-[40px] shadow-sm">
+                        <form className="grid md:grid-cols-2 gap-6" action="https://portal.bazztech.co.ke/register">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name *</label>
+                                <input type="text" placeholder="John Doe" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors" required />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Phone Number *</label>
+                                <input type="tel" placeholder="0712345678" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors" required />
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Email Address</label>
+                                <input type="email" placeholder="john@example.com" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Industry & Location *</label>
+                                <input type="text" placeholder="e.g. Real Estate in Nairobi" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors" required />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Interested Bundle ^</label>
+                                <select className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors bg-white">
+                                    <option>Bazz-Connect (WhatsApp)</option>
+                                    <option>Bazz-Flow (Jenga Payments)</option>
+                                    <option>Bazz-Doc (OCR Automations)</option>
+                                    <option>Full Agentic Suite</option>
+                                </select>
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Additional Information</label>
+                                <textarea placeholder="Tell us about your specific needs..." className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors min-h-[100px]"></textarea>
+                            </div>
+                            <div className="md:col-span-2 mt-4">
+                                <button type="submit" className="w-full py-4 bg-red-600 text-white font-bold text-lg rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-200">
+                                    Submit Request
+                                </button>
+                                <p className="text-center text-[10px] text-slate-400 mt-4">
+                                    Submitting this form redirects you to the Client Portal for account setup.
+                                </p>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </section>
@@ -114,7 +165,7 @@ export default function LandingPage() {
                                         <span className="text-white/60">{s.label}</span>
                                         <span className="font-mono text-green-400">{s.val}</span>
                                     </div>
-                                ))}
+                                head))}
                             </div>
                             <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10 text-xs text-white/40 italic">
                                 "Our Jenga polling engine automatically activated 45 new MSME subscriptions today."
@@ -125,15 +176,60 @@ export default function LandingPage() {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 border-t border-slate-100">
-                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="text-slate-400 text-sm">
-                        © 2026 Bazztech Solution Ltd. All rights reserved.
+            <footer className="bg-slate-900 text-white py-20 px-6">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+                    <div className="col-span-1 md:col-span-1">
+                        <div className="text-3xl font-black tracking-tighter mb-6">
+                            Bazz<span className="text-red-600">AI</span>
+                        </div>
+                        <p className="text-slate-400 text-sm leading-relaxed mb-8">
+                            Your trusted partner for AI Automation in Kenya. We provide ready-to-deploy,
+                            productized automation solutions built on n8n.
+                        </p>
                     </div>
-                    <div className="flex gap-8 text-sm font-medium text-slate-600">
-                        <Link href="/privacy">Privacy</Link>
-                        <Link href="/terms">Terms</Link>
-                        <Link href="mailto:hello@bazztech.co.ke">hello@bazztech.co.ke</Link>
+
+                    <div>
+                        <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-red-500">Quick Links</h4>
+                        <ul className="space-y-4 text-slate-400 text-sm">
+                            <li><Link href="#features" className="hover:text-white transition-colors text-sm">Products</Link></li>
+                            <li><Link href="#features" className="hover:text-white transition-colors text-sm">Features</Link></li>
+                            <li><Link href="/pricing" className="hover:text-white transition-colors text-sm">Pricing</Link></li>
+                            <li><Link href="#assessment" className="hover:text-white transition-colors text-sm">Assessment</Link></li>
+                            <li><Link href="https://admin.bazztech.co.ke" className="hover:text-white transition-colors text-sm font-bold">Admin</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-red-500">Legal</h4>
+                        <ul className="space-y-4 text-slate-400 text-sm">
+                            <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                        </ul>
+                    </div>
+
+                    <div id="contact">
+                        <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-red-500">Contact Us</h4>
+                        <ul className="space-y-4 text-slate-400 text-sm">
+                            <li className="flex items-center gap-3">
+                                <Phone size={16} className="text-red-600" /> +254 781 751 937
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <Mail size={16} className="text-red-600" /> info@bazztech.co.ke
+                            </li>
+                            <li className="flex items-center gap-3">
+                                <MapPin size={16} className="text-red-600" /> Nairobi, Kenya
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                    <div>
+                        © 2026 Bazztech Solutions Ltd. All rights reserved.
+                    </div>
+                    <div className="flex gap-6">
+                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
                     </div>
                 </div>
             </footer>
