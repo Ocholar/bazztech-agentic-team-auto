@@ -48,56 +48,61 @@ export default function LandingPage() {
                 )}
             </header>
 
-            {/* Hero Section - Matches Screenshot 1 */}
-            <section className="pt-40 pb-24 px-6 relative">
-                <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-8">
-                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                        Productized AI Services for MSMEs
-                    </div>
-                    
-                    <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[1.05] mb-8">
-                        Automate <br />
-                        Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Growth</span>
-                    </h1>
-                    
-                    <p className="max-w-2xl text-lg md:text-xl text-slate-500 mb-12 leading-relaxed">
-                        Ready-to-deploy AI solutions for Kenyan businesses.<br className="hidden md:block" />
-                        No complexity, just results.
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 items-center">
-                        <Link href="https://portal.bazztech.co.ke/register" className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-2xl shadow-red-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                            Get Your Free Assessment <ArrowRight size={22} />
-                        </Link>
-                        <Link href="#products" className="w-full sm:w-auto px-10 py-5 rounded-2xl border-2 border-slate-200 text-slate-900 font-black text-lg hover:bg-slate-50 transition-all">
-                            View AI Bundles
-                        </Link>
-                    </div>
-
-                    {/* Dynamic Graphic Mockup (Placeholder for the red panel in screenshot) */}
-                    <div className="mt-20 w-full max-w-5xl aspect-video rounded-3xl bg-gradient-to-br from-red-50 to-white border border-red-100 shadow-2xl flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute top-10 right-10 bg-white shadow-xl p-4 rounded-2xl flex items-center gap-3 animate-bounce">
-                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white">
-                                <Zap size={16} fill="currentColor" />
-                            </div>
-                            <div className="text-left">
-                                <div className="text-[10px] font-bold text-slate-400 uppercase">Response</div>
-                                <div className="text-sm font-black">&lt; 1s</div>
-                            </div>
+            {/* Hero Section - Matches Screenshot 1 & 2 - Side-by-Side */}
+            <section className="pt-32 md:pt-48 pb-16 md:pb-32 px-6 relative overflow-hidden bg-slate-50/30">
+                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+                    {/* Left Column: Text Content */}
+                    <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-8">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                            Productized AI Services for MSMEs
                         </div>
-                        <div className="p-20 bg-gradient-to-tr from-red-600 to-pink-500 rounded-full blur-[100px] opacity-10 absolute -z-10"></div>
-                        <Bot size={120} className="text-red-600" />
-                        <div className="absolute bottom-10 left-10 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-white shadow-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                <span className="text-[10px] font-bold text-slate-500 uppercase">Agents</span>
+                        
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-8">
+                            Automate <br />
+                            Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Growth</span>
+                        </h1>
+                        
+                        <p className="max-w-xl text-lg md:text-xl text-slate-500 mb-12 leading-relaxed">
+                            Ready-to-deploy AI solutions for Kenyan businesses. No complexity, just results.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
+                            <Link href="https://portal.bazztech.co.ke/register" className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                                Get Your Free Assessment <ArrowRight size={22} />
+                            </Link>
+                            <Link href="#products" className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-slate-200 text-slate-900 font-black text-lg hover:bg-slate-50 transition-all">
+                                View AI Bundles
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Mini Mockup (Reduced Dimensions) */}
+                    <div className="hidden lg:flex justify-center relative">
+                        <div className="w-full max-w-lg aspect-square rounded-[40px] bg-gradient-to-br from-red-50 to-white border border-red-100 shadow-2xl flex items-center justify-center relative overflow-hidden transition-transform hover:scale-[1.02] duration-700">
+                            <div className="absolute top-8 right-8 bg-white shadow-xl p-3 rounded-2xl flex items-center gap-2 animate-bounce">
+                                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                    <Zap size={14} fill="currentColor" />
+                                </div>
+                                <div className="text-left">
+                                    <div className="text-[8px] font-bold text-slate-400 uppercase">Response</div>
+                                    <div className="text-xs font-black">&lt; 1s</div>
+                                </div>
                             </div>
-                            <div className="text-lg font-black">Active</div>
+                            <div className="p-16 bg-gradient-to-tr from-red-600 to-pink-500 rounded-full blur-[80px] opacity-10 absolute -z-10"></div>
+                            <Bot size={100} className="text-red-600" />
+                            <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-white shadow-lg">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                    <span className="text-[8px] font-bold text-slate-500 uppercase">Agents</span>
+                                </div>
+                                <div className="text-base font-black">Active</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
+
 
             {/* Product Bundles - Matches Screenshot 2 */}
             <section id="products" className="py-24 bg-slate-50 border-y border-slate-100">
