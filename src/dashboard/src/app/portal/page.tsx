@@ -11,38 +11,8 @@ export default function PortalLanding() {
 
     return (
         <div className="flex min-h-screen flex-col bg-white text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 overflow-x-hidden">
-            {/* Portal Navigation */}
-            <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-100">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-black tracking-tighter hover:opacity-80">
-                        Bazz<span className="text-red-600">AI</span> <span className="text-sm font-bold text-slate-400">Portal</span>
-                    </Link>
-                    
-                    {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                        <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
-                        <Link href="/login" className="px-5 py-2 rounded-full border border-slate-200 font-bold hover:bg-slate-50 transition-all text-slate-900">Client Login</Link>
-                        <Link href="/admin" className="text-red-600 font-bold hover:underline">Admin</Link>
-                    </nav>
-
-                    {/* Mobile Menu Toggle */}
-                    <button className="md:hidden text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-                    </button>
-                </div>
-
-                {/* Mobile Menu Overlay */}
-                {isMenuOpen && (
-                    <div className="md:hidden bg-white border-b border-slate-100 p-6 flex flex-col gap-4 animate-fade-in-down">
-                        <Link href="/pricing" onClick={() => setIsMenuOpen(false)} className="font-bold text-slate-600 hover:text-red-600">Pricing</Link>
-                        <Link href="/login" onClick={() => setIsMenuOpen(false)} className="font-bold text-slate-600 hover:text-red-600">Client Login</Link>
-                        <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="font-bold text-red-600">Admin</Link>
-                    </div>
-                )}
-            </header>
-
-            {/* Hero Section - "Hire Your First AI Digital Employee" (Matches Screenshot 4) */}
-            <section className="pt-32 md:pt-40 pb-16 md:pb-24 px-6 relative overflow-hidden bg-slate-50/50">
+            {/* Hero Section */}
+            <section className="pt-16 md:pt-24 pb-16 md:pb-24 px-6 relative overflow-hidden bg-slate-50/50">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-6 animate-fade-in">
                         <span className="relative flex h-2 w-2">
