@@ -1,14 +1,20 @@
 import Link from 'next/link';
 import { LayoutDashboard, Send, Settings, Activity, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 interface SidebarProps {
     isOpen?: boolean;
     onClose?: () => void;
     className?: string;
+    role?: 'ADMIN' | 'CLIENT';
 }
 
-export function Sidebar({ isOpen, onClose, className }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: SidebarProps) {
+    const pathname = usePathname();
+    
+    const dashboardHref = role === 'ADMIN' ? '/admin' : '/portal';
+
     return (
         <>
             {/* Mobile Overlay */}
@@ -27,7 +33,7 @@ export function Sidebar({ isOpen, onClose, className }: SidebarProps) {
             )}>
                 <div className="flex h-14 items-center justify-between border-b px-6 font-bold text-lg text-slate-900 dark:text-white">
                     <Link href="/" onClick={onClose}>
-                        Bazz<span className="text-red-600">AI</span> Portal
+                        Bazz<span className="text-red-600">AI</span> Platform
                     </Link>
                     <button 
                         onClick={onClose}
@@ -39,31 +45,46 @@ export function Sidebar({ isOpen, onClose, className }: SidebarProps) {
                 
                 <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
                     <Link
-                        href="/admin"
+                        href={dashboardHref}
                         onClick={onClose}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                            pathname === dashboardHref 
+                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400" 
+                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        )}
                     >
                         <LayoutDashboard className="h-4 w-4" />
                         Overview
                     </Link>
                     
                     <div className="pt-4 pb-2 px-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        My Automations
+                        Management
                     </div>
                     
                     <Link
-                        href="/portal"
+                        href="/portal/config"
                         onClick={onClose}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                            pathname.startsWith('/portal/config') 
+                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400" 
+                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        )}
                     >
                         <Settings className="h-4 w-4" />
                         Configure Prompts
                     </Link>
                     
                     <Link
-                        href="/blog"
+                        href="/portal/crm"
                         onClick={onClose}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                            pathname === '/portal/crm' 
+                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400" 
+                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                        )}
                     >
                         <Send className="h-4 w-4" />
                         CRM Pipeline
@@ -77,7 +98,7 @@ export function Sidebar({ isOpen, onClose, className }: SidebarProps) {
                             System: Online
                         </div>
                         <div className="text-xs text-slate-500">
-                            Next Billing: 01 Apr 2026
+                            Support Active
                         </div>
                     </div>
                 </div>

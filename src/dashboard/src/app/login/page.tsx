@@ -27,13 +27,27 @@ function LoginForm() {
             redirect: false,
         });
 
-        setLoading(false);
-
         if (result?.error) {
+            setLoading(false);
             setError('Invalid email or password. Please try again.');
         } else {
-            router.push(callbackUrl);
-            router.refresh();
+            // Fetch session to determine role-based redirect
+            const response = await fetch('/api/auth/session');
+            const session = await response.json();
+            
+            setLoading(false);
+            
+            if (session?.user) {
+                const role = (session.user as any).role;
+                const target = role === 'ADMIN' ? '/admin' : '/portal';
+                // If there's a callbackUrl that isn't just '/', prioritize it
+                const finalTarget = (callbackUrl && callbackUrl !== '/') ? callbackUrl : target;
+                router.push(finalTarget);
+                router.refresh();
+            } else {
+                router.push(callbackUrl);
+                router.refresh();
+            }
         }
     }
 

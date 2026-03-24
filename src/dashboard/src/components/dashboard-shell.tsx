@@ -9,15 +9,16 @@ interface DashboardShellProps {
     children: React.ReactNode;
     bannerText?: string;
     bannerColor?: string;
+    role?: 'ADMIN' | 'CLIENT';
 }
 
-export function DashboardShell({ children, bannerText, bannerColor = "bg-red-600" }: DashboardShellProps) {
+export function DashboardShell({ children, bannerText, bannerColor = "bg-red-600", role = 'CLIENT' }: DashboardShellProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex h-screen overflow-hidden bg-white dark:bg-zinc-950">
+        <div className="flex h-screen overflow-hidden bg-white dark:bg-zinc-950 text-slate-900 font-sans">
             {/* Sidebar Component (Hides on mobile, showing only as drawer) */}
-            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} role={role} />
 
             {/* Main Content Area */}
             <div className="flex flex-1 flex-col overflow-hidden">
