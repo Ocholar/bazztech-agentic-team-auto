@@ -20,8 +20,9 @@ export default function PortalLanding() {
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
                         <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
                         <Link href="/login" className="px-5 py-2 rounded-full border border-slate-200 font-bold hover:bg-slate-50 transition-all">Client Login</Link>
-                        <Link href="https://admin.bazztech.co.ke" className="text-red-600 font-bold hover:underline">Admin</Link>
+                        <Link href="/admin" className="text-red-600 font-bold hover:underline">Admin</Link>
                     </nav>
+
                 </div>
             </header>
 

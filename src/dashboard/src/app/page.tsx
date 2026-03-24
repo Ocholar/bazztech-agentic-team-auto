@@ -27,9 +27,7 @@ export default function LandingPage() {
                     <nav className="hidden md:flex items-center gap-10 text-sm font-bold text-slate-600">
                         <Link href="#products" className="hover:text-red-600 transition-colors">Products</Link>
                         <Link href="#features" className="hover:text-red-600 transition-colors">Features</Link>
-                        <Link href="#testimonials" className="hover:text-red-600 transition-colors">Testimonials</Link>
-                        <Link href="#contact" className="hover:text-red-600 transition-colors">Contact</Link>
-                        <Link href="https://admin.bazztech.co.ke" className="px-6 py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-md">Agent Login</Link>
+                        <Link href="/admin" className="px-6 py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-md">Agent Login</Link>
                     </nav>
 
                     {/* Mobile Menu Toggle */}
@@ -41,9 +39,8 @@ export default function LandingPage() {
                 {/* Mobile Menu */}
                 {isMenuOpen && (
                     <div className="md:hidden bg-white border-b border-slate-100 p-6 flex flex-col gap-4 animate-fade-in-down">
-                        <Link href="#products" onClick={() => setIsMenuOpen(false)} className="font-bold">Products</Link>
                         <Link href="#features" onClick={() => setIsMenuOpen(false)} className="font-bold">Features</Link>
-                        <Link href="https://admin.bazztech.co.ke" onClick={() => setIsMenuOpen(false)} className="font-bold text-red-600">Agent Login</Link>
+                        <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="font-bold text-red-600">Agent Login</Link>
                     </div>
                 )}
             </header>
@@ -68,7 +65,7 @@ export default function LandingPage() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
-                            <Link href="https://portal.bazztech.co.ke/register" className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                            <Link href="/portal" className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                                 Get Your Free Assessment <ArrowRight size={22} />
                             </Link>
                             <Link href="#products" className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-slate-200 text-slate-900 font-black text-lg hover:bg-slate-50 transition-all">
@@ -138,7 +135,7 @@ export default function LandingPage() {
                                     ))}
                                 </ul>
 
-                                <Link href="https://portal.bazztech.co.ke/register" className="w-full py-4 rounded-xl bg-slate-900 text-white text-xs font-black text-center hover:bg-red-600 transition-colors">
+                                <Link href="/portal" className="w-full py-4 rounded-xl bg-slate-900 text-white text-xs font-black text-center hover:bg-red-600 transition-colors">
                                     Get Started
                                 </Link>
                             </div>
@@ -182,7 +179,7 @@ export default function LandingPage() {
                             Bazztech Networks is your trusted partner for AI Automation in Kenya. We provide ready-to-deploy, productized automation solutions built on n8n.
                         </p>
                         <div className="flex gap-6">
-                            <Link href="https://portal.bazztech.co.ke/register" className="px-6 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-700 transition-all font-bold">Get Started Today</Link>
+                            <Link href="/portal" className="px-6 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-700 transition-all font-bold">Get Started Today</Link>
                         </div>
                     </div>
                     

@@ -46,11 +46,11 @@ export async function POST(req: Request) {
         const paybillInfo = 'Paybill: 247247 | Account: 0714929790';
 
         switch (type) {
-            case 'SETUP_RECEIVED':
             case 'PAYMENT_RECEIVED':
                 subject = '✅ Welcome to BazzAI — Your Portal is now Active';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour setup payment has been confirmed. Your AI Agentic workflows are now ACTIVE.\n\nLogin here: https://portal.bazztech.co.ke/login\n\nThank you for choosing Bazztech!\n\n— Bazztech Networks`;
+                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour setup payment has been confirmed. Your AI Agentic workflows are now ACTIVE.\n\nLogin here: https://bazztech.co.ke/login\n\nThank you for choosing Bazztech!\n\n— Bazztech Networks`;
                 break;
+
 
             case 'MAINTENANCE_RECEIVED':
                 subject = '✅ Maintenance Confirmed — BazzAI';

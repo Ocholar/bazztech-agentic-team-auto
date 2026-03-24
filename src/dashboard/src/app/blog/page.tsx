@@ -114,7 +114,7 @@ export default function BlogHome() {
                     <div className="text-2xl font-black tracking-tighter">
                         Bazz<span className="text-red-600">AI</span>
                     </div>
-                    <Link href="https://bazztech.co.ke" className="text-sm font-bold text-slate-400 hover:text-red-600 transition-colors">
+                    <Link href="/" className="text-sm font-bold text-slate-400 hover:text-red-600 transition-colors">
                         Back to Home
                     </Link>
                 </div>
