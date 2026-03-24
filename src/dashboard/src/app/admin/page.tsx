@@ -166,7 +166,7 @@ export default async function AdminDashboard() {
                     {/* Diagnostic Monitor */}
                     <div className="mt-8 pt-8 border-t border-slate-700 text-left">
                         <div className="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Environment Monitior (Safe View)</div>
-                        <div className="space-y-2 text-[10px] font-mono">
+                        <div className="space-y-2 text-[10px] font-mono mb-4">
                             <div className="flex justify-between border-b border-slate-700/50 pb-1">
                                 <span className="text-slate-500">DATABASE_URL:</span>
                                 <span className={process.env.DATABASE_URL ? "text-green-400" : "text-red-400"}>
@@ -179,11 +179,15 @@ export default async function AdminDashboard() {
                                     {process.env.DIRECT_URL ? `SET (${process.env.DIRECT_URL.substring(0, 15)}...)` : "MISSING"}
                                 </span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-500">NODE_ENV:</span>
-                                <span className="text-blue-400">{process.env.NODE_ENV}</span>
+                        </div>
+
+                        <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
+                            <div className="text-[10px] font-bold text-red-400 uppercase mb-1">Last Connection Error:</div>
+                            <div className="text-[10px] text-red-200/70 break-all">
+                                {String(error)}
                             </div>
                         </div>
+
                         <p className="mt-4 text-[9px] text-slate-500 text-center italic">
                            If any show as 'MISSING' despite being in Vercel, click "Redeploy" in Vercel to sync them.
                         </p>
