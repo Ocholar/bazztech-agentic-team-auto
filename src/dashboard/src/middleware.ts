@@ -8,10 +8,12 @@ export const config = {
          * 2. /_next (Next.js internals)
          * 3. /static (if used)
          * 4. /favicon.ico, /sitemap.xml (static files)
+         * 5. /.well-known (SSL verification)
          */
-        '/((?!api|_next|static|[\\w-]+\\.\\w+).*)',
+        '/((?!api|_next|static|\\.well-known|[\\w-]+\\.\\w+).*)',
     ],
 };
+
 
 export default function middleware(req: NextRequest) {
     const url = req.nextUrl;
