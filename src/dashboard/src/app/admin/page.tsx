@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
-import { Shield, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, AlertCircle, Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
