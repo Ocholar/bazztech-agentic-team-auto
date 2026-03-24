@@ -53,23 +53,23 @@ export default async function AdminDashboard() {
         });
 
         return (
-            <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
-                <div className="mb-8 flex items-center justify-between">
+            <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             <Shield className="text-red-600" />
                             Admin Oversight
                         </h1>
                         <p className="text-sm text-gray-500 mt-1">Manual overrides and system audit logs</p>
                     </div>
-                    <div className="flex gap-4">
-                        <Card className="px-6 py-2 border-slate-200">
+                    <div className="grid grid-cols-2 lg:flex gap-4 w-full sm:w-auto">
+                        <Card className="px-4 md:px-6 py-2 border-slate-200">
                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Est. MRR</div>
-                            <div className="text-xl font-black text-red-600">KES {mrr.toLocaleString()}</div>
+                            <div className="text-base md:text-xl font-black text-red-600">KES {mrr.toLocaleString()}</div>
                         </Card>
-                        <Card className="px-6 py-2 border-slate-200">
+                        <Card className="px-4 md:px-6 py-2 border-slate-200">
                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Monthly Signups</div>
-                            <div className="text-xl font-black text-slate-900">{newSignups}</div>
+                            <div className="text-base md:text-xl font-black text-slate-900">{newSignups}</div>
                         </Card>
                     </div>
                 </div>
@@ -79,55 +79,57 @@ export default async function AdminDashboard() {
                     <CardHeader>
                         <CardTitle>Client Subscriptions</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <table className="w-full border-collapse">
-                            <thead>
-                                <tr className="border-b text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    <th className="pb-3 px-2">Client / Company</th>
-                                    <th className="pb-3 px-2">Product</th>
-                                    <th className="pb-3 px-2">Status</th>
-                                    <th className="pb-3 px-2">Ref Code</th>
-                                    <th className="pb-3 px-2">Tier</th>
-                                    <th className="pb-3 px-2 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-sm">
-                                {subscriptions.length > 0 ? (
-                                    subscriptions.map((sub) => (
-                                        <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50 last:border-0">
-                                            <td className="py-4 px-2">
-                                                <div className="font-medium text-slate-900">{sub.user.name || sub.user.email}</div>
-                                                <div className="text-xs text-slate-500">{sub.user.companyName}</div>
-                                            </td>
-                                            <td className="py-4 px-2 font-medium">{sub.productType}</td>
-                                            <td className="py-4 px-2">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${sub.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                                                    sub.status === 'SUSPENDED' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'
-                                                    }`}>
-                                                    {sub.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-2 font-mono text-[10px] text-slate-400">{sub.paymentReference}</td>
-                                            <td className="py-4 px-2 text-xs text-slate-600">{sub.businessSizeTier}</td>
-                                            <td className="py-4 px-2 text-right space-x-4">
-                                                <button className="text-xs font-bold text-green-600 hover:text-green-700">Activate</button>
-                                                <button className="text-xs font-bold text-red-600 hover:text-red-700">Suspend</button>
+                    <CardContent className="p-0 sm:p-6">
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="border-b text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        <th className="pb-3 px-4 min-w-[150px]">Client / Company</th>
+                                        <th className="pb-3 px-4 min-w-[100px]">Product</th>
+                                        <th className="pb-3 px-4 min-w-[100px]">Status</th>
+                                        <th className="pb-3 px-4 min-w-[100px]">Ref Code</th>
+                                        <th className="pb-3 px-4 min-w-[80px]">Tier</th>
+                                        <th className="pb-3 px-4 text-right min-w-[150px]">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm">
+                                    {subscriptions.length > 0 ? (
+                                        subscriptions.map((sub) => (
+                                            <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50 last:border-0">
+                                                <td className="py-4 px-4">
+                                                    <div className="font-medium text-slate-900 whitespace-nowrap">{sub.user.name || sub.user.email}</div>
+                                                    <div className="text-xs text-slate-500 whitespace-nowrap">{sub.user.companyName}</div>
+                                                </td>
+                                                <td className="py-4 px-4 font-medium whitespace-nowrap">{sub.productType}</td>
+                                                <td className="py-4 px-4">
+                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${sub.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                                                        sub.status === 'SUSPENDED' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'
+                                                        }`}>
+                                                        {sub.status}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-4 font-mono text-[10px] text-slate-400 whitespace-nowrap">{sub.paymentReference}</td>
+                                                <td className="py-4 px-4 text-xs text-slate-600 uppercase">{sub.businessSizeTier}</td>
+                                                <td className="py-4 px-4 text-right space-x-4 whitespace-nowrap">
+                                                    <button className="text-xs font-bold text-green-600 hover:text-green-700">Activate</button>
+                                                    <button className="text-xs font-bold text-red-600 hover:text-red-700">Suspend</button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={6} className="py-20 text-center">
+                                                <div className="flex flex-col items-center gap-2 text-slate-400">
+                                                    <Users size={40} className="mb-2 opacity-20" />
+                                                    <p className="font-bold text-slate-500">No active subscriptions found.</p>
+                                                    <p className="text-xs underline">Your database is connected, waiting for first customer.</p>
+                                                </div>
                                             </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="py-20 text-center">
-                                            <div className="flex flex-col items-center gap-2 text-slate-400">
-                                                <Users size={40} className="mb-2 opacity-20" />
-                                                <p className="font-bold text-slate-500">No active subscriptions found.</p>
-                                                <p className="text-xs underline">Your database is connected, waiting for first customer.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </CardContent>
                 </Card>
 

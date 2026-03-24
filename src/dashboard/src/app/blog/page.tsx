@@ -86,7 +86,7 @@ export default function BlogHome() {
                     </div>
 
                     {/* Newsletter Section */}
-                    <div className="mt-24 p-12 rounded-[40px] bg-slate-900 text-white relative overflow-hidden">
+                    <div className="mt-24 p-6 md:p-12 rounded-[40px] bg-slate-900 text-white relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-10">
                             <Share2 size={120} />
                         </div>
@@ -110,7 +110,7 @@ export default function BlogHome() {
 
             {/* Footer */}
             <footer className="py-12 border-t border-slate-100">
-                <div className="max-w-5xl mx-auto px-6 flex justify-between items-center">
+                <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
                     <div className="text-2xl font-black tracking-tighter">
                         Bazz<span className="text-red-600">AI</span>
                     </div>
