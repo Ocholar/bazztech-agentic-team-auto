@@ -162,6 +162,32 @@ export default async function AdminDashboard() {
                             <li>Redeploy the project</li>
                         </ol>
                     </div>
+                    
+                    {/* Diagnostic Monitor */}
+                    <div className="mt-8 pt-8 border-t border-slate-700 text-left">
+                        <div className="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Environment Monitior (Safe View)</div>
+                        <div className="space-y-2 text-[10px] font-mono">
+                            <div className="flex justify-between border-b border-slate-700/50 pb-1">
+                                <span className="text-slate-500">DATABASE_URL:</span>
+                                <span className={process.env.DATABASE_URL ? "text-green-400" : "text-red-400"}>
+                                    {process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 15)}...)` : "MISSING"}
+                                </span>
+                            </div>
+                            <div className="flex justify-between border-b border-slate-700/50 pb-1">
+                                <span className="text-slate-500">DIRECT_URL:</span>
+                                <span className={process.env.DIRECT_URL ? "text-green-400" : "text-red-400"}>
+                                    {process.env.DIRECT_URL ? `SET (${process.env.DIRECT_URL.substring(0, 15)}...)` : "MISSING"}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-slate-500">NODE_ENV:</span>
+                                <span className="text-blue-400">{process.env.NODE_ENV}</span>
+                            </div>
+                        </div>
+                        <p className="mt-4 text-[9px] text-slate-500 text-center italic">
+                           If any show as 'MISSING' despite being in Vercel, click "Redeploy" in Vercel to sync them.
+                        </p>
+                    </div>
                 </div>
             </main>
         );
