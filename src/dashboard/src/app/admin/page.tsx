@@ -1,3 +1,5 @@
+import { auth } from '../../../auth';
+import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
 import { Shield, CheckCircle, XCircle, AlertCircle, Users } from 'lucide-react';
@@ -5,6 +7,13 @@ import { Shield, CheckCircle, XCircle, AlertCircle, Users } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
+    const session = await auth();
+
+    // 🔒 RESTRICT ACCESS: Only allow logged-in ADMINS
+    if (!session || (session.user as any)?.role !== 'ADMIN') {
+        redirect('/login');
+    }
+
     try {
         if (!process.env.DATABASE_URL) {
             throw new Error('DATABASE_URL_MISSING');
