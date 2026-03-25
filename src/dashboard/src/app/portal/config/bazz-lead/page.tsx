@@ -108,8 +108,8 @@ export default async function BazzLeadConfig() {
                     <div className="md:col-span-2 lg:col-span-2 space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>1. Qualification Criteria</CardTitle>
-                                <CardDescription>What makes a lead "Qualified"? Instruct the AI on what data to gather.</CardDescription>
+                                <CardTitle>1. AI Nurturing & Qualification Rules</CardTitle>
+                                <CardDescription>How should the AI nurture raw prospects into qualified leads?</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
@@ -125,14 +125,19 @@ export default async function BazzLeadConfig() {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>2. Hand-off & Scheduling</CardTitle>
-                                <CardDescription>How does the AI hand the conversation over to a human?</CardDescription>
+                                <CardTitle>2. Meeting Scheduling & Pipeline Mgmt</CardTitle>
+                                <CardDescription>How does the AI hand the conversation over to a human closer?</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Calendly / Booking Link</label>
                                     <input type="text" placeholder="https://calendly.com/your-business/30min" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-orange-600" />
                                     <p className="text-[11px] text-gray-500">The AI answers questions and ONLY offers this link to Hot/Qualified leads. (Need one? <a href="https://calendly.com/signup" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline font-medium">Get a free Calendly account here</a>).</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">CRM Pipeline Sync URL</label>
+                                    <input type="text" placeholder="https://api.hubapi.com/crm/v3/objects/contacts" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-orange-600" />
+                                    <p className="text-[11px] text-gray-500">Bazz-Lead will instantly structure and post qualified profiles straight to your external pipeline.</p>
                                 </div>
                                 <div className="flex justify-end pt-4 border-t">
                                     <button className="bg-orange-600 text-white px-8 py-2 rounded-md font-bold hover:bg-orange-700 transition flex items-center gap-2">

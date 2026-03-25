@@ -104,8 +104,8 @@ export default async function BazzDocConfig() {
                     <div className="md:col-span-2 lg:col-span-2 space-y-6">
                         <Card>
                             <CardHeader>
-                                <CardTitle>1. Document Extraction Schema</CardTitle>
-                                <CardDescription>Define exactly what fields the AI should extract from uploaded files (PDFs/Images)</CardDescription>
+                                <CardTitle>1. Document Extraction & OCR Schema</CardTitle>
+                                <CardDescription>Define exactly what Data Structuring the AI should perform on uploaded files (Invoices & Receipts)</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
@@ -128,8 +128,8 @@ export default async function BazzDocConfig() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>2. Destination Routing</CardTitle>
-                                    <CardDescription>Where should the structured JSON be sent?</CardDescription>
+                                    <CardTitle>2. Complete Database Sync</CardTitle>
+                                    <CardDescription>Where should the structured JSON data be sent?</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">

@@ -120,22 +120,22 @@ export default async function BazzConnectConfig() {
                                 <form action={saveProductConfig} className="space-y-4">
                                     <input type="hidden" name="configId" value={config?.id || ""} />
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">System Prompt</label>
+                                        <label className="text-sm font-medium">System Prompt (FAQ Automation & Order Status)</label>
                                         <textarea
                                             name="systemPrompt"
                                             rows={4}
                                             className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-green-600"
-                                            placeholder="e.g. You are the digital receptionist for Bazztech... Keep answers short."
+                                            placeholder="e.g. You are the digital receptionist. Answer FAQs, qualify leads, and check Order Status..."
                                             defaultValue={config?.systemPrompt || ""}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">Knowledge Base (Vector Memory)</label>
+                                        <label className="text-sm font-medium">Knowledge Base (CRM Backup Data)</label>
                                         <textarea
                                             name="knowledgeBase"
                                             rows={4}
                                             className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-green-600"
-                                            placeholder="Paste FAQs, pricing sheets, and company details here..."
+                                            placeholder="Paste FAQs, pricing sheets, and unstructured CRM backup data here..."
                                             defaultValue={config?.knowledgeBase || ""}
                                         />
                                     </div>

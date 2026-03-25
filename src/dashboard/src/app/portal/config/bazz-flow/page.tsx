@@ -143,14 +143,19 @@ export default async function BazzFlowConfig() {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>2. ERP Destination / Spreadsheet Sync</CardTitle>
-                                <CardDescription>Where should Bazz-Flow send your parsed M-Pesa payments?</CardDescription>
+                                <CardTitle>2. ERP Ledger Sync & SMS Alerts</CardTitle>
+                                <CardDescription>Where should Bazz-Flow push ledger updates and trigger SMS confirmations?</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Destination Webhook URL or Google Sheet ID</label>
+                                    <label className="text-sm font-medium">Main ERP / Ledger Webhook</label>
                                     <input type="text" placeholder="https://your-crm.com/webhook/mpesa" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600" />
-                                    <p className="text-xs text-slate-500">We will POST a structured JSON payload for every successful transaction.</p>
+                                    <p className="text-xs text-slate-500">We will instantly sync matched payments to your ledger with zero errors.</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Instant SMS Gateway Key (Optional)</label>
+                                    <input type="password" placeholder="e.g. Twilio or Africa's Talking API Key" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600" />
+                                    <p className="text-xs text-slate-500">Trigger instantaneous SMS alerts to the payer upon successful matching.</p>
                                 </div>
                                 <div className="flex justify-end pt-4 border-t">
                                     <button className="bg-slate-900 text-white px-8 py-2 rounded-md font-bold hover:bg-slate-800 transition flex items-center gap-2">
