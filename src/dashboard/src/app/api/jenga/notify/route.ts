@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         // Build notification message based on type
         let subject = '';
         let message = '';
-        const paybillInfo = 'Paybill: 247247 | Account: 0714929790';
+        const paybillInfo = 'Paybill: 247247 | Account: 0290170458002';
 
         switch (type) {
             case 'PAYMENT_RECEIVED':

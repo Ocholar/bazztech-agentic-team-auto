@@ -59,7 +59,7 @@ export default async function BazzFlowConfig() {
                                     </div>
                                     <div className="flex justify-between border-b border-slate-700 pb-2">
                                         <span className="text-slate-400">Account:</span>
-                                        <span className="font-bold text-red-400">0714929790</span>
+                                        <span className="font-bold text-red-400">0290170458002</span>
                                     </div>
                                     <div className="flex justify-between border-b border-slate-700 pb-2">
                                         <span className="text-slate-400">Ref:</span>

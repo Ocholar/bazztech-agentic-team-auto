@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getJengaToken, getAccountStatement, formatDate } from '@/lib/jenga';
 
-const ACCOUNT_NUMBER = process.env.EQUITY_ACCOUNT_NUMBER || '0714929790';
+const ACCOUNT_NUMBER = process.env.EQUITY_ACCOUNT_NUMBER || '0290170458002';
 const COUNTRY_CODE = process.env.EQUITY_COUNTRY_CODE || 'KE';
 
 /**
