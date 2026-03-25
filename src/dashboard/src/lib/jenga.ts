@@ -3,7 +3,7 @@
  * Handles authentication, signature generation, and API calls
  */
 
-const JENGA_BASE_URL = 'https://api.finserve.africa';
+const JENGA_BASE_URL = process.env.JENGA_BASE_URL || 'https://api.finserve.africa';
 
 const JENGA_MERCHANT_CODE = process.env.JENGA_MERCHANT_CODE!;
 const JENGA_API_KEY = process.env.JENGA_API_KEY!;
