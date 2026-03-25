@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, UserPlus } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const product = searchParams.get('product') || '';
 
     const [form, setForm] = useState({
         name: '',
@@ -45,6 +47,7 @@ export default function RegisterPage() {
                 companyName: form.companyName,
                 email: form.email,
                 password: form.password,
+                product: product,
             }),
         });
 
@@ -54,7 +57,7 @@ export default function RegisterPage() {
         if (!res.ok) {
             setError(data.error || 'Registration failed. Please try again.');
         } else {
-            router.push('/login?registered=true');
+            router.push(data.redirectUrl || '/login?registered=true');
         }
     }
 
@@ -168,5 +171,13 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-900"><Loader2 className="animate-spin h-8 w-8 text-red-500" /></div>}>
+            <RegisterForm />
+        </Suspense>
     );
 }

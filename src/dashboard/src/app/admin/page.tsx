@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
 import { Shield, CheckCircle, XCircle, AlertCircle, Users } from 'lucide-react';
+import { setSubscriptionStatus } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,10 +54,10 @@ export default async function AdminDashboard() {
         });
 
         return (
-            <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
+            <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50 bg-zinc-900">
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 text-gray-100 flex items-center gap-2">
                             <Shield className="text-red-600" />
                             Admin Oversight
                         </h1>
@@ -110,9 +111,21 @@ export default async function AdminDashboard() {
                                                 </td>
                                                 <td className="py-4 px-4 font-mono text-[10px] text-slate-400 whitespace-nowrap">{sub.paymentReference}</td>
                                                 <td className="py-4 px-4 text-xs text-slate-600 uppercase">{sub.businessSizeTier}</td>
-                                                <td className="py-4 px-4 text-right space-x-4 whitespace-nowrap">
-                                                    <button className="text-xs font-bold text-green-600 hover:text-green-700">Activate</button>
-                                                    <button className="text-xs font-bold text-red-600 hover:text-red-700">Suspend</button>
+                                                <td className="py-4 px-4 text-right whitespace-nowrap">
+                                                    {sub.status !== 'ACTIVE' && (
+                                                        <form action={setSubscriptionStatus.bind(null, sub.id, 'ACTIVE')} className="inline">
+                                                            <button className="px-3 py-1 rounded bg-green-100 bg-green-900/30 text-xs font-bold text-green-700 text-green-400 hover:bg-green-200 hover:bg-green-900 transition-colors">
+                                                                Activate
+                                                            </button>
+                                                        </form>
+                                                    )}
+                                                    {sub.status === 'ACTIVE' && (
+                                                        <form action={setSubscriptionStatus.bind(null, sub.id, 'SUSPENDED')} className="inline pl-2">
+                                                            <button className="px-3 py-1 rounded bg-red-100 bg-red-900/30 text-xs font-bold text-red-700 text-red-400 hover:bg-red-200 hover:bg-red-900 transition-colors">
+                                                                Suspend
+                                                            </button>
+                                                        </form>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))
@@ -167,13 +180,13 @@ export default async function AdminDashboard() {
                     <div className="space-y-4 text-left bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
                         <div className="text-xs font-bold text-slate-500 uppercase">Next Steps:</div>
                         <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside">
-                            <li>Go to Vercel -> bu3d -> Settings</li>
+                            <li>Go to Vercel -&gt; bu3d -&gt; Settings</li>
                             <li>Add <code className="text-pink-400">DATABASE_URL</code></li>
                             <li>Add <code className="text-pink-400">DIRECT_URL</code></li>
                             <li>Redeploy the project</li>
                         </ol>
                     </div>
-                    
+
                     {/* Diagnostic Monitor */}
                     <div className="mt-8 pt-8 border-t border-slate-700 text-left">
                         <div className="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Environment Monitior (Safe View)</div>
@@ -200,7 +213,7 @@ export default async function AdminDashboard() {
                         </div>
 
                         <p className="mt-4 text-[9px] text-slate-500 text-center italic">
-                           If any show as 'MISSING' despite being in Vercel, click "Redeploy" in Vercel to sync them.
+                            If any show as 'MISSING' despite being in Vercel, click "Redeploy" in Vercel to sync them.
                         </p>
                     </div>
                 </div>

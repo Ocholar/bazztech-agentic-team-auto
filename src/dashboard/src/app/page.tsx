@@ -109,10 +109,10 @@ export default function LandingPage() {
                     
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { color: 'green', icon: <MessageSquare />, title: 'Bazz-Connect WhatsApp', sub: 'n8n + WhatsApp API + OpenAI', features: ['FAQ Automation', 'Lead Qualification', 'Order Status', 'CRM Backup'] },
-                            { color: 'blue', icon: <Zap />, title: 'Bazz-Flow M-Pesa', sub: 'n8n + Daraja 3.0 + ERP Sync', features: ['Payment Matching', 'Instant SMS Alerts', 'Ledger Updates', 'Zero Errors'] },
-                            { color: 'purple', icon: <FileText />, title: 'Bazz-Doc AI Processor', sub: 'n8n + OpenAI Vision/OCR', features: ['Invoice Extraction', 'Receipt OCR', 'Data Structuring', 'Database Sync'] },
-                            { color: 'orange', icon: <Bot />, title: 'Bazz-Lead Agent', sub: 'n8n + CRM Integration', features: ['Social Media Capture', 'AI Nurturing', 'Meeting Scheduling', 'Pipeline Mgmt.'] },
+                            { color: 'green', icon: <MessageSquare />, title: 'Bazz-Connect WhatsApp', sub: 'n8n + WhatsApp API + OpenAI', features: ['FAQ Automation', 'Lead Qualification', 'Order Status', 'CRM Backup'], productId: 'BAZZ_CONNECT' },
+                            { color: 'blue', icon: <Zap />, title: 'Bazz-Flow M-Pesa', sub: 'n8n + Daraja 3.0 + ERP Sync', features: ['Payment Matching', 'Instant SMS Alerts', 'Ledger Updates', 'Zero Errors'], productId: 'BAZZ_FLOW' },
+                            { color: 'purple', icon: <FileText />, title: 'Bazz-Doc AI Processor', sub: 'n8n + OpenAI Vision/OCR', features: ['Invoice Extraction', 'Receipt OCR', 'Data Structuring', 'Database Sync'], productId: 'BAZZ_DOC' },
+                            { color: 'orange', icon: <Bot />, title: 'Bazz-Lead Agent', sub: 'n8n + CRM Integration', features: ['Social Media Capture', 'AI Nurturing', 'Meeting Scheduling', 'Pipeline Mgmt.'], productId: 'BAZZ_LEAD' },
                         ].map((b, i) => (
                             <div key={i} className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-2xl transition-all group flex flex-col text-left">
                                 <div className={`w-14 h-14 rounded-2xl mb-8 flex items-center justify-center transition-transform group-hover:scale-110 ${
@@ -135,7 +135,7 @@ export default function LandingPage() {
                                     ))}
                                 </ul>
 
-                                <Link href="/portal" className="w-full py-4 rounded-xl bg-slate-900 text-white text-xs font-black text-center hover:bg-red-600 transition-colors">
+                                <Link href={`/register?product=${b.productId}`} className="w-full py-4 rounded-xl bg-slate-900 text-white text-xs font-black text-center hover:bg-red-600 transition-colors">
                                     Get Started
                                 </Link>
                             </div>

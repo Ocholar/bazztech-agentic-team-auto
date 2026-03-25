@@ -1,61 +1,41 @@
-"use client";
+import { auth } from '../../../../../auth';
+import { db } from '@/lib/db';
+import { redirect } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui-card";
+import { MessageSquare, Webhook, Smartphone, CheckCircle2, Zap, AlertCircle, PlusCircle } from "lucide-react";
+import { saveProductConfig, createPendingSubscription, saveApiKeys } from '../actions';
+import { revalidatePath } from 'next/cache';
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui-card";
-import { MessageSquare, Save, Webhook, Smartphone, Loader2, CheckCircle2 } from "lucide-react";
+export default async function BazzConnectConfig() {
+    const session = await auth();
+    if (!session || !session.user) redirect('/login');
 
-export default function BazzConnectConfig() {
-    // Application State
-    const [isLoadingData, setIsLoadingData] = useState(true);
-    const [isActive, setIsActive] = useState(false);
-    const [configData, setConfigData] = useState<any>(null);
-    const [paymentReference, setPaymentReference] = useState("BAZZ-101"); // This would be unique per user
-    const [onboardingStep, setOnboardingStep] = useState(1);
-    const [agreedToCompliance, setAgreedToCompliance] = useState(false);
-
-    // Note: In a real app we'd fetch this from a protected route
-    // Simulate initial load
-    useState(() => {
-        setTimeout(() => {
-            setIsLoadingData(false);
-            // setIsActive(true); // Toggle this to test the "Active" view locally
-        }, 1000);
+    const sub = await db.subscription.findFirst({
+        where: { userId: session.user.id, productType: 'BAZZ_CONNECT' }
     });
 
-    const handleSaveConfig = () => {
-        alert("Configuration saved! Step " + onboardingStep + " complete.");
-        if (onboardingStep < 3) setOnboardingStep(onboardingStep + 1);
-    };
+    const config = await db.productConfig.findFirst({
+        where: { userId: session.user.id } // Ideally tied to the subscription, but we'll use user's first config for now
+    });
 
-    if (isLoadingData) {
-        return (
-            <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-zinc-900">
-                <Loader2 className="h-8 w-8 animate-spin text-red-600" />
-            </div>
-        );
-    }
+    const isActive = sub?.status === 'ACTIVE';
+    const amount = sub?.oneTimeFee || 2500;
+    const refCode = sub?.paymentReference || `BAZ-PENDING`;
 
     return (
-        <main className="flex min-h-screen flex-col p-8 bg-gray-50 dark:bg-zinc-900">
+        <main className="flex min-h-screen flex-col p-8 bg-gray-50">
             <div className="mb-8 flex items-center justify-between border-b pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-3">
-                        <MessageSquare className="text-red-600" size={32} />
-                        {isActive ? `Onboarding: Step ${onboardingStep} of 3` : "Bazz-Connect Subscription"}
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
+                        <MessageSquare className="text-green-600" size={32} />
+                        Bazz-Connect Subscription
                     </h1>
                     <p className="text-sm text-gray-500 mt-1">
                         {isActive
-                            ? (onboardingStep === 1 ? "Fine-tune your AI Agent's persona and knowledge" : onboardingStep === 2 ? "Connect your business WhatsApp number" : "Review compliance and go live")
-                            : "Activate your autonomous WhatsApp FrontDesk Agent"}
+                            ? "Fine-tune your autonomous WhatsApp FrontDesk Agent"
+                            : "Activate your AI Digital Employee via Equity Bank Jenga API"}
                     </p>
                 </div>
-                {isActive && (
-                    <div className="flex gap-2">
-                        {[1, 2, 3].map(step => (
-                            <div key={step} className={`h-2 w-12 rounded-full ${onboardingStep >= step ? "bg-red-600" : "bg-slate-200"}`} />
-                        ))}
-                    </div>
-                )}
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -84,39 +64,31 @@ export default function BazzConnectConfig() {
                                     </div>
                                     <div className="flex justify-between border-b border-slate-700 pb-2">
                                         <span className="text-slate-400">Ref:</span>
-                                        <span className="font-bold text-green-400">{paymentReference}</span>
+                                        <span className="font-bold text-green-400">{refCode}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-slate-400">KES Amount:</span>
-                                        <span className="font-bold">1,500 - 5,000</span>
+                                        <span className="font-bold">{amount.toLocaleString()}</span>
                                     </div>
                                 </div>
 
                                 <div className="text-center py-2 space-y-3">
-                                    <div className="inline-flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
-                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                        Checking Payment...
-                                    </div>
-
-                                    <button
-                                        onClick={async () => {
-                                            const subId = "sub-101"; // Would be dynamic
-                                            const res = await fetch("/api/jenga/check-status", {
-                                                method: "POST",
-                                                headers: { "Content-Type": "application/json" },
-                                                body: JSON.stringify({ subscriptionId: subId })
-                                            });
-                                            const data = await res.json();
-                                            if (data.success && data.status === 'ACTIVE') {
-                                                setIsActive(true);
-                                            } else {
-                                                alert(data.message || "No payment found. Tip: Check the reference code.");
-                                            }
-                                        }}
-                                        className="block w-full text-xs font-semibold text-red-600 hover:text-red-700 underline underline-offset-4"
-                                    >
-                                        I have paid, unlock now
-                                    </button>
+                                    {sub ? (
+                                        <div className="inline-flex items-center gap-2 text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-200">
+                                            <AlertCircle className="h-4 w-4" />
+                                            Awaiting Payment Sync
+                                        </div>
+                                    ) : (
+                                        <form action={createPendingSubscription.bind(null, 'BAZZ_CONNECT')}>
+                                            <button className="inline-flex items-center gap-2 text-xs font-medium text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full shadow-lg transition-transform hover:scale-105">
+                                                <PlusCircle className="h-4 w-4" />
+                                                Subscribe & Generate Invoice
+                                            </button>
+                                        </form>
+                                    )}
+                                    <p className="text-[10px] text-slate-500 italic px-4">
+                                        This page will automatically unlock once Equity Bank confirms payment for Reference <b>{refCode}</b>.
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -127,114 +99,79 @@ export default function BazzConnectConfig() {
                                 1. Open your M-Pesa or Equity Mobile App.
                             </p>
                             <p className="text-sm text-blue-800 mb-3">
-                                2. Pay KES 2,500 to Paybill 247247 and use <b>{paymentReference}</b> as the account name.
+                                2. Pay KES {amount.toLocaleString()} to Paybill 247247 and use <b className="font-mono">{refCode}</b> as the account number.
                             </p>
                             <p className="text-sm text-blue-800">
-                                3. Once detected, your WhatsApp AI Brain will be unlocked instantly.
+                                3. Once detected by our Jenga Integration, your WhatsApp AI Brain will be unlocked instantly.
                             </p>
                         </div>
                     </div>
                 )}
 
-                {/* --- ONBOARDING STEPS --- */}
+                {/* --- CONFIGURATION PORTAL --- */}
                 {isActive && (
                     <div className="md:col-span-2 lg:col-span-2 space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>1. Persona & Memory</CardTitle>
+                                <CardDescription>How should your AI represent your company on WhatsApp?</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <form action={saveProductConfig} className="space-y-4">
+                                    <input type="hidden" name="configId" value={config?.id || ""} />
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">System Prompt</label>
+                                        <textarea
+                                            name="systemPrompt"
+                                            rows={4}
+                                            className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-green-600"
+                                            placeholder="e.g. You are the digital receptionist for Bazztech... Keep answers short."
+                                            defaultValue={config?.systemPrompt || ""}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Knowledge Base (Vector Memory)</label>
+                                        <textarea
+                                            name="knowledgeBase"
+                                            rows={4}
+                                            className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-green-600"
+                                            placeholder="Paste FAQs, pricing sheets, and company details here..."
+                                            defaultValue={config?.knowledgeBase || ""}
+                                        />
+                                    </div>
+                                    <div className="flex justify-end pt-4 border-t">
+                                        <button className="bg-green-600 text-white px-8 py-2 rounded-md font-bold hover:bg-green-700 transition flex items-center gap-2">
+                                            <Zap size={16} /> Save AI Configuration
+                                        </button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
 
-                        {/* STEP 1: BRAIN CONFIG */}
-                        {onboardingStep === 1 && (
-                            <>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>1. Persona & Memory</CardTitle>
-                                        <CardDescription>How should your AI represent your company?</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">System Prompt</label>
-                                            <textarea rows={4} className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-red-600" placeholder="e.g. You are the digital receptionist for Bazztech..." />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Knowledge Base (Vector Memory)</label>
-                                            <textarea rows={4} className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-red-600" placeholder="Upload FAQs, pricing sheets, and company details here..." />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                                <div className="flex justify-end">
-                                    <button onClick={handleSaveConfig} className="bg-red-600 text-white px-8 py-2 rounded-md font-bold hover:bg-red-700">Next Step: WhatsApp Setup</button>
-                                </div>
-                            </>
-                        )}
-
-                        {/* STEP 2: WHATSAPP SETUP */}
-                        {onboardingStep === 2 && (
-                            <>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>2. WhatsApp Connectivity</CardTitle>
-                                        <CardDescription>Connect your Meta WhatsApp Business API</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Meta Phone Number ID</label>
-                                            <input type="text" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="e.g. 1029384756..." />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Permanent Access Token</label>
-                                            <input type="password" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="EAAGm..." />
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                                <div className="flex justify-between">
-                                    <button onClick={() => setOnboardingStep(1)} className="text-slate-600 font-medium">Back</button>
-                                    <button onClick={handleSaveConfig} className="bg-red-600 text-white px-8 py-2 rounded-md font-bold hover:bg-red-700">Next Step: Compliance</button>
-                                </div>
-                            </>
-                        )}
-
-                        {/* STEP 3: COMPLIANCE & LAUNCH */}
-                        {onboardingStep === 3 && (
-                            <>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>3. Compliance Guidelines</CardTitle>
-                                        <CardDescription>Ensure a healthy WhatsApp number status</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <div className="bg-slate-50 p-4 rounded-md border border-slate-200 text-sm space-y-3">
-                                            <p className="font-bold text-red-700">To avoid WhatsApp bans (Spam Policy):</p>
-                                            <ul className="list-disc pl-5 space-y-2 text-slate-700">
-                                                <li><b>Opt-In:</b> Only message customers who have explicitly messaged you or opted in.</li>
-                                                <li><b>Standard Response:</b> The bot should only handle inbound queries within the 24-hour window.</li>
-                                                <li><b>Direct Marketing:</b> Do not use the bot for unsolicited broadcast messages.</li>
-                                                <li><b>Clear Opt-Out:</b> Allow customers to end the chat by typing "Stop" or "Unsubscribe".</li>
-                                            </ul>
-                                        </div>
-                                        <div className="flex items-center space-x-2 pt-4">
-                                            <input
-                                                type="checkbox"
-                                                id="compliance"
-                                                checked={agreedToCompliance}
-                                                onChange={(e) => setAgreedToCompliance(e.target.checked)}
-                                                className="h-4 w-4 text-red-600 border-gray-300 rounded"
-                                            />
-                                            <label htmlFor="compliance" className="text-sm font-medium text-gray-700 leading-none">
-                                                I acknowledge that I am responsible for WhatsApp compliance and usage behavior.
-                                            </label>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                                <div className="flex justify-between">
-                                    <button onClick={() => setOnboardingStep(2)} className="text-slate-600 font-medium">Back</button>
-                                    <button
-                                        disabled={!agreedToCompliance}
-                                        onClick={() => alert("Congratulations! Your Bazz-Connect Agent is now LIVE across Kenya.")}
-                                        className={`px-8 py-2 rounded-md font-bold text-white shadow-lg ${agreedToCompliance ? "bg-green-600 hover:bg-green-700 translate-y-0 shadow-green-200" : "bg-slate-300 cursor-not-allowed"}`}
-                                    >
-                                        Deploy My AI Brain
-                                    </button>
-                                </div>
-                            </>
-                        )}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>2. WhatsApp Connectivity</CardTitle>
+                                <CardDescription>Connect your Meta WhatsApp Business API</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <form action={saveApiKeys} className="space-y-4">
+                                    <input type="hidden" name="configId" value={config?.id || ""} />
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Meta Phone Number ID</label>
+                                        <input type="text" name="whatsappPhoneId" defaultValue={config?.whatsappPhoneId || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="e.g. 1029384756..." />
+                                        <p className="text-[11px] text-gray-500">Find this in your <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">Meta App Dashboard &rarr; WhatsApp &rarr; API Setup</a>.</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Permanent Access Token</label>
+                                        <input type="password" name="whatsappToken" defaultValue={config?.whatsappToken || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="EAAGm..." />
+                                        <p className="text-[11px] text-gray-500">Generate a permanent token via <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">Meta Business Settings &rarr; System Users</a>.</p>
+                                    </div>
+                                    <div className="flex justify-end pt-4 border-t">
+                                        <button className="bg-slate-900 text-white px-8 py-2 rounded-md font-bold hover:bg-slate-800 transition">Save API Keys</button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
 
@@ -244,7 +181,7 @@ export default function BazzConnectConfig() {
                         <Card className="bg-slate-900 border-none text-white shadow-xl">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <Webhook size={20} className="text-red-400" />
+                                    <Webhook size={20} className="text-green-400" />
                                     Webhook Integration
                                 </CardTitle>
                                 <CardDescription className="text-slate-400">
@@ -254,10 +191,12 @@ export default function BazzConnectConfig() {
                             <CardContent className="space-y-4">
                                 <div>
                                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Your Webhook ID</p>
-                                    <code className="block w-full bg-slate-950 text-red-400 p-3 rounded text-xs break-all">
-                                        whk_production_secure_id
+                                    <code className="block w-full bg-slate-950 text-green-400 p-3 rounded font-mono text-sm break-all">
+                                        {config?.webhookId ? `https://n8n.bazztech.co.ke/webhook/${config.webhookId}` : "Pending Configuration Save..."}
                                     </code>
-                                    <p className="text-xs text-slate-500 mt-2">Connect this ID to your WhatsApp number inside the Bazz AI Master workflow to go live.</p>
+                                    <p className="text-[11px] text-slate-400 mt-2 hover:text-slate-300 transition-colors">
+                                        Paste this entire URL into your Meta App's <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Webhook Configuration</a> to connect your WhatsApp numbers instantly.
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>

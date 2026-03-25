@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
     try {
-        const { name, companyName, email, password } = await req.json();
+        const { name, companyName, email, password, product } = await req.json();
 
         if (!process.env.DATABASE_URL) {
             console.error('[register] CRITICAL: DATABASE_URL is not defined in environment variables.');
@@ -38,7 +38,36 @@ export async function POST(req: Request) {
                 },
             });
 
-            return NextResponse.json({ success: true, userId: user.id }, { status: 201 });
+            let redirectUrl = '/login?registered=true';
+
+            // Determine if a valid product was passed
+            if (product && ['BAZZ_CONNECT', 'BAZZ_FLOW', 'BAZZ_DOC', 'BAZZ_LEAD'].includes(product)) {
+                
+                const refCode = `BAZ-${user.id.substring(0, 5).toUpperCase()}-${product.split('_')[1]}`;
+                
+                await db.subscription.create({
+                    data: {
+                        userId: user.id,
+                        productType: product as any,
+                        status: 'INACTIVE',
+                        businessSizeTier: 'MICRO',
+                        oneTimeFee: 2500,
+                        amountExpected: 2500,
+                        paymentReference: refCode,
+                    }
+                });
+                
+                const configPaths: Record<string, string> = {
+                    'BAZZ_CONNECT': '/portal/config/bazz-connect',
+                    'BAZZ_FLOW': '/portal/config/bazz-flow',
+                    'BAZZ_DOC': '/portal/config/bazz-doc',
+                    'BAZZ_LEAD': '/portal/config/bazz-lead',
+                };
+                
+                redirectUrl = `/login?registered=true&callbackUrl=${encodeURIComponent(configPaths[product])}`;
+            }
+
+            return NextResponse.json({ success: true, userId: user.id, redirectUrl }, { status: 201 });
         } catch (dbError) {
             console.error('[register] Database Error:', dbError);
             return NextResponse.json({ 

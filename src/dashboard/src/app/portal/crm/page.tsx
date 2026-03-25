@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { auth } from '../../../../auth';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
 import { Send, Users, Filter, Plus, Phone, Mail, Calendar } from 'lucide-react';
@@ -11,10 +11,17 @@ export default async function CRMPage() {
     const session = await auth();
     if (!session || !session.user) redirect('/login');
 
-    const leads = await db.lead.findMany({
-        where: { userId: session.user.id },
-        orderBy: { createdAt: 'desc' }
-    });
+    let leads: any[] = [];
+    let dbError = false;
+
+    try {
+        leads = await db.lead.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: 'desc' }
+        });
+    } catch (e) {
+        dbError = true;
+    }
 
     const stats = {
         total: leads.length,
@@ -24,16 +31,16 @@ export default async function CRMPage() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50 dark:bg-zinc-900">
+        <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50">
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
                         <Send className="text-red-600" />
                         Autonomous CRM Pipeline
                     </h1>
                     <p className="text-gray-500 mt-1">Real-time leads captured by your BazzAI agents.</p>
                 </div>
-                
+
                 <AddLeadModal />
             </div>
 
@@ -72,8 +79,14 @@ export default async function CRMPage() {
                         <tbody className="divide-y divide-slate-100">
                             {leads.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium italic">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500 font-medium italic">
                                         No leads captured yet. Your AI agents are working hard...
+                                    </td>
+                                </tr>
+                            ) : dbError ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-red-500 font-bold">
+                                        Database connection dropped while loading leads. Please refresh the page to wake up the server.
                                     </td>
                                 </tr>
                             ) : (
@@ -90,9 +103,9 @@ export default async function CRMPage() {
                                             <span className={cn(
                                                 "px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
                                                 lead.stage === 'SALE' ? "bg-green-50 text-green-600 border-green-100" :
-                                                lead.stage === 'PROSPECTIVE' ? "bg-purple-50 text-purple-600 border-purple-100" :
-                                                lead.stage === 'CONTACTED' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                                                "bg-slate-100 text-slate-500 border-slate-200"
+                                                    lead.stage === 'PROSPECTIVE' ? "bg-purple-50 text-purple-600 border-purple-100" :
+                                                        lead.stage === 'CONTACTED' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                                                            "bg-slate-100 text-slate-500 border-slate-200"
                                             )}>
                                                 {lead.stage}
                                             </span>
