@@ -54,10 +54,10 @@ export default async function AdminDashboard() {
         });
 
         return (
-            <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50 bg-zinc-900">
+            <main className="flex min-h-screen flex-col p-4 md:p-8 bg-gray-50">
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 text-gray-100 flex items-center gap-2">
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
                             <Shield className="text-red-600" />
                             Admin Oversight
                         </h1>
@@ -170,16 +170,16 @@ export default async function AdminDashboard() {
         );
     } catch (error) {
         return (
-            <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-slate-900 text-white">
-                <div className="max-w-md w-full bg-slate-800 p-10 rounded-[40px] border border-slate-700 shadow-2xl text-center">
+            <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gray-50 text-slate-900">
+                <div className="max-w-md w-full bg-white p-10 rounded-[40px] border border-slate-200 shadow-xl text-center">
                     <AlertCircle size={60} className="mx-auto text-red-500 mb-6" />
                     <h1 className="text-2xl font-black mb-4">Database Connection Required</h1>
-                    <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                        The admin dashboard cannot load because the <code className="text-red-400">DATABASE_URL</code> is missing or incorrect in your Vercel settings.
+                    <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+                        The admin dashboard cannot load because the <code className="text-red-500">DATABASE_URL</code> is missing or incorrect in your Vercel settings.
                     </p>
-                    <div className="space-y-4 text-left bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
-                        <div className="text-xs font-bold text-slate-500 uppercase">Next Steps:</div>
-                        <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside">
+                    <div className="space-y-4 text-left bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <div className="text-xs font-bold text-slate-600 uppercase">Next Steps:</div>
+                        <ol className="text-xs text-slate-600 space-y-2 list-decimal list-inside">
                             <li>Go to Vercel -&gt; bu3d -&gt; Settings</li>
                             <li>Add <code className="text-pink-400">DATABASE_URL</code></li>
                             <li>Add <code className="text-pink-400">DIRECT_URL</code></li>
@@ -188,16 +188,16 @@ export default async function AdminDashboard() {
                     </div>
 
                     {/* Diagnostic Monitor */}
-                    <div className="mt-8 pt-8 border-t border-slate-700 text-left">
+                    <div className="mt-8 pt-8 border-t border-slate-200 text-left">
                         <div className="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Environment Monitior (Safe View)</div>
                         <div className="space-y-2 text-[10px] font-mono mb-4">
-                            <div className="flex justify-between border-b border-slate-700/50 pb-1">
+                            <div className="flex justify-between border-b border-slate-200 pb-1">
                                 <span className="text-slate-500">DATABASE_URL:</span>
                                 <span className={process.env.DATABASE_URL ? "text-green-400" : "text-red-400"}>
                                     {process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 15)}...)` : "MISSING"}
                                 </span>
                             </div>
-                            <div className="flex justify-between border-b border-slate-700/50 pb-1">
+                            <div className="flex justify-between border-b border-slate-200 pb-1">
                                 <span className="text-slate-500">DIRECT_URL:</span>
                                 <span className={process.env.DIRECT_URL ? "text-green-400" : "text-red-400"}>
                                     {process.env.DIRECT_URL ? `SET (${process.env.DIRECT_URL.substring(0, 15)}...)` : "MISSING"}

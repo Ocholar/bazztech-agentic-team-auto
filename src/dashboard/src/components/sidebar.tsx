@@ -37,11 +37,11 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
 
             {/* Sidebar Container */}
             <div className={cn(
-                "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r bg-white dark:bg-zinc-950 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:flex",
+                "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r bg-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:flex",
                 isOpen ? "translate-x-0" : "-translate-x-full",
                 className
             )}>
-                <div className="flex h-14 items-center justify-between border-b px-6 font-bold text-lg text-slate-900 dark:text-white">
+                <div className="flex h-14 items-center justify-between border-b px-6 font-bold text-lg text-slate-900">
                     <Link href="/" onClick={onClose}>
                         Bazz<span className="text-red-600">AI</span> {role === 'ADMIN' ? 'Admin' : 'Portal'}
                     </Link>
@@ -60,8 +60,8 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                         className={cn(
                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                             pathname === dashboardHref
-                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
-                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                                ? "bg-red-50 text-red-600"
+                                : "text-gray-900 hover:bg-gray-100"
                         )}
                     >
                         <LayoutDashboard className="h-4 w-4" />
@@ -78,8 +78,8 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                         className={cn(
                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                             pathname.startsWith(configHref)
-                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
-                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                                ? "bg-red-50 text-red-600"
+                                : "text-gray-900 hover:bg-gray-100"
                         )}
                     >
                         <Settings className="h-4 w-4" />
@@ -92,8 +92,8 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                         className={cn(
                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                             pathname.startsWith(crmHref)
-                                ? "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
-                                : "text-gray-900 hover:bg-gray-100 dark:text-gray-50 dark:hover:bg-zinc-800"
+                                ? "bg-red-50 text-red-600"
+                                : "text-gray-900 hover:bg-gray-100"
                         )}
                     >
                         <Send className="h-4 w-4" />
@@ -102,8 +102,8 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                 </nav>
 
                 <div className="border-t p-4">
-                    <div className="flex flex-col gap-2 rounded-lg bg-slate-50 dark:bg-zinc-900 p-3">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <div className="flex flex-col gap-2 rounded-lg bg-slate-50 p-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                             <Activity className="h-4 w-4 text-green-500" />
                             System: Online
                         </div>
