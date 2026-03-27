@@ -101,12 +101,34 @@ model ProductConfig {
   
   // AI Agent Dynamic "Brain"
   systemPrompt    String?      @db.Text
-  knowledgeBase   String?      @db.Text // Can hold raw text or URLs to docs
+  knowledgeBase   String?      @db.Text
   
-  // Custom WhatsApp Integration
-  whatsappPhoneId    String?   // Meta Phone ID or Evolution API Instance Name
-  whatsappUrl        String?   // Evolution API URL (e.g. https://api.client.com)
-  whatsappToken      String?   // Auth token to send messages on behalf of this client
+  // Shared Configuration Options
+  productType         String?  
+  isConfigured        Boolean  @default(false)
+  leadNotifyEmail     String?
+  
+  // Custom WhatsApp Integration (Bazz-Connect / Evolution API / Meta)
+  whatsappPhoneId     String?
+  whatsappUrl         String?
+  whatsappToken       String?
+  
+  // Bazz-Flow (M-Pesa ERP)
+  darajaConsumerKey    String?
+  darajaConsumerSecret String?
+  darajaShortcode      String?
+  darajaPasskey        String?
+  darajaCallbackUrl    String?
+  erpWebhookUrl        String?
+  
+  // Bazz-Doc (AI Receipts / OpenAI Vision)
+  openaiApiKey         String?
+  docOutputWebhook     String?
+  
+  // Bazz-Lead (Social Media CRM)
+  metaPageAccessToken  String?
+  metaPageId           String?
+  crmWebhookUrl        String?
   
   updatedAt       DateTime     @updatedAt
 }
