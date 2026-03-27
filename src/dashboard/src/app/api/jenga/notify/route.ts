@@ -5,9 +5,13 @@ import { db } from '@/lib/db';
 
 type NotifyType = 'PAYMENT_RECEIVED' | 'SETUP_RECEIVED' | 'MAINTENANCE_RECEIVED' | 'RENEWAL_DUE' | 'SUSPENDED';
 
+const BAZZAI_SUPPORT_PHONE = process.env.BAZZAI_WHATSAPP_PHONE_ID;
+const BAZZAI_SUPPORT_TOKEN = process.env.BAZZAI_WHATSAPP_TOKEN;
+const META_API = 'https://graph.facebook.com/v19.0';
+
 /**
  * POST /api/jenga/notify
- * Internal notification router — sends emails to clients.
+ * Sends a WhatsApp message to the client via BazzAI's Meta Business account.
  * Called by n8n after poll or lifecycle check triggers an event.
  *
  * Body: { type: NotifyType, userId: string, subscriptionId: string, extra?: object }
@@ -40,58 +44,60 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        // Build notification message based on type
-        let subject = '';
+        // Fetch the client's phone number from their subscription (Jenga paidPhone)
+        let clientPhone: string | null = null;
+        if (subscriptionId) {
+            const sub = await db.subscription.findUnique({
+                where: { id: subscriptionId },
+                select: { paidPhone: true },
+            });
+            clientPhone = sub?.paidPhone || null;
+        }
+
+        // Fallback: look up admin BazzAI product config for sending credentials
+        // We use the platform's own Bazz-Connect Meta credentials for outbound messages
+        let waPhoneId = BAZZAI_SUPPORT_PHONE;
+        let waToken = BAZZAI_SUPPORT_TOKEN;
+
+        if (!waPhoneId || !waToken) {
+            // Pull from the admin's ProductConfig (Bazz-Connect config for admin@bazztech.co.ke)
+            const adminConfig = await db.productConfig.findFirst({
+                where: {
+                    user: { role: 'ADMIN' },
+                    whatsappPhoneId: { not: null },
+                    whatsappToken: { not: null },
+                    isConfigured: true,
+                },
+                select: { whatsappPhoneId: true, whatsappToken: true },
+            });
+            waPhoneId = adminConfig?.whatsappPhoneId || null;
+            waToken = adminConfig?.whatsappToken || null;
+        }
+
+        // Build WhatsApp message text
+        const paybillInfo = `Account: 0290170458002 (Equity Bank)`;
+        const supportLine = `\n\n💬 Need help? WhatsApp our support team: +254 781 751 937`;
         let message = '';
-        const paybillInfo = 'Paybill: 247247 | Account: 0290170458002';
 
         switch (type) {
             case 'PAYMENT_RECEIVED':
-                subject = '✅ Welcome to BazzAI — Your Portal is now Active';
-                message = `Hi ${user.name || user.companyName || 'Client'},
-
-Great news! Your payment has been confirmed and your BazzAI subscription is now ACTIVE.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 NEXT STEPS — Get Started in 3 Minutes
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣  Login to your dashboard:
-   https://www.bazztech.co.ke/login
-
-2️⃣  Navigate to: Portal → Configure Prompts
-   Set up your AI "Brain" — your custom system prompt and knowledge base.
-
-3️⃣  Add your API credentials (WhatsApp Token, Daraja Keys, etc.)
-   in the API Integration section.
-
-4️⃣  Your AI agent will activate within minutes of completing configuration.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-Need help? Reply to this email or WhatsApp us at +254 781 751 937
-
-Thank you for choosing Bazztech Networks!
-— The Bazztech Team`;
+                message = `✅ *Welcome to BazzAI!*\n\nHi ${user.name || user.companyName || 'Client'},\n\nYour payment has been confirmed and your subscription is now *ACTIVE*! 🎉\n\n*Get started in 3 minutes:*\n1️⃣  Login: https://www.bazztech.co.ke/login\n2️⃣  Go to Portal → Configure Prompts\n3️⃣  Add your API credentials (WhatsApp Token / Daraja Keys)\n4️⃣  Your AI agent activates automatically!\n\nThank you for choosing Bazztech Networks!${supportLine}`;
                 break;
 
-
             case 'MAINTENANCE_RECEIVED':
-                subject = '✅ Maintenance Confirmed — BazzAI';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour monthly maintenance payment has been received. Your subscription has been extended by 30 days.\n\nThank you for your continued partnership.\n\n— Bazztech Networks`;
+                message = `✅ *Maintenance Confirmed — BazzAI*\n\nHi ${user.name || user.companyName || 'Client'},\n\nYour monthly maintenance payment has been received. Your subscription has been extended by 30 days.\n\nThank you for your continued partnership! 🙏${supportLine}`;
                 break;
 
             case 'RENEWAL_DUE':
-                subject = '⏰ Subscription Renewal Due — BazzAI';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription is expiring soon.\n\nTo continue uninterrupted service, please make your maintenance payment:\n${paybillInfo}\n\nAmount: KES ${extra?.amount || 'as agreed'}\n\nThank you!\n\n— Bazztech Networks`;
+                message = `⏰ *Subscription Renewal Due — BazzAI*\n\nHi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription is expiring soon.\n\nTo continue uninterrupted service, please make your renewal payment:\n📌 ${paybillInfo}\n💰 Amount: KES ${extra?.amount || 'as agreed'}${supportLine}`;
                 break;
 
             case 'SUSPENDED':
-                subject = '⚠️ Subscription Suspended — BazzAI';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour BazzAI subscription has been suspended due to non-payment.\n\nTo reactivate, please make your payment:\n${paybillInfo}\n\nYour portal will be reactivated within 15 minutes of payment confirmed.\n\n— Bazztech Networks`;
+                message = `⚠️ *Subscription Suspended — BazzAI*\n\nHi ${user.name || user.companyName || 'Client'},\n\nYour subscription has been *suspended* due to non-payment.\n\nTo reactivate within 15 minutes, please pay:\n📌 ${paybillInfo}${supportLine}`;
                 break;
         }
 
-        // Log the notification
+        // Log the notification event
         await db.auditLog.create({
             data: {
                 event: `NOTIFY_${type}`,
@@ -99,25 +105,44 @@ Thank you for choosing Bazztech Networks!
                     userId,
                     email: user.email,
                     subscriptionId,
-                    subject,
+                    clientPhone,
+                    sentVia: 'WhatsApp',
                 }),
             },
         });
 
-        // TODO: Integrate SendGrid/Resend/Gmail SMTP here
-        // For now, we log and return the message for n8n to handle email sending
-        console.log(`[notify] ${type} → ${user.email}: ${subject}`);
+        // Send WhatsApp message via BazzAI Meta Business Account
+        let whatsappResult: any = { skipped: true, reason: 'No client phone or WA credentials available' };
+
+        if (clientPhone && waPhoneId && waToken) {
+            // Normalize phone: strip spaces, ensure no +
+            const toPhone = clientPhone.replace(/\s+/g, '').replace(/^\+/, '');
+
+            const waRes = await fetch(`${META_API}/${waPhoneId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${waToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messaging_product: 'whatsapp',
+                    to: toPhone,
+                    type: 'text',
+                    text: { body: message },
+                }),
+            });
+
+            whatsappResult = await waRes.json();
+            console.log(`[notify] WhatsApp dispatch → ${toPhone}:`, whatsappResult);
+        } else {
+            console.warn(`[notify] SKIPPED WhatsApp dispatch — clientPhone: ${clientPhone}, waPhoneId: ${waPhoneId ? 'set' : 'missing'}, waToken: ${waToken ? 'set' : 'missing'}`);
+        }
 
         return NextResponse.json({
             success: true,
-            notification: {
-                type,
-                to: user.email,
-                toEmail: user.email,
-                phone: '+254 781 751 937',
-                subject,
-                message,
-            },
+            sentVia: 'WhatsApp',
+            clientPhone,
+            whatsappResult,
         });
     } catch (error: any) {
         console.error('[jenga/notify] Error:', error);
