@@ -1,0 +1,110 @@
+{
+  "name": "Bazz_Doc_Master",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "bazz-doc-master",
+        "options": { "responseMode": "lastNode" }
+      },
+      "id": "d11cada9-6fed-4865-a34d-5361f00d6d0f",
+      "name": "Document Upload Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "webhookId": "bazz-doc-master",
+      "notes": "Triggered when a file is uploaded via WhatsApp or Web. Expects multipart/form-data with webhookId field and a file attachment."
+    },
+    {
+      "parameters": {
+        "url": "=https://www.bazztech.co.ke/api/client-config?webhookId={{ $json.body.webhookId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "67e0f644-36db-4252-b468-4fb6fbde2b54",
+      "name": "Fetch Client Extraction Rules",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [208, 0],
+      "notes": "Pulls the client's extraction rules and output schema from the database."
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\n// Pass config fields AND preserve binary data reference from trigger\nreturn [{\n  json: {\n    systemPrompt: config.systemPrompt,\n    businessName: config.businessName,\n    knowledgeBase: config.knowledgeBase,\n    webhookId: config.webhookId\n  }\n}];"
+      },
+      "id": "c799b5cf-11d1-4337-8413-929121659a3e",
+      "name": "Prepare Document Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "text": "Extract all relevant information from the attached document based on your system instructions. Use the readDocument tool to access the file content.",
+        "options": {
+          "systemMessage": "=You are Bazz-Doc, the highly accurate document extraction AI for {{ $json.businessName }}.\n\nYour task:\n{{ $json.systemPrompt }}\n\nReference Material:\n{{ $json.knowledgeBase }}\n\nPlease output the extracted data in strict JSON format only. No preamble, no markdown fences."
+        }
+      },
+      "id": "b78b8442-0d33-43e8-be7f-ff066b05fa63",
+      "name": "Document AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [656, 0]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": { "temperature": 0 }
+      },
+      "id": "f3a425f6-0a89-442c-8ecf-d11c24d0713d",
+      "name": "OpenAI Vision Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [416, 224]
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX: Read binary from the TRIGGER node, not the Code node\nconst triggerItems = $('Document Upload Trigger').all();\nconst item = triggerItems[0];\n\nif (!item.binary || Object.keys(item.binary).length === 0) {\n  return {\n    text: 'No document was attached to this request. Please upload a file (PDF, image, or document).',\n    hasBinary: false\n  };\n}\n\n// Get first binary key (file field name)\nconst binaryKey = Object.keys(item.binary)[0];\nconst binaryData = item.binary[binaryKey];\n\nreturn {\n  text: `Document attached: ${binaryData.fileName || 'file'} (${binaryData.mimeType}). Please analyze and extract all relevant information.`,\n  binary: item.binary,\n  hasBinary: true,\n  fileName: binaryData.fileName,\n  mimeType: binaryData.mimeType\n};\n",
+        "description": "Use this tool to read the uploaded document file from the webhook trigger."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [800, 240],
+      "id": "17b3bdd7-ce7f-4897-8d74-ed795a69c141",
+      "name": "readDocument"
+    },
+    {
+      "parameters": {},
+      "id": "5e765c71-61ff-41d9-b478-51ceb4f4777a",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [624, 224]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Safely parse the AI's JSON output\nconst raw = $input.first().json.output || '';\nlet extractedData;\ntry {\n  // Strip markdown fences if present\n  const clean = raw.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  extractedData = JSON.parse(clean);\n} catch (e) {\n  // If not valid JSON, return the raw text in a wrapper\n  extractedData = { raw_output: raw, parse_error: e.message };\n}\n\nreturn [{ json: { extractedData, success: !extractedData.parse_error } }];"
+      },
+      "id": "51a809e7-c94c-448f-ba18-abbd79274a7c",
+      "name": "Parse Extracted JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1056, 0]
+    }
+  ],
+  "connections": {
+    "Document Upload Trigger": { "main": [[{ "node": "Fetch Client Extraction Rules", "type": "main", "index": 0 }]] },
+    "Fetch Client Extraction Rules": { "main": [[{ "node": "Prepare Document Context", "type": "main", "index": 0 }]] },
+    "Prepare Document Context": { "main": [[{ "node": "Document AI Agent", "type": "main", "index": 0 }]] },
+    "Document AI Agent": { "main": [[{ "node": "Parse Extracted JSON", "type": "main", "index": 0 }]] },
+    "OpenAI Vision Model": { "ai_languageModel": [[{ "node": "Document AI Agent", "type": "ai_languageModel", "index": 0 }]] },
+    "Window Buffer Memory": { "ai_memory": [[{ "node": "Document AI Agent", "type": "ai_memory", "index": 0 }]] },
+    "readDocument": { "ai_tool": [[{ "node": "Document AI Agent", "type": "ai_tool", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}

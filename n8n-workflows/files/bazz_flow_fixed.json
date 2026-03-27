@@ -1,0 +1,263 @@
+{
+  "name": "Bazz-Flow: Jenga API Polling Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
+      },
+      "id": "0031d56e-6476-4714-8de3-4bdb69813548",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-800, 16]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 24 }]
+        }
+      },
+      "id": "bb959a52-8c0e-4b45-a10a-7a6421dff200",
+      "name": "Daily 08:00 EAT",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-800, 416]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/jenga/poll",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "options": {
+          "redirect": { "redirect": { "followRedirects": true, "maxRedirects": 21 } },
+          "timeout": 30000
+        }
+      },
+      "id": "6b4de2c4-7781-4075-b354-d0ac5469899e",
+      "name": "Poll Equity Statement",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-496, 16],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 60000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "poll-success",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2097c13-56ac-4e3e-9968-6dc0ed8cf60e",
+      "name": "Poll Succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-256, 16]
+    },
+    {
+      "parameters": { "options": {} },
+      "id": "58bd017b-64f9-4a8b-97fd-74615d8813bf",
+      "name": "Log Poll Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [0, -48]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "has-matches",
+              "leftValue": "={{ $json.summary.matched }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7892004f-8cc8-48d1-af00-7a8a7be037a2",
+      "name": "Any Matches?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [0, 112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/jenga/notify",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"PAYMENT_RECEIVED\",\n  \"userId\": \"{{ $json.summary.matchedUserId }}\",\n  \"subscriptionId\": \"{{ $json.summary.matchedSubId }}\"\n}",
+        "options": {}
+      },
+      "id": "21883df0-20d2-4e93-a018-65b4cdb21b65",
+      "name": "Send Payment Confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [256, 112]
+    },
+    {
+      "parameters": { "options": {} },
+      "id": "aaf442b9-f0a1-417d-aded-d42a24e402e6",
+      "name": "Log Poll Failure",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/jenga/subscriptions/check",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "options": { "timeout": 30000 }
+      },
+      "id": "6b58dcc3-2fd8-48ae-ad28-5e30bfd3828d",
+      "name": "Check Subscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-496, 416],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 60000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "has-renewals",
+              "leftValue": "={{ $json.renewalReminders.length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "17307ac2-809c-4a91-b43e-e4ccf705ee49",
+      "name": "Any Renewals?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-256, 416]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/jenga/notify",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"RENEWAL_DUE\",\n  \"userId\": \"{{ $json.renewalReminders[0].userId }}\",\n  \"subscriptionId\": \"{{ $json.renewalReminders[0].subscriptionId }}\"\n}",
+        "options": {}
+      },
+      "id": "540c4803-c126-44a7-b393-364feba208bb",
+      "name": "Send Renewal Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [16, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "has-suspended",
+              "leftValue": "={{ $json.suspended.length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "24a69124-1114-4fb1-b3ff-76ce253231e4",
+      "name": "Any Suspended?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-256, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/jenga/notify",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"SUSPENDED\",\n  \"userId\": \"{{ $json.suspended[0] }}\",\n  \"subscriptionId\": \"\"\n}",
+        "options": {}
+      },
+      "id": "8db17527-fa88-4c43-9db0-e073a5f998ca",
+      "name": "Send Suspension Notice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 560]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": { "main": [[{ "node": "Poll Equity Statement", "type": "main", "index": 0 }]] },
+    "Poll Equity Statement": { "main": [[{ "node": "Poll Succeeded?", "type": "main", "index": 0 }]] },
+    "Poll Succeeded?": {
+      "main": [
+        [{ "node": "Log Poll Result", "type": "main", "index": 0 }, { "node": "Any Matches?", "type": "main", "index": 0 }],
+        [{ "node": "Log Poll Failure", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Matches?": { "main": [[{ "node": "Send Payment Confirmation", "type": "main", "index": 0 }]] },
+    "Daily 08:00 EAT": { "main": [[{ "node": "Check Subscriptions", "type": "main", "index": 0 }]] },
+    "Check Subscriptions": {
+      "main": [
+        [{ "node": "Any Renewals?", "type": "main", "index": 0 }, { "node": "Any Suspended?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Any Renewals?": { "main": [[{ "node": "Send Renewal Reminder", "type": "main", "index": 0 }]] },
+    "Any Suspended?": { "main": [[{ "node": "Send Suspension Notice", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}

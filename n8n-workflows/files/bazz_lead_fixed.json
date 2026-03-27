@@ -1,0 +1,126 @@
+{
+  "name": "Bazz_Lead_Master",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 1 }]
+        }
+      },
+      "id": "f26c429d-998b-4ecf-b9bc-adbd22f1b21b",
+      "name": "Hourly Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "notes": "Triggers every hour to review the CRM pipeline and autonomously follow up with leads."
+    },
+    {
+      "parameters": {
+        "url": "https://www.bazztech.co.ke/api/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fbcdd287-a96b-4f11-8c7c-ada285a0b7e8",
+      "name": "Fetch Leads Pipeline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [208, 0],
+      "notes": "Pulls all leads grouped by stage (LEAD, CONTACTED, PROSPECTIVE)."
+    },
+    {
+      "parameters": {
+        "text": "=Review these leads and determine the best approach to follow up with them via WhatsApp. For leads that need outreach, use the SendWhatsApp tool. For leads that qualify as prospects, use the UpdateCRMStage tool to move them to PROSPECTIVE.\n\nLeads Data:\n{{ JSON.stringify($json.leads) }}",
+        "options": {
+          "systemMessage": "You are Bazz-Lead, the autonomous AI Sales Manager for Bazztech Networks. Your job is to analyze the CRM pipeline, identify leads needing follow-up, send WhatsApp messages, and update their CRM status. Be concise and professional in all communications."
+        }
+      },
+      "id": "c45ed96e-7cc2-4f24-8413-b79c26d03377",
+      "name": "Bazz-Lead CRM Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [464, 0],
+      "notes": "LangChain ReAct Agent that manages the pipeline autonomously via its tools."
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": { "temperature": 0.2 }
+      },
+      "id": "c7b94e85-79ed-4516-b9ab-da12f2029753",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [336, 224]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.bazztech.co.ke/api/leads/stage",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            { "name": "leadId", "value": "{leadId}" },
+            { "name": "stage", "value": "{newStage}" }
+          ]
+        },
+        "description": "Updates a lead's CRM stage. Parameters: leadId (string), newStage (one of: LEAD, CONTACTED, PROSPECTIVE, SALE)"
+      },
+      "id": "fad9d33a-ea13-43d5-a027-3831ee341c8e",
+      "name": "UpdateCRMStage",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [512, 224]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $vars.WHATSAPP_PHONE_ID }}/messages",
+        "authentication": "headerAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            { "name": "Authorization", "value": "=Bearer {{ $vars.WHATSAPP_SYSTEM_TOKEN }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            { "name": "messaging_product", "value": "whatsapp" },
+            { "name": "recipient_type", "value": "individual" },
+            { "name": "to", "value": "{phoneNumber}" },
+            { "name": "type", "value": "text" },
+            { "name": "text", "value": "{\"body\": \"{message}\"}" }
+          ]
+        },
+        "description": "Sends a WhatsApp message to a lead. Parameters: phoneNumber (with country code, e.g. 254712345678), message (the text to send)"
+      },
+      "id": "9c70ee2d-101f-46bd-9175-cf5d156274a9",
+      "name": "SendWhatsApp",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [704, 208]
+    }
+  ],
+  "connections": {
+    "Hourly Schedule Trigger": { "main": [[{ "node": "Fetch Leads Pipeline", "type": "main", "index": 0 }]] },
+    "Fetch Leads Pipeline": { "main": [[{ "node": "Bazz-Lead CRM Agent", "type": "main", "index": 0 }]] },
+    "OpenAI Chat Model": { "ai_languageModel": [[{ "node": "Bazz-Lead CRM Agent", "type": "ai_languageModel", "index": 0 }]] },
+    "UpdateCRMStage": { "ai_tool": [[{ "node": "Bazz-Lead CRM Agent", "type": "ai_tool", "index": 0 }]] },
+    "SendWhatsApp": { "ai_tool": [[{ "node": "Bazz-Lead CRM Agent", "type": "ai_tool", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}

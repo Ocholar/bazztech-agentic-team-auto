@@ -1,0 +1,119 @@
+{
+  "name": "Bazz_Connect_Master",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "bazz-connect-master",
+        "options": {}
+      },
+      "id": "c8461ff6-d76c-4cb3-972c-836c8c78b5ae",
+      "name": "WhatsApp Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-48, 0],
+      "webhookId": "bazz-connect-master",
+      "notes": "Receives incoming WhatsApp messages from the Meta API. Body: { webhookId, from, message }"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.bazztech.co.ke/api/client-config?webhookId={{ $json.body.webhookId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "bz_prod_937_sync_8822" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "02bfaa36-e46e-49bb-af7e-f28f121c6ac6",
+      "name": "Fetch Client AI Config",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [160, 0],
+      "notes": "Pulls System Prompt, Knowledge Base, and Meta Token for this business from our database."
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = $input.first().json;\nif (config.error) {\n  throw new Error(`Client config error: ${config.error}`);\n}\n\nconst incoming = $('WhatsApp Webhook Trigger').first().json.body;\n\nreturn [{\n  json: {\n    webhookId: config.webhookId,\n    product: config.product,\n    businessName: config.businessName,\n    systemPrompt: config.systemPrompt,\n    knowledgeBase: config.knowledgeBase,\n    whatsappPhoneId: config.whatsapp.phoneId,\n    whatsappToken: config.whatsapp.token,\n    userMessage: incoming.message,\n    userPhone: incoming.from,\n    sessionId: incoming.from\n  }\n}];"
+      },
+      "id": "365ceb45-6162-412f-994c-3dd5a828a7ac",
+      "name": "Prepare AI Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [352, 0],
+      "notes": "Merges the client's dynamic prompt with the incoming user message."
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.userMessage }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}\n\n## Your Knowledge Base:\n{{ $json.knowledgeBase }}\n\n## Your business name: {{ $json.businessName }}\n\nAlways be helpful, concise, and professional."
+        }
+      },
+      "id": "3cfae5b7-9bfc-4a6f-9919-8f63cfd930ee",
+      "name": "Advanced AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [608, 0]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": { "temperature": 0.3 }
+      },
+      "id": "053a7ab9-6d1c-4db3-a8b1-8bb5a163d94b",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [448, 256]
+    },
+    {
+      "parameters": { "contextWindowLength": 10 },
+      "id": "3c7d8b48-7681-4f2d-ab2e-88b0419cfd98",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [640, 256]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $('Prepare AI Context').first().json.whatsappPhoneId }}/messages",
+        "authentication": "headerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $('Prepare AI Context').first().json.whatsappToken }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "messaging_product", "value": "whatsapp" },
+            { "name": "recipient_type", "value": "individual" },
+            { "name": "to", "value": "={{ $('Prepare AI Context').first().json.userPhone }}" },
+            { "name": "type", "value": "text" },
+            { "name": "text.body", "value": "={{ $json.output }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c20f47-5e55-477f-83d9-708fcc74b426",
+      "name": "Send Multi-Tenant WhatsApp Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [912, 0],
+      "notes": "Sends AI response back via client's WhatsApp Business account."
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook Trigger": { "main": [[{ "node": "Fetch Client AI Config", "type": "main", "index": 0 }]] },
+    "Fetch Client AI Config": { "main": [[{ "node": "Prepare AI Context", "type": "main", "index": 0 }]] },
+    "Prepare AI Context": { "main": [[{ "node": "Advanced AI Agent", "type": "main", "index": 0 }]] },
+    "Advanced AI Agent": { "main": [[{ "node": "Send Multi-Tenant WhatsApp Reply", "type": "main", "index": 0 }]] },
+    "OpenAI Chat Model": { "ai_languageModel": [[{ "node": "Advanced AI Agent", "type": "ai_languageModel", "index": 0 }]] },
+    "Window Buffer Memory": { "ai_memory": [[{ "node": "Advanced AI Agent", "type": "ai_memory", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": true }
+}
