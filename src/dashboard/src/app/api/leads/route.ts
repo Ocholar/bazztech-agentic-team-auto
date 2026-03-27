@@ -1,45 +1,52 @@
-export const dynamic = 'force-dynamic';
-import { db } from '@/lib/db';
-import { NextResponse } from 'next/server';
+// FILE: src/app/api/leads/route.ts
+// PURPOSE: Fetch all leads for the authenticated internal API caller (n8n Bazz-Lead)
+// Called by: Bazz_Lead_Master n8n workflow every hour
 
-/**
- * GET /api/leads?stage=LEAD&limit=20
- *
- * This endpoint is used by the Autonomous Sales Agent (n8n workflow)
- * to fetch a list of leads that need to be contacted.
- * It is protected by a simple API key (in a real app, use a strong shared secret).
- */
-export async function GET(req: Request) {
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+
+const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY;
+
+export async function GET(req: NextRequest) {
+    // Auth guard — only n8n internal caller allowed
+    const apiKey = req.headers.get("x-api-key");
+    if (!INTERNAL_API_KEY || apiKey !== INTERNAL_API_KEY) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     try {
-        const apiKey = req.headers.get('x-api-key');
-        if (apiKey !== process.env.INTERNAL_API_KEY) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const { searchParams } = new URL(req.url);
-        const stage = searchParams.get('stage') || 'LEAD';
-        const limit = parseInt(searchParams.get('limit') || '20', 10);
-
-        // Ensure stage is a valid enum value to prevent malicious queries
-        const validStages = ['LEAD', 'CONTACTED', 'PROSPECTIVE', 'SALE'];
-        if (!validStages.includes(stage)) {
-            return NextResponse.json({ error: 'Invalid stage parameter.' }, { status: 400 });
-        }
-
+        // Fetch all leads grouped by stage, joined with user info
         const leads = await db.lead.findMany({
-            where: {
-                stage: stage as any, // Cast to any to satisfy Prisma enum matching
-            },
-            take: limit,
-            orderBy: {
-                createdAt: 'asc', // Process oldest uncontacted leads first
+            orderBy: { createdAt: "desc" },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        companyName: true,
+                    },
+                },
             },
         });
 
-        return NextResponse.json(leads);
+        // Group by stage for the AI agent
+        const grouped = {
+            LEAD: leads.filter((l: any) => l.stage === "LEAD"),
+            CONTACTED: leads.filter((l: any) => l.stage === "CONTACTED"),
+            PROSPECTIVE: leads.filter((l: any) => l.stage === "PROSPECTIVE"),
+            SALE: leads.filter((l: any) => l.stage === "SALE"),
+        };
 
+        return NextResponse.json({
+            success: true,
+            leads: grouped,
+            total: leads.length,
+        });
     } catch (error) {
-        console.error('[leads-api] GET Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error("[/api/leads] Error:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch leads", details: String(error) },
+            { status: 500 }
+        );
     }
 }
