@@ -30,10 +30,14 @@ rl.question('1. Paste your INTERNAL_API_KEY from Vercel: ', (internalApiKey) => 
                 if (fs.existsSync(filePath)) {
                     let content = fs.readFileSync(filePath, 'utf-8');
 
-                    // Replace n8n $vars syntax directly with the hardcoded strings
+                    // Replace n8n $vars syntax — both expression and inline formats
                     content = content.replaceAll("={{ $vars.INTERNAL_API_KEY }}", internalApiKey);
                     content = content.replaceAll("={{ $vars.WHATSAPP_PHONE_ID }}", phoneId);
                     content = content.replaceAll("={{ $vars.WHATSAPP_SYSTEM_TOKEN }}", systemToken);
+                    // Also handle double-brace inline format (used in toolHttpRequest nodes)
+                    content = content.replaceAll("{{ $vars.INTERNAL_API_KEY }}", internalApiKey);
+                    content = content.replaceAll("{{ $vars.WHATSAPP_PHONE_ID }}", phoneId);
+                    content = content.replaceAll("{{ $vars.WHATSAPP_SYSTEM_TOKEN }}", systemToken);
 
                     fs.writeFileSync(filePath, content, 'utf-8');
                     console.log(`✅ Patched: ${file}`);

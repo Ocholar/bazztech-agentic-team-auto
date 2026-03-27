@@ -86,12 +86,12 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://graph.facebook.com/v19.0/{{ $vars.WHATSAPP_PHONE_ID }}/messages",
+        "url": "=https://graph.facebook.com/v19.0/880774405122197/messages",
         "authentication": "headerAuth",
         "sendHeaders": true,
         "parametersHeaders": {
           "values": [
-            { "name": "Authorization", "value": "=Bearer {{ $vars.WHATSAPP_SYSTEM_TOKEN }}" },
+            { "name": "Authorization", "value": "=Bearer EAAblTVbhiH0BRPiZAEi0bMTj7GZCFzOPBqeQ76qqQf4P0elzqyn3Dq8vlUX8Cr7ZC99g4fxYwZC3wcRwSmXxNjXv6wZDZD" },
             { "name": "Content-Type", "value": "application/json" }
           ]
         },
