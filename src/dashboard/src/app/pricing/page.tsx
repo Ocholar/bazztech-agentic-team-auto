@@ -1,12 +1,24 @@
 "use client";
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
 import { Check, Info, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PricingPage() {
+const PRODUCT_LABELS: Record<string, string> = {
+    BAZZ_CONNECT: 'Bazz-Connect (WhatsApp AI)',
+    BAZZ_FLOW: 'Bazz-Flow (M-Pesa ERP)',
+    BAZZ_DOC: 'Bazz-Doc (AI Documents)',
+    BAZZ_LEAD: 'Bazz-Lead (CRM Agent)',
+};
+
+function PricingContent() {
     const [tier, setTier] = useState<'MICRO' | 'SMALL' | 'MEDIUM'>('MICRO');
+    const searchParams = useSearchParams();
+    const productParam = searchParams.get('product') || '';
+    const productLabel = PRODUCT_LABELS[productParam] || 'BazzAI';
 
     const pricing = {
         MICRO: { size: '1-5 employees', price: 1500, maintenance: 300 },
@@ -15,10 +27,10 @@ export default function PricingPage() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white dark:bg-zinc-950">
+        <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
             <div className="max-w-4xl w-full text-center mb-12">
                 <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 border-b pb-4 mb-4">
-                    Simple, Tiered Pricing. <span className="text-red-600">No Hidden Costs.</span>
+                    {productLabel} — <span className="text-red-600">Simple, Tiered Pricing.</span>
                 </h1>
                 <p className="text-lg text-slate-600">
                     BazzAI scales with your business. Pay a one-time setup fee, then a 20% flat monthly maintenance to keep your AI Brain active.
@@ -38,11 +50,10 @@ export default function PricingPage() {
                                 <button
                                     key={t}
                                     onClick={() => setTier(t)}
-                                    className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                                        tier === t 
-                                        ? "border-red-600 bg-red-50 ring-2 ring-red-100" 
-                                        : "border-slate-100 bg-white hover:border-slate-200"
-                                    }`}
+                                    className={`w-full p-4 rounded-lg border-2 text-left transition-all ${tier === t
+                                            ? "border-red-600 bg-red-50 ring-2 ring-red-100"
+                                            : "border-slate-100 bg-white hover:border-slate-200"
+                                        }`}
                                 >
                                     <div className="flex justify-between items-center mb-1">
                                         <span className={`font-bold ${tier === t ? "text-red-700" : "text-slate-900"}`}>{t}</span>
@@ -67,7 +78,7 @@ export default function PricingPage() {
                         Selected
                     </div>
                     <CardHeader className="text-center pt-10">
-                        <CardTitle className="text-3xl font-bold">Your {tier} AI Bundle</CardTitle>
+                        <CardTitle className="text-3xl font-bold">Your {tier} {productLabel} Bundle</CardTitle>
                         <CardDescription className="text-lg">One-time payment + monthly upkeep</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-8 px-10">
@@ -98,7 +109,7 @@ export default function PricingPage() {
                         </ul>
 
                         <div className="pt-6">
-                            <Link href="/register" className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-red-600 px-6 py-4 text-lg font-bold text-white hover:bg-red-700 shadow-lg shadow-red-200 transition-transform active:scale-95">
+                            <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-2 rounded-md bg-red-600 px-6 py-4 text-lg font-bold text-white hover:bg-red-700 shadow-lg shadow-red-200 transition-transform active:scale-95">
                                 Start Your Onboarding <ArrowRight size={20} />
                             </Link>
                         </div>
@@ -106,5 +117,13 @@ export default function PricingPage() {
                 </Card>
             </div>
         </main>
+    );
+}
+
+export default function PricingPage() {
+    return (
+        <Suspense fallback={null}>
+            <PricingContent />
+        </Suspense>
     );
 }

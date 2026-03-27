@@ -12,14 +12,21 @@ export async function saveProductConfig(formData: FormData) {
     const systemPrompt = formData.get('systemPrompt') as string;
     const knowledgeBase = formData.get('knowledgeBase') as string;
     const configId = formData.get('configId') as string;
+    const leadNotifyEmail = formData.get('leadNotifyEmail') as string | null;
+
+    const hasCore = !!systemPrompt;
 
     if (configId) {
         await db.productConfig.update({
             where: { id: configId, userId },
-            data: { systemPrompt, knowledgeBase }
+            data: {
+                systemPrompt,
+                knowledgeBase,
+                ...(leadNotifyEmail ? { leadNotifyEmail } : {}),
+                ...(hasCore ? { isConfigured: true } : {}),
+            }
         });
     } else {
-        // Find an active subscription to link to
         const sub = await db.subscription.findFirst({
             where: { userId, status: 'ACTIVE' }
         });
@@ -31,7 +38,8 @@ export async function saveProductConfig(formData: FormData) {
                 userId,
                 subscriptionId: sub.id,
                 systemPrompt,
-                knowledgeBase
+                knowledgeBase,
+                isConfigured: hasCore,
             }
         });
     }
@@ -45,15 +53,53 @@ export async function saveApiKeys(formData: FormData) {
     if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
 
     const userId = session.user.id;
-    const whatsappPhoneId = formData.get('whatsappPhoneId') as string;
-    const whatsappToken = formData.get('whatsappToken') as string;
     const configId = formData.get('configId') as string;
-
     if (!configId) throw new Error("Please save your Persona Configuration first before adding API Keys.");
+
+    // WhatsApp (Bazz-Connect)
+    const whatsappPhoneId = formData.get('whatsappPhoneId') as string | null;
+    const whatsappToken = formData.get('whatsappToken') as string | null;
+    const whatsappUrl = formData.get('whatsappUrl') as string | null;
+
+    // Bazz-Flow (Daraja)
+    const darajaConsumerKey = formData.get('darajaConsumerKey') as string | null;
+    const darajaConsumerSecret = formData.get('darajaConsumerSecret') as string | null;
+    const darajaShortcode = formData.get('darajaShortcode') as string | null;
+    const darajaPasskey = formData.get('darajaPasskey') as string | null;
+    const darajaCallbackUrl = formData.get('darajaCallbackUrl') as string | null;
+    const erpWebhookUrl = formData.get('erpWebhookUrl') as string | null;
+
+    // Bazz-Doc (OpenAI)
+    const openaiApiKey = formData.get('openaiApiKey') as string | null;
+    const docOutputWebhook = formData.get('docOutputWebhook') as string | null;
+
+    // Bazz-Lead (Meta / CRM)
+    const metaPageAccessToken = formData.get('metaPageAccessToken') as string | null;
+    const metaPageId = formData.get('metaPageId') as string | null;
+    const crmWebhookUrl = formData.get('crmWebhookUrl') as string | null;
+
+    // Determine if all essential credentials are now present for any product
+    const isNowConfigured = !!(whatsappToken || darajaConsumerKey || openaiApiKey || metaPageAccessToken);
+
+    const updateData: Record<string, any> = { ...(isNowConfigured ? { isConfigured: true } : {}) };
+    if (whatsappPhoneId) updateData.whatsappPhoneId = whatsappPhoneId;
+    if (whatsappToken) updateData.whatsappToken = whatsappToken;
+    if (whatsappUrl) updateData.whatsappUrl = whatsappUrl;
+    if (darajaConsumerKey) updateData.darajaConsumerKey = darajaConsumerKey;
+    if (darajaConsumerSecret) updateData.darajaConsumerSecret = darajaConsumerSecret;
+    if (darajaShortcode) updateData.darajaShortcode = darajaShortcode;
+    if (darajaPasskey) updateData.darajaPasskey = darajaPasskey;
+    if (darajaCallbackUrl) updateData.darajaCallbackUrl = darajaCallbackUrl;
+    if (erpWebhookUrl) updateData.erpWebhookUrl = erpWebhookUrl;
+    if (openaiApiKey) updateData.openaiApiKey = openaiApiKey;
+    if (docOutputWebhook) updateData.docOutputWebhook = docOutputWebhook;
+    if (metaPageAccessToken) updateData.metaPageAccessToken = metaPageAccessToken;
+    if (metaPageId) updateData.metaPageId = metaPageId;
+    if (crmWebhookUrl) updateData.crmWebhookUrl = crmWebhookUrl;
 
     await db.productConfig.update({
         where: { id: configId, userId },
-        data: { whatsappPhoneId, whatsappToken }
+        data: updateData,
     });
 
     revalidatePath('/portal/config');

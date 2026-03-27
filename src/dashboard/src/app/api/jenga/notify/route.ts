@@ -48,7 +48,30 @@ export async function POST(req: Request) {
         switch (type) {
             case 'PAYMENT_RECEIVED':
                 subject = '✅ Welcome to BazzAI — Your Portal is now Active';
-                message = `Hi ${user.name || user.companyName || 'Client'},\n\nYour setup payment has been confirmed. Your AI Agentic workflows are now ACTIVE.\n\nLogin here: https://bazztech.co.ke/login\n\nThank you for choosing Bazztech!\n\n— Bazztech Networks`;
+                message = `Hi ${user.name || user.companyName || 'Client'},
+
+Great news! Your payment has been confirmed and your BazzAI subscription is now ACTIVE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 NEXT STEPS — Get Started in 3 Minutes
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣  Login to your dashboard:
+   https://www.bazztech.co.ke/login
+
+2️⃣  Navigate to: Portal → Configure Prompts
+   Set up your AI "Brain" — your custom system prompt and knowledge base.
+
+3️⃣  Add your API credentials (WhatsApp Token, Daraja Keys, etc.)
+   in the API Integration section.
+
+4️⃣  Your AI agent will activate within minutes of completing configuration.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Need help? Reply to this email or WhatsApp us at +254 XXX XXX XXX
+
+Thank you for choosing Bazztech Networks!
+— The Bazztech Team`;
                 break;
 
 

@@ -4,93 +4,77 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 /**
- * POST /api/jenga/subscriptions/check
- * Daily lifecycle management — called by n8n cron once per day.
+ * GET /api/jenga/subscriptions/check
+ * Daily subscription lifecycle check called by Bazz-Flow n8n workflow.
+ * Returns:
+ *   { renewalReminders: [{ userId, subscriptionId }], suspended: [userId] }
  *
- * Actions:
- *  1. Find subscriptions expiring in ≤ 3 days → flag for renewal reminder
- *  2. Find subscriptions expired > 24h → suspend
- *
- * Returns summary of actions taken.
+ * Protected by: x-api-key header = INTERNAL_API_KEY
  */
-export async function POST(req: Request) {
-    try {
-        const apiKey = req.headers.get('x-api-key');
-        if (apiKey !== process.env.INTERNAL_API_KEY) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+export async function GET(req: Request) {
+    const apiKey = req.headers.get('x-api-key');
+    if (apiKey !== process.env.INTERNAL_API_KEY) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
+    try {
         const now = new Date();
         const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-        // 1. Find active subs expiring within 3 days (renewal reminders)
-        const expiringSubscriptions = await db.subscription.findMany({
+        // Find ACTIVE subscriptions expiring in the next 3 days
+        const expiringSoon = await db.subscription.findMany({
             where: {
                 status: 'ACTIVE',
                 expiresAt: {
                     lte: threeDaysFromNow,
-                    gt: now,
+                    gte: now,
                 },
             },
-            include: { user: true },
+            select: { id: true, userId: true, productType: true, expiresAt: true },
         });
 
-        // 2. Find expired subs that should be suspended (expired > 24h ago)
-        const expiredSubscriptions = await db.subscription.findMany({
+        // Find ACTIVE subscriptions that have already expired (should be suspended)
+        const expired = await db.subscription.findMany({
             where: {
                 status: 'ACTIVE',
                 expiresAt: {
-                    lte: oneDayAgo,
+                    lt: now,
                 },
             },
-            include: { user: true },
+            select: { id: true, userId: true },
         });
 
-        // Suspend expired subscriptions
-        const suspendedIds: string[] = [];
-        for (const sub of expiredSubscriptions) {
-            await db.subscription.update({
-                where: { id: sub.id },
+        // Auto-suspend expired subscriptions
+        if (expired.length > 0) {
+            const expiredIds = expired.map((s: any) => s.id);
+            await db.subscription.updateMany({
+                where: { id: { in: expiredIds } },
                 data: { status: 'SUSPENDED' },
             });
-            suspendedIds.push(sub.id);
 
+            // Audit log the batch suspension
             await db.auditLog.create({
                 data: {
-                    event: 'SUB_SUSPENDED',
+                    event: 'BATCH_SUSPEND',
                     detail: JSON.stringify({
-                        subscriptionId: sub.id,
-                        userId: sub.userId,
-                        productType: sub.productType,
-                        expiredAt: sub.expiresAt,
+                        count: expired.length,
+                        ids: expiredIds,
+                        reason: 'expiresAt passed with no renewal payment',
                     }),
                 },
             });
         }
 
-        // Log the check
-        await db.auditLog.create({
-            data: {
-                event: 'LIFECYCLE_CHECK',
-                detail: JSON.stringify({
-                    checkedAt: now.toISOString(),
-                    expiringCount: expiringSubscriptions.length,
-                    suspendedCount: expiredSubscriptions.length,
-                }),
-            },
-        });
-
         return NextResponse.json({
             success: true,
-            renewalReminders: expiringSubscriptions.map((s) => ({
-                subscriptionId: s.id,
+            renewalReminders: expiringSoon.map((s: any) => ({
                 userId: s.userId,
-                email: s.user.email,
+                subscriptionId: s.id,
                 productType: s.productType,
                 expiresAt: s.expiresAt,
             })),
-            suspended: suspendedIds,
+            suspended: expired.map((s: any) => s.userId),
+            processedAt: new Date().toISOString(),
         });
     } catch (error: any) {
         console.error('[jenga/subscriptions/check] Error:', error);
