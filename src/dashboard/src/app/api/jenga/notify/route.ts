@@ -68,7 +68,7 @@ Great news! Your payment has been confirmed and your BazzAI subscription is now 
 4️⃣  Your AI agent will activate within minutes of completing configuration.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-Need help? Reply to this email or WhatsApp us at +254 XXX XXX XXX
+Need help? Reply to this email or WhatsApp us at +254 781 751 937
 
 Thank you for choosing Bazztech Networks!
 — The Bazztech Team`;
@@ -113,6 +113,8 @@ Thank you for choosing Bazztech Networks!
             notification: {
                 type,
                 to: user.email,
+                toEmail: user.email,
+                phone: '+254 781 751 937',
                 subject,
                 message,
             },
