@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getJengaToken, getAccountStatement, formatDate } from '@/lib/jenga';
+import { apiRateLimiter } from '@/lib/rate-limiter';
+import { logger } from '@/lib/logger';
 
 const ACCOUNT_NUMBER = process.env.EQUITY_ACCOUNT_NUMBER || '0290170458002';
 const COUNTRY_CODE = process.env.EQUITY_COUNTRY_CODE || 'KE';
@@ -25,6 +27,14 @@ const COUNTRY_CODE = process.env.EQUITY_COUNTRY_CODE || 'KE';
  */
 export async function POST(req: Request) {
     try {
+        const ip = req.headers.get('x-forwarded-for') || 'unknown';
+        try {
+            await apiRateLimiter.consume(ip);
+        } catch (rateLimitError) {
+            logger.warn('Rate limit exceeded for Jenga check-status API', { ip });
+            return NextResponse.json({ error: 'Too Many Requests' }, { status: 429 });
+        }
+
         const body = await req.json();
         const { subscriptionId, transactionId } = body as {
             subscriptionId: string;
@@ -252,7 +262,7 @@ export async function POST(req: Request) {
             });
         }
     } catch (error: any) {
-        console.error('[jenga/check-status] Error:', error);
+        logger.error('Jenga check-status Error', error);
         return NextResponse.json({ error: error.message || 'Internal Error' }, { status: 500 });
     }
 }

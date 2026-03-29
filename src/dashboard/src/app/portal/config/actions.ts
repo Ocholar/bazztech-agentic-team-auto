@@ -3,49 +3,91 @@
 import { auth } from '../../../../auth';
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+
+const saveConfigSchema = z.object({
+    configId: z.string().optional(),
+    systemPrompt: z.string().max(10000).optional(),
+    knowledgeBase: z.string().max(50000).optional(),
+    leadNotifyEmail: z.string().email().optional().or(z.literal('')),
+});
+
+const saveApiKeysSchema = z.object({
+    configId: z.string().min(1, "Configuration required"),
+    whatsappPhoneId: z.string().optional(),
+    whatsappToken: z.string().optional(),
+    whatsappUrl: z.string().optional(),
+    darajaConsumerKey: z.string().optional(),
+    darajaConsumerSecret: z.string().optional(),
+    darajaShortcode: z.string().optional(),
+    darajaPasskey: z.string().optional(),
+    darajaCallbackUrl: z.string().optional(),
+    erpWebhookUrl: z.string().url().optional().or(z.literal('')),
+    openaiApiKey: z.string().optional(),
+    docOutputWebhook: z.string().url().optional().or(z.literal('')),
+    metaPageAccessToken: z.string().optional(),
+    metaPageId: z.string().optional(),
+    crmWebhookUrl: z.string().url().optional().or(z.literal('')),
+});
 
 export async function saveProductConfig(formData: FormData) {
     const session = await auth();
     if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
-
     const userId = session.user.id;
-    const systemPrompt = formData.get('systemPrompt') as string;
-    const knowledgeBase = formData.get('knowledgeBase') as string;
-    const configId = formData.get('configId') as string;
-    const leadNotifyEmail = formData.get('leadNotifyEmail') as string | null;
 
-    const hasCore = !!systemPrompt;
+    try {
+        const rawData = Object.fromEntries(formData.entries());
+        const validated = saveConfigSchema.parse(rawData);
 
-    if (configId) {
-        await db.productConfig.update({
-            where: { id: configId, userId },
-            data: {
-                systemPrompt,
-                knowledgeBase,
-                ...(leadNotifyEmail ? { leadNotifyEmail } : {}),
-                ...(hasCore ? { isConfigured: true } : {}),
+        const hasCore = !!validated.systemPrompt;
+
+        if (validated.configId) {
+            // Verify ownership to prevent IDOR
+            const existingConfig = await db.productConfig.findFirst({
+                where: { id: validated.configId, userId },
+                select: { id: true }
+            });
+
+            if (!existingConfig) {
+                console.warn(`[SECURITY] User ${userId} attempted to modify config ${validated.configId} without ownership`);
+                throw new Error("Configuration not found or access denied");
             }
-        });
-    } else {
-        const sub = await db.subscription.findFirst({
-            where: { userId, status: 'ACTIVE' }
-        });
 
-        if (!sub) throw new Error("No active subscription found to configure.");
+            await db.productConfig.update({
+                where: { id: validated.configId },
+                data: {
+                    systemPrompt: validated.systemPrompt,
+                    knowledgeBase: validated.knowledgeBase,
+                    ...(validated.leadNotifyEmail ? { leadNotifyEmail: validated.leadNotifyEmail } : {}),
+                    ...(hasCore ? { isConfigured: true } : {}),
+                }
+            });
+        } else {
+            const sub = await db.subscription.findFirst({
+                where: { userId, status: 'ACTIVE' }
+            });
 
-        await db.productConfig.create({
-            data: {
-                userId,
-                subscriptionId: sub.id,
-                systemPrompt,
-                knowledgeBase,
-                isConfigured: hasCore,
-            }
-        });
+            if (!sub) throw new Error("No active subscription found to configure.");
+
+            await db.productConfig.create({
+                data: {
+                    userId,
+                    subscriptionId: sub.id,
+                    systemPrompt: validated.systemPrompt,
+                    knowledgeBase: validated.knowledgeBase,
+                    ...((hasCore ? { isConfigured: true } : {}) as any),
+                }
+            });
+        }
+
+        revalidatePath('/portal/config');
+        return { success: true, message: "Configuration saved successfully" };
+    } catch (e: any) {
+        if (e instanceof z.ZodError) {
+            return { success: false, error: (e as any).errors[0].message };
+        }
+        return { success: false, error: e.message || "Failed to save configuration" };
     }
-
-    revalidatePath('/portal/config');
-    return { success: true };
 }
 
 export async function saveApiKeys(formData: FormData) {
@@ -53,57 +95,46 @@ export async function saveApiKeys(formData: FormData) {
     if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
 
     const userId = session.user.id;
-    const configId = formData.get('configId') as string;
-    if (!configId) throw new Error("Please save your Persona Configuration first before adding API Keys.");
 
-    // WhatsApp (Bazz-Connect)
-    const whatsappPhoneId = formData.get('whatsappPhoneId') as string | null;
-    const whatsappToken = formData.get('whatsappToken') as string | null;
-    const whatsappUrl = formData.get('whatsappUrl') as string | null;
+    try {
+        const rawData = Object.fromEntries(formData.entries());
+        const validated = saveApiKeysSchema.parse(rawData);
 
-    // Bazz-Flow (Daraja)
-    const darajaConsumerKey = formData.get('darajaConsumerKey') as string | null;
-    const darajaConsumerSecret = formData.get('darajaConsumerSecret') as string | null;
-    const darajaShortcode = formData.get('darajaShortcode') as string | null;
-    const darajaPasskey = formData.get('darajaPasskey') as string | null;
-    const darajaCallbackUrl = formData.get('darajaCallbackUrl') as string | null;
-    const erpWebhookUrl = formData.get('erpWebhookUrl') as string | null;
+        // Explicit IDOR check: ensure user owns this configId
+        const existingConfig = await db.productConfig.findFirst({
+            where: { id: validated.configId, userId },
+            select: { id: true }
+        });
 
-    // Bazz-Doc (OpenAI)
-    const openaiApiKey = formData.get('openaiApiKey') as string | null;
-    const docOutputWebhook = formData.get('docOutputWebhook') as string | null;
+        if (!existingConfig) {
+            console.warn(`[SECURITY] User ${userId} attempted to modify keys for config ${validated.configId}`);
+            throw new Error("Configuration not found or access denied");
+        }
 
-    // Bazz-Lead (Meta / CRM)
-    const metaPageAccessToken = formData.get('metaPageAccessToken') as string | null;
-    const metaPageId = formData.get('metaPageId') as string | null;
-    const crmWebhookUrl = formData.get('crmWebhookUrl') as string | null;
+        const isNowConfigured = !!(validated.whatsappToken || validated.darajaConsumerKey || validated.openaiApiKey || validated.metaPageAccessToken);
 
-    // Determine if all essential credentials are now present for any product
-    const isNowConfigured = !!(whatsappToken || darajaConsumerKey || openaiApiKey || metaPageAccessToken);
+        const updateData: Record<string, any> = { ...(isNowConfigured ? { isConfigured: true } : {}) };
 
-    const updateData: Record<string, any> = { ...(isNowConfigured ? { isConfigured: true } : {}) };
-    if (whatsappPhoneId) updateData.whatsappPhoneId = whatsappPhoneId;
-    if (whatsappToken) updateData.whatsappToken = whatsappToken;
-    if (whatsappUrl) updateData.whatsappUrl = whatsappUrl;
-    if (darajaConsumerKey) updateData.darajaConsumerKey = darajaConsumerKey;
-    if (darajaConsumerSecret) updateData.darajaConsumerSecret = darajaConsumerSecret;
-    if (darajaShortcode) updateData.darajaShortcode = darajaShortcode;
-    if (darajaPasskey) updateData.darajaPasskey = darajaPasskey;
-    if (darajaCallbackUrl) updateData.darajaCallbackUrl = darajaCallbackUrl;
-    if (erpWebhookUrl) updateData.erpWebhookUrl = erpWebhookUrl;
-    if (openaiApiKey) updateData.openaiApiKey = openaiApiKey;
-    if (docOutputWebhook) updateData.docOutputWebhook = docOutputWebhook;
-    if (metaPageAccessToken) updateData.metaPageAccessToken = metaPageAccessToken;
-    if (metaPageId) updateData.metaPageId = metaPageId;
-    if (crmWebhookUrl) updateData.crmWebhookUrl = crmWebhookUrl;
+        // Only append explicitly provided values
+        const fields = ['whatsappPhoneId', 'whatsappToken', 'whatsappUrl', 'darajaConsumerKey', 'darajaConsumerSecret', 'darajaShortcode', 'darajaPasskey', 'darajaCallbackUrl', 'erpWebhookUrl', 'openaiApiKey', 'docOutputWebhook', 'metaPageAccessToken', 'metaPageId', 'crmWebhookUrl'] as const;
 
-    await db.productConfig.update({
-        where: { id: configId, userId },
-        data: updateData,
-    });
+        for (const field of fields) {
+            if (validated[field]) updateData[field] = validated[field];
+        }
 
-    revalidatePath('/portal/config');
-    return { success: true };
+        await db.productConfig.update({
+            where: { id: validated.configId },
+            data: updateData,
+        });
+
+        revalidatePath('/portal/config');
+        return { success: true };
+    } catch (e: any) {
+        if (e instanceof z.ZodError) {
+            return { success: false, error: "Validation failed: " + (e as any).errors[0].message };
+        }
+        return { success: false, error: e.message || "Failed to save API keys" };
+    }
 }
 
 export async function triggerTestWorkflow() {
@@ -138,11 +169,19 @@ export async function triggerTestWorkflow() {
     return { success: true, message: "AI Agent Test triggered! Check your WhatsApp/n8n." };
 }
 
-export async function createPendingSubscription(productType: any) {
+const productTypeSchema = z.enum(['BAZZ_CONNECT', 'BAZZ_FLOW', 'BAZZ_DOC', 'BAZZ_LEAD']);
+
+export async function createPendingSubscription(productTypeRaw: any) {
     const session = await auth();
     if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
 
     const userId = session.user.id;
+    let productType;
+    try {
+        productType = productTypeSchema.parse(productTypeRaw);
+    } catch (e: any) {
+        throw new Error("Invalid product type");
+    }
 
     const existing = await db.subscription.findFirst({
         where: { userId, productType }

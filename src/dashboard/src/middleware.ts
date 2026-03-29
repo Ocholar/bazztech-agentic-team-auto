@@ -1,30 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { getToken } from 'next-auth/jwt';
+
 export const config = {
     matcher: [
         /*
          * Match all paths except:
-         * 1. /api (API routes)
+         * 1. /api/auth (Auth endpoints)
          * 2. /_next (Next.js internals)
          * 3. /static (if used)
          * 4. /favicon.ico, /sitemap.xml (static files)
          * 5. /.well-known (SSL verification)
          */
-        '/((?!api|_next|static|\\.well-known|[\\w-]+\\.\\w+).*)',
+        '/((?!api/auth|_next|static|\\.well-known|[\\w-]+\\.\\w+).*)',
     ],
 };
 
 /**
  * BazzAI Production Middleware
  * 
- * Simplified to handle standard path-based routing.
- * Vercel handles domain-level redirects (e.g. non-www to www).
+ * Enforces defense-in-depth authentication protection at the edge.
  */
-export default function middleware(req: NextRequest) {
-    // Current application logic uses path-based routing:
-    // /portal -> Client Dashboard
-    // /admin  -> Admin Oversight
-    // /       -> Public Landing Page
+export default async function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+
+    // Protect all portal routes
+    if (pathname.startsWith('/portal')) {
+        const token = await getToken({
+            req,
+            secret: process.env.AUTH_SECRET,
+            secureCookie: process.env.NODE_ENV === 'production'
+        });
+
+        if (!token) {
+            const loginUrl = new URL('/login', req.url);
+            loginUrl.searchParams.set('callbackUrl', pathname);
+            return NextResponse.redirect(loginUrl);
+        }
+
+        // Admin boundary reinforcement
+        if (pathname.startsWith('/portal/admin') && token.role !== 'ADMIN') {
+            return NextResponse.redirect(new URL('/portal', req.url));
+        }
+    }
 
     return NextResponse.next();
 }

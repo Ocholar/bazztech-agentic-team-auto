@@ -34,6 +34,8 @@ export async function getJengaToken(): Promise<string> {
     return data.accessToken || data.access_token;
 }
 
+import { createSign } from 'crypto';
+
 /**
  * Step 2: Generate Base64 signature for API requests
  * For Account Full Statement: accountNumber + countryCode + toDate
@@ -43,12 +45,25 @@ export function generateSignature(
     countryCode: string,
     toDate: string
 ): string {
-    // The Jenga API Key IS the signature for v3 when using consumer secret auth
-    // For merchant-level API key auth, the API key itself serves as the signature
     const plaintext = `${accountNumber}${countryCode}${toDate}`;
-    // Use base64 encoding of the plaintext as signature
-    const signature = Buffer.from(plaintext).toString('base64');
-    return signature;
+
+    // Official Jenga RSA-SHA256 signature format
+    const privateKey = process.env.JENGA_PRIVATE_KEY;
+
+    if (privateKey) {
+        try {
+            const sign = createSign('RSA-SHA256');
+            sign.update(plaintext);
+            sign.end();
+            return sign.sign(privateKey.replace(/\\n/g, '\n'), 'base64');
+        } catch (e) {
+            console.error('[jenga] RSA signing failed, falling back to basic base64 error:', e);
+        }
+    }
+
+    // The Jenga API Key IS the signature for v3 when using consumer secret auth
+    // Prefix fallback: basic base64 encoded plaintext
+    return Buffer.from(plaintext).toString('base64');
 }
 
 /**

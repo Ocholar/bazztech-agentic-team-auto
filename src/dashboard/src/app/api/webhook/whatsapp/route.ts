@@ -1,5 +1,7 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { webhookRateLimiter } from '@/lib/rate-limiter';
+import { logger } from '@/lib/logger';
 
 /**
  * Meta WhatsApp Webhook Gateway
@@ -20,17 +22,25 @@ export async function GET(req: Request) {
     const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'bazz_auth_verify_2026';
 
     if (mode === 'subscribe' && token === verifyToken) {
-        console.log('[whatsapp-webhook] Verification SUCCESS');
+        logger.info('WhatsApp Webhook Verification SUCCESS');
         return new Response(challenge, { status: 200 });
     }
 
-    console.warn('[whatsapp-webhook] Verification FAILED');
+    logger.warn('WhatsApp Webhook Verification FAILED', { mode, tokenReceived: !!token });
     return new Response('Forbidden', { status: 403 });
 }
 
 // Message Ingress logic (POST)
 export async function POST(req: Request) {
     try {
+        const ip = req.headers.get('x-forwarded-for') || 'unknown';
+        try {
+            await webhookRateLimiter.consume(ip);
+        } catch (rateLimitError) {
+            logger.warn('Rate limit exceeded for WhatsApp webhook endpoint', { ip });
+            return new Response('Too Many Requests', { status: 429 });
+        }
+
         const body = await req.json();
 
         // Meta's payload structure is deeply nested
@@ -61,7 +71,7 @@ export async function POST(req: Request) {
         });
 
         if (!config || !config.webhookId) {
-            console.error(`[whatsapp-webhook] No client found for Phone ID: ${waPhoneId}`);
+            logger.error(`No client found for Phone ID: ${waPhoneId}`, new Error("Config search failed"), { waPhoneId });
             return NextResponse.json({ error: 'Client not found' }, { status: 404 });
         }
 
@@ -85,14 +95,14 @@ export async function POST(req: Request) {
 
         if (!n8nRes.ok) {
             const errorText = await n8nRes.text();
-            console.error(`[whatsapp-webhook] n8n forward failed: ${errorText}`);
+            logger.error(`n8n forward failed: ${errorText}`, new Error("n8n Network Error"), { webhookId: config.webhookId });
             return NextResponse.json({ error: 'Failed to forward to automation' }, { status: 502 });
         }
 
         return NextResponse.json({ success: true, forwarded: true });
 
     } catch (error: any) {
-        console.error('[whatsapp-webhook] Error:', error);
+        logger.error('WhatsApp Webhook Error', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
