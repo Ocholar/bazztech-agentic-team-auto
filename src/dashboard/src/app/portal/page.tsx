@@ -1,108 +1,217 @@
-"use client";
-
-import { useState } from 'react';
-import { Bot, MessageSquare, Zap, FileText, ArrowRight, Check, Users, Globe, Shield, Phone, Mail, MapPin, Menu, X } from 'lucide-react';
+import { auth } from '../../../auth';
+import { redirect } from 'next/navigation';
+import { db } from '@/lib/db';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
+import {
+    Activity,
+    CreditCard,
+    Zap,
+    ArrowRight,
+    Settings,
+    Send,
+    Bot,
+    AlertCircle,
+    CheckCircle2
+} from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default function PortalLanding() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default async function PortalDashboard() {
+    const session = await auth();
+
+    if (!session || !session.user) {
+        redirect('/login');
+    }
+
+    const userId = (session.user as any).id;
+
+    // Fetch subscription data
+    const subscriptions = await db.subscription.findMany({
+        where: { userId },
+        orderBy: { startDate: 'desc' }
+    });
+
+    // Fetch lead counts for summary
+    const totalLeads = await db.lead.count({ where: { userId } });
+    const saleLeads = await db.lead.count({ where: { userId, stage: 'SALE' } });
+
+    // Identify primary subscription
+    const activeSub = subscriptions.find(s => s.status === 'ACTIVE');
+    const hasAnySub = subscriptions.length > 0;
 
     return (
-        <div className="flex min-h-screen flex-col bg-white text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 overflow-x-hidden">
-            {/* Hero Section */}
-            <section className="pt-16 md:pt-24 pb-16 md:pb-24 px-6 relative overflow-hidden bg-slate-50/50">
-                <div className="max-w-7xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-6 animate-fade-in">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                        </span>
-                        NOW LIVE IN KENYA 🇰🇪
-                    </div>
-                    <h1 className="text-4xl md:text-7xl font-black tracking-tight leading-[1.1] mb-8">
-                        Hire Your First <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">AI Digital Employee.</span>
+        <div className="flex flex-col min-h-screen bg-slate-50/50 p-6 md:p-10">
+            {/* Header */}
+            <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                        Welcome back, {(session.user as any).name || 'Client'}
                     </h1>
-                    <p className="max-w-2xl mx-auto text-base md:text-xl text-slate-600 mb-8 md:mb-12 leading-relaxed">
-                        Automate your sales, accounting, and customer service with autonomous AI Agentic workflows built specifically for Kenyan MSMEs.
-                    </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="#assessment" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-red-600 text-white font-bold text-lg hover:bg-red-700 shadow-xl shadow-red-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                            Start Free Trial <ArrowRight size={20} />
-                        </Link>
-                        <Link href="/login" className="w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-200 font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center text-slate-900 bg-white">
-                            Member Access
-                        </Link>
+                    <p className="text-slate-500 mt-1">Manage your AI Digital Employees and CRM metrics.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="px-4 py-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Sync Status: Active</span>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            {/* Assessment Form Section - Matches Screenshot 5 */}
-            <section id="assessment" className="py-16 md:py-24 px-4 md:px-6 bg-white">
-                <div className="max-w-4xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-5xl font-black mb-4">Free AI Automation Readiness Assessment</h2>
-                        <p className="text-slate-500 text-sm md:text-lg">Fill out the form and our agentic automations will qualify your request instantly.</p>
-                    </div>
-                    <div className="bg-slate-50 border border-slate-100 p-6 md:p-12 rounded-[30px] md:rounded-[40px] shadow-sm">
-                        <form className="grid md:grid-cols-2 gap-4 md:gap-6" action="/register">
-                            <div className="space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Full Name *</label>
-                                <input type="text" placeholder="John Doe" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
-                            </div>
-                            <div className="space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Phone Number *</label>
-                                <input type="tel" placeholder="0712345678" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
-                            </div>
-                            <div className="md:col-span-2 space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Email Address</label>
-                                <input type="email" placeholder="john@example.com" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" />
-                            </div>
-                            <div className="space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Industry & Location *</label>
-                                <input type="text" placeholder="e.g. Real Estate in Nairobi" className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors text-sm font-bold" required />
-                            </div>
-                            <div className="space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Interested Bundle ^</label>
-                                <select className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors bg-white text-sm font-bold">
-                                    <option>Bazz-Connect (WhatsApp)</option>
-                                    <option>Bazz-Flow (M-Pesa / Jenga)</option>
-                                    <option>Bazz-Doc (AI OCR)</option>
-                                    <option>Full Agentic Suite</option>
-                                </select>
-                            </div>
-                            <div className="md:col-span-2 space-y-2 text-left">
-                                <label className="text-[10px] md:text-xs font-black uppercase tracking-wider text-slate-500">Additional Information</label>
-                                <textarea placeholder="Tell us about your specific needs..." className="w-full px-4 py-4 rounded-xl border border-slate-200 outline-none focus:border-red-500 transition-colors min-h-[120px] text-sm font-bold"></textarea>
-                            </div>
-                            <div className="md:col-span-2 mt-6">
-                                <button type="submit" className="w-full py-5 bg-red-600 text-white font-black text-xl rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-200">
-                                    Submit Request
-                                </button>
-                                <p className="text-center text-[10px] text-slate-400 mt-6 font-bold">
-                                    Submitting this form redirects you to the registration page for account setup.
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </section>
+            {/* Top Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <Card className="border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                            <Activity size={14} className="text-red-500" />
+                            Total Leads Captured
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-black text-slate-900">{totalLeads}</div>
+                        <div className="text-xs text-slate-400 mt-1">Life-time performance</div>
+                    </CardContent>
+                </Card>
 
-            {/* Simple Footer */}
-            <footer className="py-12 border-t border-slate-100 bg-white">
-                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="text-slate-400 text-xs font-bold uppercase tracking-tight">
-                        © 2026 Bazztech Networks. All rights reserved.
-                    </div>
-                    <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-500">
-                        <Link href="/privacy" className="hover:text-red-600">Privacy</Link>
-                        <Link href="/terms" className="hover:text-red-600">Terms</Link>
-                        <Link href="mailto:info@bazztech.co.ke" className="hover:text-red-600">Support</Link>
-                    </div>
+                <Card className="border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                            <CheckCircle2 size={14} className="text-green-500" />
+                            Completed Sales
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-black text-slate-900">{saleLeads}</div>
+                        <div className="text-xs text-slate-400 mt-1">Conversion via AI Agent</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                            <CreditCard size={14} className="text-blue-500" />
+                            Subscription
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className={`text-xl font-black uppercase ${activeSub ? 'text-green-600' : 'text-red-600'}`}>
+                            {activeSub ? 'ACTIVE (Pro)' : 'INACTIVE'}
+                        </div>
+                        <div className="text-xs text-slate-400 mt-1">
+                            {activeSub?.expiresAt
+                                ? `Expires: ${new Date(activeSub.expiresAt).toLocaleDateString()}`
+                                : 'No active service'}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Product Status Table */}
+                <Card className="lg:col-span-2 border-slate-200 shadow-sm overflow-hidden">
+                    <CardHeader className="bg-slate-50 border-b border-slate-100 px-6 py-4">
+                        <CardTitle className="text-lg font-bold">Your AI Bundles</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        {hasAnySub ? (
+                            <div className="divide-y divide-slate-100">
+                                {subscriptions.map((sub) => (
+                                    <div key={sub.id} className="flex items-center justify-between p-6 hover:bg-slate-50/50 transition-colors">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${sub.status === 'ACTIVE' ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-400'
+                                                }`}>
+                                                <Bot size={20} />
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-slate-900">{sub.productType.replace('_', ' ')}</div>
+                                                <div className="text-xs text-slate-500">
+                                                    Status: {sub.status}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            {sub.status === 'ACTIVE' ? (
+                                                <Link
+                                                    href={`/portal/config?product=${sub.productType}`}
+                                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-all"
+                                                >
+                                                    Configure <ArrowRight size={14} />
+                                                </Link>
+                                            ) : (
+                                                <Link
+                                                    href={`/portal/config?product=${sub.productType}`}
+                                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-200 text-red-600 text-xs font-bold hover:bg-red-50 transition-all"
+                                                >
+                                                    Activate Now
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-12 text-center text-slate-500">
+                                <AlertCircle size={40} className="mx-auto text-slate-300 mb-4" />
+                                <p className="font-bold">No active subscriptions found.</p>
+                                <p className="text-xs max-w-xs mx-auto mt-2">Browse the BazzAI product suite to hire your first AI digital employee.</p>
+                                <Link href="/#products" className="inline-block mt-6 px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-100">
+                                    Browse Solutions
+                                </Link>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Quick Actions / Help */}
+                <div className="space-y-6">
+                    <Card className="border-red-600 border-2 bg-slate-900 text-white shadow-xl shadow-red-100/20">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-white italic">
+                                <Zap className="text-red-500" fill="currentColor" size={20} />
+                                Quick Launch
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <Link href="/portal/config" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group">
+                                <div className="flex items-center gap-3">
+                                    <Settings size={18} className="text-slate-400" />
+                                    <span className="text-sm font-bold">Configure Agents</span>
+                                </div>
+                                <ArrowRight size={16} className="text-slate-600 group-hover:text-white transition-colors" />
+                            </Link>
+
+                            <Link href="/portal/crm" className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group">
+                                <div className="flex items-center gap-3">
+                                    <Send size={18} className="text-slate-400" />
+                                    <span className="text-sm font-bold">View CRM Pipeline</span>
+                                </div>
+                                <ArrowRight size={16} className="text-slate-600 group-hover:text-white transition-colors" />
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-slate-200 shadow-sm bg-white">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold text-slate-900">Need BazzAI Support?</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <p className="text-xs text-slate-500 leading-relaxed">
+                                Our engineers are available to help you calibrate your AI personas or troubleshoot WhatsApp connections.
+                            </p>
+                            <a
+                                href="https://wa.me/254781751937"
+                                target="_blank"
+                                className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500 text-white text-xs font-black shadow-lg shadow-green-100 hover:bg-green-600 transition-all active:scale-95"
+                            >
+                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                </svg>
+                                Chat on WhatsApp Support
+                            </a>
+                        </CardContent>
+                    </Card>
                 </div>
-            </footer>
+            </div>
         </div>
     );
 }

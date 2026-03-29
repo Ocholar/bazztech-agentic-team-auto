@@ -138,11 +138,17 @@ export async function POST(req: Request) {
             console.warn(`[notify] SKIPPED WhatsApp dispatch — clientPhone: ${clientPhone}, waPhoneId: ${waPhoneId ? 'set' : 'missing'}, waToken: ${waToken ? 'set' : 'missing'}`);
         }
 
+        // 📩 Email Notification Scaffold (GAP H)
+        // If we have a verified email service (e.g. Resend), we would send the onboarding email here.
+        console.log(`[notify] Email Scaffold → To: ${user.email}, Type: ${type}`);
+        // await sendOnboardingEmail(user.email, type, extra);
+
         return NextResponse.json({
             success: true,
             sentVia: 'WhatsApp',
             clientPhone,
             whatsappResult,
+            emailScaffold: true,
         });
     } catch (error: any) {
         console.error('[jenga/notify] Error:', error);

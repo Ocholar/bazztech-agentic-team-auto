@@ -14,36 +14,17 @@ export const config = {
     ],
 };
 
-
+/**
+ * BazzAI Production Middleware
+ * 
+ * Simplified to handle standard path-based routing.
+ * Vercel handles domain-level redirects (e.g. non-www to www).
+ */
 export default function middleware(req: NextRequest) {
-    const url = req.nextUrl;
-    const hostname = req.headers.get('host') || '';
+    // Current application logic uses path-based routing:
+    // /portal -> Client Dashboard
+    // /admin  -> Admin Oversight
+    // /       -> Public Landing Page
 
-    // Define your custom domains
-    // Note: Localhost testing typically uses 'localhost:3000'
-    const adminDomain = 'admin.bazztech.co.ke';
-    const portalDomain = 'portal.bazztech.co.ke';
-    const blogDomain = 'blog.bazztech.co.ke';
-
-    // 1. Admin Subdomain logic (admin.bazztech.co.ke)
-    if (hostname.includes(adminDomain)) {
-        // Rewrite all requests to the /admin folder
-        return NextResponse.rewrite(new URL(`/admin${url.pathname}`, req.url));
-    }
-
-    // 2. Portal Subdomain logic (portal.bazztech.co.ke)
-    if (hostname.includes(portalDomain)) {
-        // Rewrite all requests to the /portal folder
-        return NextResponse.rewrite(new URL(`/portal${url.pathname}`, req.url));
-    }
-
-    // 3. Blog Subdomain logic (blog.bazztech.co.ke)
-    if (hostname.includes(blogDomain)) {
-        // Rewrite all requests to the /blog folder
-        return NextResponse.rewrite(new URL(`/blog${url.pathname}`, req.url));
-    }
-
-    // 3. Default/Main domain (bazztech.co.ke)
-    // No rewrite needed, serves from root of /app (Landing Page)
     return NextResponse.next();
 }
