@@ -1,0 +1,34 @@
+{
+    "name": "bazz-cli",
+    "version": "0.1.0",
+    "description": "BazzAI Terminal Agent — monitor, chat, and execute tools from your terminal.",
+    "bin": {
+        "bazz": "./dist/index.js"
+    },
+    "main": "./dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "dev": "ts-node src/index.ts",
+        "start": "node dist/index.js",
+        "prepublishOnly": "npm run build"
+    },
+    "dependencies": {
+        "commander": "^12.1.0",
+        "chalk": "^5.3.0",
+        "ora": "^8.1.0",
+        "dotenv": "^16.4.5",
+        "node-fetch": "^3.3.2",
+        "zod": "^3.23.8",
+        "readline": "^1.3.0",
+        "eventsource": "^2.0.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.5.3",
+        "@types/node": "^20.14.0",
+        "@types/eventsource": "^1.1.15",
+        "ts-node": "^10.9.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}

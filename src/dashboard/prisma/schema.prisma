@@ -188,8 +188,15 @@ model ProcessedTransaction {
 // AUDIT LOG (Tracks all payment-related system events)
 // -------------------------------------------------------------
 model AuditLog {
-  id        String   @id @default(uuid())
-  event     String   // e.g. "JENGA_POLL", "PAYMENT_MATCHED", "SUB_SUSPENDED"
-  detail    String?  @db.Text
-  createdAt DateTime @default(now())
+  id               String    @id @default(uuid())
+  event            String    // e.g. "JENGA_POLL", "PAYMENT_MATCHED", "PENDING_APPROVAL"
+  detail           String?   @db.Text
+  // Multi-tenant scoping for CLI monitor streaming
+  userId           String?
+  // HITL (Human-in-the-Loop) gate fields
+  toolName         String?   // The tool that triggered this event
+  toolInput        String?   @db.Text // JSON-serialised input (for re-dispatch on approval)
+  pendingApproval  Boolean   @default(false)
+  approvedAt       DateTime? // Stamped when admin approves via portal or webhook
+  createdAt        DateTime  @default(now())
 }
