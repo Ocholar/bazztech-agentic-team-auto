@@ -75,6 +75,35 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Client not found' }, { status: 404 });
         }
 
+        // --- NEW: HITL Interceptor ---
+        const inputUpper = messageText.trim().toUpperCase();
+        if (inputUpper === 'APPROVE' || inputUpper === 'REJECT') {
+            // Find the most recent pending action for this tenant
+            const pendingLog = await db.auditLog.findFirst({
+                where: { userId: config.userId, pendingApproval: true },
+                orderBy: { createdAt: 'desc' }
+            });
+
+            if (pendingLog) {
+                const { executeApprovedAction, rejectPendingAction } = await import('@/lib/permissions/hitl-gate');
+
+                if (inputUpper === 'APPROVE') {
+                    logger.info(`WhatsApp HITL: APPROVE received for ${pendingLog.toolName}`);
+                    const outcome = await executeApprovedAction(pendingLog.id, db);
+                    if ('error' in outcome) {
+                        logger.error(`HITL Approval Execution Error: ${outcome.error}`, new Error(outcome.error));
+                    }
+                } else {
+                    logger.info(`WhatsApp HITL: REJECT received for ${pendingLog.toolName}`);
+                    await rejectPendingAction(pendingLog.id, db);
+                }
+
+                // Do not forward to n8n since this was an infrastructure command
+                return NextResponse.json({ success: true, hitlMessageHandled: true });
+            }
+        }
+        // -----------------------------
+
         // 2. Forward to the n8n Master Workflow
         // We use the simplified format that Bazz_Connect_Master expects
         const n8nWebhookUrl = process.env.N8N_CONNECT_MASTER_URL || 'https://n8n.bazztech.co.ke/webhook/bazz-connect-master';

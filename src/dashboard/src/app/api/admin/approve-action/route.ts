@@ -25,87 +25,18 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing auditLogId' }, { status: 400 });
         }
 
-        // Fetch the pending record
-        const auditLog = await db.auditLog.findUnique({ where: { id: auditLogId } });
+        const { executeApprovedAction } = await import('@/lib/permissions/hitl-gate');
+        const outcome = await executeApprovedAction(auditLogId, db);
 
-        if (!auditLog) {
-            return NextResponse.json({ error: 'AuditLog record not found' }, { status: 404 });
-        }
-        if (!auditLog.pendingApproval) {
-            return NextResponse.json({ error: 'This action is not pending approval or has already been processed.' }, { status: 409 });
-        }
-        if (!auditLog.toolName || !auditLog.userId) {
-            return NextResponse.json({ error: 'Incomplete HITL record — missing toolName or userId' }, { status: 422 });
+        if ('error' in outcome) {
+            // Distinguish 404/409/422 based on the error message if needed, or just return 400
+            let status = 400;
+            if (outcome.error.includes('not found')) status = 404;
+            if (outcome.error.includes('processed')) status = 409;
+            return NextResponse.json({ error: outcome.error }, { status });
         }
 
-        // Mark as approved immediately
-        await db.auditLog.update({
-            where: { id: auditLogId },
-            data: { pendingApproval: false, approvedAt: new Date() },
-        });
-
-        // Fetch the tenant's ProductConfig for the tool context
-        const productConfig = await db.productConfig.findFirst({
-            where: { userId: auditLog.userId },
-            select: {
-                openaiApiKey: true,
-                darajaConsumerKey: true,
-                darajaConsumerSecret: true,
-                darajaShortcode: true,
-                darajaPasskey: true,
-                darajaCallbackUrl: true,
-                whatsappPhoneId: true,
-                whatsappUrl: true,
-                whatsappToken: true,
-                docOutputWebhook: true,
-                systemPrompt: true,
-            },
-        });
-
-        // Parse the saved tool input
-        let toolInput: unknown = {};
-        try {
-            toolInput = JSON.parse(auditLog.toolInput ?? '{}');
-        } catch {
-            toolInput = {};
-        }
-
-        // Re-dispatch the tool — HITL gate will NOT intercept because we call the tool directly
-        // bypassing isSensitiveTool (approval already granted above)
-        const tool = (await import('@/lib/tools/tool-orchestrator')).getTool(auditLog.toolName);
-        if (!tool) {
-            return NextResponse.json({ error: `Tool "${auditLog.toolName}" no longer registered.` }, { status: 404 });
-        }
-
-        const ctx = {
-            userId: auditLog.userId,
-            db,
-            productConfig: productConfig ?? undefined,
-        };
-
-        const parsed = tool.inputSchema.safeParse(toolInput);
-        if (!parsed.success) {
-            return NextResponse.json({ error: `Saved tool input is invalid: ${parsed.error.message}` }, { status: 422 });
-        }
-
-        const result = await tool.execute(parsed.data, ctx);
-
-        logger.info('[approve-action] Tool re-dispatched after HITL approval', {
-            auditLogId,
-            toolName: auditLog.toolName,
-            success: result.success,
-        });
-
-        await db.auditLog.create({
-            data: {
-                event: 'HITL_APPROVAL_DISPATCHED',
-                userId: auditLog.userId,
-                toolName: auditLog.toolName,
-                detail: JSON.stringify({ auditLogId, result }),
-            },
-        });
-
-        return NextResponse.json({ approved: true, result });
+        return NextResponse.json({ approved: true, result: outcome.result });
     } catch (error: any) {
         logger.error('[approve-action] Error', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
