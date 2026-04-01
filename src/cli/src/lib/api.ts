@@ -7,7 +7,7 @@ import { loadSession } from './auth';
  */
 export async function bazzRequest(endpoint: string, method = 'GET', body?: unknown) {
     const session = loadSession();
-    const cliSecret = process.env.BAZZ_CLI_SECRET || 'bazz_internal_dev_secret_2026';
+    const cliSecret = process.env.INTERNAL_CLI_SECRET || 'bazz_internal_dev_secret_2026';
 
     const res = await fetch(`${session.apiUrl}${endpoint}`, {
         method,

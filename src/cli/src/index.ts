@@ -4,6 +4,7 @@ import { initCommand, initTokenCommand } from './commands/init';
 import { chatCommand } from './commands/chat';
 import { monitorCommand } from './commands/monitor';
 import { toolRunCommand } from './commands/tool-run';
+import { doctorCommand } from './commands/doctor';
 
 const program = new Command();
 
@@ -17,5 +18,6 @@ program.addCommand(initTokenCommand);
 program.addCommand(chatCommand);
 program.addCommand(monitorCommand);
 program.addCommand(toolRunCommand);
+program.addCommand(doctorCommand);
 
 program.parse(process.argv);
