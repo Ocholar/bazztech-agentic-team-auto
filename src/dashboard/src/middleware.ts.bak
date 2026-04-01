@@ -1,0 +1,25 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+/**
+ * BazzAI Production Middleware (Bypass Mode)
+ * 
+ * Temporarily disabled Edge-side auth to resolve MIDDLEWARE_INVOCATION_FAILED.
+ * Authentication continues to be enforced at the server-component level via auth().
+ */
+export default async function middleware(req: NextRequest) {
+    const { pathname } = req.nextUrl;
+
+    // Enforce portal boundary
+    if (pathname.startsWith('/portal')) {
+        // We let the request pass through to the Server Components
+        // Page-level auth() will handle redirection to /login
+    }
+
+    return NextResponse.next();
+}
+
+export const config = {
+    matcher: [
+        '/((?!api/auth|_next|static|\\.well-known|[\\w-]+\\.\\w+).*)',
+    ],
+};
