@@ -1,11 +1,12 @@
 import { auth } from '../../../../auth';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
-import { Send, Users, Filter, Plus, Phone, Mail, Calendar } from 'lucide-react';
+import { Send, Users, Filter, Plus, Phone, Mail, Calendar, Zap, CheckCircle2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { addLead } from './actions';
 import { format } from 'date-fns';
 import { AddLeadModal } from './add-lead-modal';
+import { cn } from '@/lib/utils';
 
 export default async function CRMPage() {
     const session = await auth();
@@ -145,6 +146,4 @@ export default async function CRMPage() {
     );
 }
 
-// Missing imports logic (already in some files, but ensuring here)
-import { Zap, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+

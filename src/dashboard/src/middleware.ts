@@ -26,11 +26,20 @@ export default async function middleware(req: NextRequest) {
 
     // Protect all portal routes
     if (pathname.startsWith('/portal')) {
-        const token = await getToken({
-            req,
-            secret: process.env.AUTH_SECRET,
-            secureCookie: process.env.NODE_ENV === 'production'
-        });
+        let token;
+        try {
+            token = await getToken({
+                req,
+                secret: process.env.AUTH_SECRET,
+                secureCookie: process.env.NODE_ENV === 'production'
+            });
+        } catch (err) {
+            console.error("Middleware Auth Crash:", err);
+            const loginUrl = new URL('/login', req.url);
+            loginUrl.searchParams.set('callbackUrl', pathname);
+            loginUrl.searchParams.set('error', 'AuthFailure');
+            return NextResponse.redirect(loginUrl);
+        }
 
         if (!token) {
             const loginUrl = new URL('/login', req.url);
