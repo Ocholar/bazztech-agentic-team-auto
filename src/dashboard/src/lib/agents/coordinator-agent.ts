@@ -9,13 +9,13 @@
 
 import { BazzAgent, AgentContext, AgentResult } from './base-agent';
 import { BillingAgent } from './billing-agent';
-import { LeadQualifyingAgent } from './lead-qualifying-agent';
+import { SalesAgent } from './sales-agent';
 import { retrieveMemories, saveMemory } from './memory-service';
 
 // All available sub-agents
 const SUB_AGENTS: BazzAgent[] = [
     new BillingAgent(),
-    new LeadQualifyingAgent(),
+    new SalesAgent(),
 ];
 
 // OpenAI tool definitions for routing
@@ -91,8 +91,10 @@ export class CoordinatorAgent extends BazzAgent {
                         {
                             role: 'system',
                             content:
-                                'You are the BazzAI Coordinator. Decompose the user\'s request into sub-tasks and assign each to the best available agent. ' +
-                                'You may call multiple agent functions in parallel. Always include the original task in the agent\'s task argument.' + memoryContext,
+                                'You are the BazzAI Coordinator (Sales Oriented). Decompose the user\'s request into sub-tasks and assign each to the best available agent. ' +
+                                'If the customer is asking for prices, product details, or expressed interest, use the SalesAgent. ' +
+                                'If they are asking to pay or checking balance, use the BillingAgent. ' +
+                                'Always include the original task in the agent\'s task argument.' + memoryContext,
                         },
                         { role: 'user', content: ctx.task },
                     ],

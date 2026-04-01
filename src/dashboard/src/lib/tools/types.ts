@@ -15,6 +15,7 @@ export interface ToolContext {
     db: PrismaClient;
     /** The tenant's ProductConfig — fetched once and passed down */
     productConfig?: {
+        id: string;
         openaiApiKey?: string | null;
         darajaConsumerKey?: string | null;
         darajaConsumerSecret?: string | null;
@@ -26,6 +27,10 @@ export interface ToolContext {
         openaiVisionKey?: string | null;
         docOutputWebhook?: string | null;
         systemPrompt?: string | null;
+        // Fine-tuning & Robustness
+        tokenQuotaInt?: number;
+        tokensUsed?: number;
+        fineTunedModelId?: string | null;
     };
 }
 

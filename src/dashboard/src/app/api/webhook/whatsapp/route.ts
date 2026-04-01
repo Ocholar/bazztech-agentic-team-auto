@@ -102,7 +102,30 @@ export async function POST(req: Request) {
                 return NextResponse.json({ success: true, hitlMessageHandled: true });
             }
         }
-        // -----------------------------
+
+        // --- NEW: Coordinator Agent Trigger (Autonomous Sales) ---
+        // If it's not a HITL command, let the BazzAI Swarm decide how to handle it.
+        try {
+            const { CoordinatorAgent } = await import('@/lib/agents/coordinator-agent');
+            const coordinator = new CoordinatorAgent();
+
+            // We pass the full context including the DB and ProductConfig
+            const fullConfig = await db.productConfig.findUnique({
+                where: { id: config.id }
+            });
+
+            // Fire-and-forget the swarm run (we don't want to block the webhook response)
+            coordinator.run({
+                userId: config.userId,
+                task: messageText,
+                db,
+                productConfig: fullConfig as any
+            }).catch(err => logger.error(`Swarm execution failed for ${from}`, err));
+
+        } catch (err: any) {
+            logger.error(`Failed to initiate Coordinator for ${from}`, err);
+        }
+        // ---------------------------------------------------------
 
         // 2. Forward to the n8n Master Workflow
         // We use the simplified format that Bazz_Connect_Master expects
