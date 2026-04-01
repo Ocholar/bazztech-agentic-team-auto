@@ -67,7 +67,7 @@ export async function POST(req: Request) {
         // 1. Identify the client by their whatsappPhoneId
         const config = await db.productConfig.findFirst({
             where: { whatsappPhoneId: waPhoneId },
-            select: { webhookId: true, userId: true },
+            select: { id: true, webhookId: true, userId: true },
         });
 
         if (!config || !config.webhookId) {
@@ -103,27 +103,52 @@ export async function POST(req: Request) {
             }
         }
 
+        // --- NEW: Audio Processor (Bazz-Voice) ---
+        const audioObj = messageObj.audio;
+        if (audioObj) {
+            try {
+                const { VoiceService } = await import('@/lib/agents/voice-service');
+                const fullConfig = await db.productConfig.findUnique({ where: { id: config.id } });
+
+                // Audio URL retrieval normally requires a second call to Meta Media API
+                const audioUrl = `https://graph.facebook.com/v17.0/${audioObj.id}`;
+
+                VoiceService.processVoiceNote(audioUrl, {
+                    userId: config.userId,
+                    task: '[Audio Input]',
+                    db,
+                    productConfig: fullConfig as any
+                }).catch(err => logger.error(`Voice execution failed for ${from}`, err));
+
+                return NextResponse.json({ success: true, voiceNoteHandled: true });
+            } catch (err: any) {
+                logger.error(`Failed to initiate VoiceService for ${from}`, err);
+            }
+        }
+
         // --- NEW: Coordinator Agent Trigger (Autonomous Sales) ---
-        // If it's not a HITL command, let the BazzAI Swarm decide how to handle it.
-        try {
-            const { CoordinatorAgent } = await import('@/lib/agents/coordinator-agent');
-            const coordinator = new CoordinatorAgent();
+        // If it's a HITL command, let the BazzAI Swarm decide how to handle it.
+        if (messageText) {
+            try {
+                const { CoordinatorAgent } = await import('@/lib/agents/coordinator-agent');
+                const coordinator = new CoordinatorAgent();
 
-            // We pass the full context including the DB and ProductConfig
-            const fullConfig = await db.productConfig.findUnique({
-                where: { id: config.id }
-            });
+                // We pass the full context including the DB and ProductConfig
+                const fullConfig = await db.productConfig.findUnique({
+                    where: { id: config.id }
+                });
 
-            // Fire-and-forget the swarm run (we don't want to block the webhook response)
-            coordinator.run({
-                userId: config.userId,
-                task: messageText,
-                db,
-                productConfig: fullConfig as any
-            }).catch(err => logger.error(`Swarm execution failed for ${from}`, err));
+                // Fire-and-forget the swarm run (we don't want to block the webhook response)
+                coordinator.run({
+                    userId: config.userId,
+                    task: messageText,
+                    db,
+                    productConfig: fullConfig as any
+                }).catch(err => logger.error(`Swarm execution failed for ${from}`, err));
 
-        } catch (err: any) {
-            logger.error(`Failed to initiate Coordinator for ${from}`, err);
+            } catch (err: any) {
+                logger.error(`Failed to initiate Coordinator for ${from}`, err);
+            }
         }
         // ---------------------------------------------------------
 
