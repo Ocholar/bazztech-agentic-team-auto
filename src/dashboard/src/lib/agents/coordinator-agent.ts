@@ -54,11 +54,26 @@ export class CoordinatorAgent extends BazzAgent {
             };
         }
 
-        // Retrieving relevant past context (Agent Memory)
+        // 0. Token Quota Check (Robustness)
+        const config = ctx.productConfig;
+        const quota = config?.tokenQuotaInt ?? 50000;
+        const used = config?.tokensUsed ?? 0;
+        if (used >= quota) {
+            await this.logEvent('COORDINATOR_QUOTA_EXCEEDED', { used, quota }, ctx);
+            return {
+                success: false,
+                summary: 'Monthly AI token quota exceeded. Please upgrade your BazzAI subscription.',
+                error: 'TOKEN_QUOTA_EXCEEDED',
+            };
+        }
+
+        // 1. Context Preparation (Memories)
         const memories = await retrieveMemories(ctx.userId, ctx.task, openaiApiKey, 3);
         const memoryContext = memories.length > 0
             ? `\n\nRelevant past interactions for context:\n${memories.map(m => `- ${m.content}`).join('\n')}`
             : '';
+
+        const modelId = config?.fineTunedModelId || 'gpt-4o';
 
         // Step 1: Ask OpenAI to decompose the task and route to agents
         let routingDecisions: Array<{ agentName: string; task: string }> = [];
@@ -71,7 +86,7 @@ export class CoordinatorAgent extends BazzAgent {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o',
+                    model: modelId,
                     messages: [
                         {
                             role: 'system',
@@ -110,23 +125,43 @@ export class CoordinatorAgent extends BazzAgent {
             return { success: false, summary: `Coordinator failed: ${err.message}`, error: err.message };
         }
 
-        // Step 2: Execute all routing decisions in parallel
+        // Step 2: Execute all routing decisions with Retry Policy (Robustness)
         const agentMap = new Map(SUB_AGENTS.map((a) => [a.name, a]));
+        const MAX_RETRIES = 3;
+
         const subResults = await Promise.all(
-            routingDecisions.map(({ agentName, task }) => {
+            routingDecisions.map(async ({ agentName, task }) => {
                 const agent = agentMap.get(agentName);
                 if (!agent) {
-                    return Promise.resolve<AgentResult>({
-                        success: false,
-                        summary: `Unknown agent: ${agentName}`,
-                        error: `No agent registered with name "${agentName}"`,
-                    });
+                    return { success: false, summary: `Unknown agent: ${agentName}`, error: 'AGENT_MISSING' };
                 }
-                return agent.run({ ...ctx, task });
+
+                let attempts = 0;
+                let lastResult: AgentResult = { success: false, summary: 'Pending' };
+
+                while (attempts < MAX_RETRIES) {
+                    try {
+                        lastResult = await agent.run({ ...ctx, task });
+                        if (lastResult.success) return lastResult;
+                    } catch (e: any) {
+                        lastResult = { success: false, summary: `Agent ${agentName} failed`, error: e.message };
+                    }
+                    attempts++;
+                    if (attempts < MAX_RETRIES) await new Promise(r => setTimeout(r, 500 * attempts));
+                }
+
+                return lastResult;
             })
         );
 
-        // Step 3: Aggregate results
+        // Step 3: Track Cost & Token Usage (Approximate)
+        const estTokens = Math.ceil((ctx.task.length + subResults.map(r => r.summary.length).reduce((a, b) => a + b, 0)) / 4);
+        await ctx.db.productConfig.update({
+            where: { id: config!.id },
+            data: { tokensUsed: { increment: estTokens } }
+        });
+
+        // Step 4: Aggregate results
         const allSucceeded = subResults.every((r) => r.success);
         const summaries = subResults.map((r, i) =>
             `[${routingDecisions[i]?.agentName ?? i}]: ${r.summary}`
@@ -145,8 +180,16 @@ export class CoordinatorAgent extends BazzAgent {
             );
         }
 
+        if (!allSucceeded) {
+            return {
+                success: false,
+                summary: `Digital Employee is currently fatigued or facing errors. A human team member has been notified to take over manually. \n\nPartial progress:\n${finalSummary}`,
+                details: subResults,
+            };
+        }
+
         return {
-            success: allSucceeded,
+            success: true,
             summary: finalSummary,
             details: subResults,
         };

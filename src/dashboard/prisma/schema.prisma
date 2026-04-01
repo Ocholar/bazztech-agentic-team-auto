@@ -133,6 +133,11 @@ model ProductConfig {
   metaPageId           String?
   crmWebhookUrl        String?
   
+  // Fine-tuning & Robustness
+  tokenQuotaInt          Int                 @default(50000)
+  tokensUsed             Int                 @default(0)
+  fineTunedModelId       String?
+
   updatedAt       DateTime     @updatedAt
 }
 
