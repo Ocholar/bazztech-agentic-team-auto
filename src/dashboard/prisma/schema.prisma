@@ -1,12 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [vector]
 }
 
 // -------------------------------------------------------------
@@ -26,6 +28,7 @@ model User {
   subscriptions Subscription[]
   leads         Lead[]
   configs       ProductConfig[]
+  memories      AgentMemory[]
 }
 
 enum UserRole {
@@ -199,4 +202,22 @@ model AuditLog {
   pendingApproval  Boolean   @default(false)
   approvedAt       DateTime? // Stamped when admin approves via portal or webhook
   createdAt        DateTime  @default(now())
+}
+
+// -------------------------------------------------------------
+// AGENT MEMORY (Vector Store for Long-Term Context)
+// -------------------------------------------------------------
+model AgentMemory {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  content   String   @db.Text
+  embedding Unsupported("vector(1536)")
+  
+  metadata  Json?
+  
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }

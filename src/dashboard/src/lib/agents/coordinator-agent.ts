@@ -10,6 +10,7 @@
 import { BazzAgent, AgentContext, AgentResult } from './base-agent';
 import { BillingAgent } from './billing-agent';
 import { LeadQualifyingAgent } from './lead-qualifying-agent';
+import { retrieveMemories, saveMemory } from './memory-service';
 
 // All available sub-agents
 const SUB_AGENTS: BazzAgent[] = [
@@ -53,6 +54,12 @@ export class CoordinatorAgent extends BazzAgent {
             };
         }
 
+        // Retrieving relevant past context (Agent Memory)
+        const memories = await retrieveMemories(ctx.userId, ctx.task, openaiApiKey, 3);
+        const memoryContext = memories.length > 0
+            ? `\n\nRelevant past interactions for context:\n${memories.map(m => `- ${m.content}`).join('\n')}`
+            : '';
+
         // Step 1: Ask OpenAI to decompose the task and route to agents
         let routingDecisions: Array<{ agentName: string; task: string }> = [];
 
@@ -70,7 +77,7 @@ export class CoordinatorAgent extends BazzAgent {
                             role: 'system',
                             content:
                                 'You are the BazzAI Coordinator. Decompose the user\'s request into sub-tasks and assign each to the best available agent. ' +
-                                'You may call multiple agent functions in parallel. Always include the original task in the agent\'s task argument.',
+                                'You may call multiple agent functions in parallel. Always include the original task in the agent\'s task argument.' + memoryContext,
                         },
                         { role: 'user', content: ctx.task },
                     ],
@@ -124,12 +131,23 @@ export class CoordinatorAgent extends BazzAgent {
         const summaries = subResults.map((r, i) =>
             `[${routingDecisions[i]?.agentName ?? i}]: ${r.summary}`
         );
+        const finalSummary = summaries.join('\n');
 
         await this.logEvent('COORDINATOR_COMPLETE', { routingDecisions, subResults }, ctx);
 
+        // Save memory of this interaction for future context
+        if (allSucceeded) {
+            await saveMemory(
+                ctx.userId,
+                `Task: ${ctx.task}\nOutcome: ${finalSummary}`,
+                openaiApiKey,
+                { task: ctx.task }
+            );
+        }
+
         return {
             success: allSucceeded,
-            summary: summaries.join('\n'),
+            summary: finalSummary,
             details: subResults,
         };
     }
