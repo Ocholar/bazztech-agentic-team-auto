@@ -36,6 +36,13 @@ export default async function PortalDashboard() {
     const totalLeads = await db.lead.count({ where: { userId } });
     const saleLeads = await db.lead.count({ where: { userId, stage: 'SALE' } });
 
+    // Fetch latest swarm activity
+    const latestLogs = await db.auditLog.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: 5
+    });
+
     // Identify primary subscription
     const activeSub = subscriptions.find(s => s.status === 'ACTIVE');
     const hasAnySub = subscriptions.length > 0;
@@ -162,8 +169,45 @@ export default async function PortalDashboard() {
                     </CardContent>
                 </Card>
 
-                {/* Quick Actions / Help */}
+                {/* Swarm Activity Feed */}
                 <div className="space-y-6">
+                    <Card className="border-slate-200 shadow-sm bg-white overflow-hidden">
+                        <CardHeader className="bg-slate-50 border-b border-slate-100 px-6 py-3">
+                            <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                                <Zap size={14} className="text-red-500" />
+                                Live Swarm Activity
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            {latestLogs.length > 0 ? (
+                                <div className="divide-y divide-slate-100">
+                                    {latestLogs.map((log) => (
+                                        <div key={log.id} className="p-4 hover:bg-slate-50 transition-colors flex items-start gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                                <Bot size={14} className="text-blue-600" />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-[11px] font-bold text-slate-900 truncate uppercase tracking-tighter">
+                                                    {log.event.replace(/_/g, ' ')}
+                                                </div>
+                                                <div className="text-[10px] text-slate-500 truncate mt-0.5">
+                                                    {log.detail || 'Agent processing...'}
+                                                </div>
+                                                <div className="text-[9px] text-slate-400 mt-1 italic">
+                                                    {new Date(log.createdAt).toLocaleTimeString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="p-10 text-center text-slate-400 italic text-xs">
+                                    No swarm activity recorded yet.
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
                     <Card className="border-red-600 border-2 bg-slate-900 text-white shadow-xl shadow-red-100/20">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-white italic">

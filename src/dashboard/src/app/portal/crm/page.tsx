@@ -35,10 +35,10 @@ export default async function CRMPage() {
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-                        <Send className="text-red-600" />
-                        Autonomous CRM Pipeline
+                        <Zap className="text-red-600 animate-pulse" />
+                        BazzAI Sales Pipeline
                     </h1>
-                    <p className="text-gray-500 mt-1">Real-time leads captured by your BazzAI agents.</p>
+                    <p className="text-gray-500 mt-1">Autonomous leads qualified by your BazzAI Agent Swarm.</p>
                 </div>
 
                 <AddLeadModal />
@@ -69,9 +69,9 @@ export default async function CRMPage() {
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-100 uppercase text-[10px] font-bold tracking-wider text-slate-500">
                                 <th className="px-6 py-4">Lead Info</th>
-                                <th className="px-6 py-4">Stage</th>
-                                <th className="px-6 py-4">Source</th>
-                                <th className="px-6 py-4">Last Message</th>
+                                <th className="px-6 py-4">AI Status</th>
+                                <th className="px-6 py-4 text-center">Intent</th>
+                                <th className="px-6 py-4">Last Agent Action</th>
                                 <th className="px-6 py-4">Captured At</th>
                                 <th className="px-6 py-4 text-right">Action</th>
                             </tr>
@@ -110,11 +110,21 @@ export default async function CRMPage() {
                                                 {lead.stage}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-xs font-semibold text-slate-600">
-                                            {lead.source}
+                                        <td className="px-6 py-4 text-xs font-semibold text-slate-600 text-center">
+                                            {lead.stage === 'PROSPECTIVE' ? (
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <span className="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-[8px] font-black uppercase">High Intent</span>
+                                                    <Zap size={12} className="text-red-500 fill-current" />
+                                                </div>
+                                            ) : (
+                                                <div className="text-slate-300 font-black italic">Normal</div>
+                                            )}
                                         </td>
-                                        <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">
-                                            {lead.lastMessage || 'N/A'}
+                                        <td className="px-6 py-4 text-xs text-slate-500 max-w-xs">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                                <span className="truncate italic">"{lead.lastMessage || 'N/A'}"</span>
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 text-xs text-slate-500">
                                             <div className="flex items-center gap-1"><Calendar size={12} /> {format(lead.createdAt, 'dd MMM yyyy')}</div>
