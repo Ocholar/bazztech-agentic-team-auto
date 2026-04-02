@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { Analytics } from "@vercel/analytics/react";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en" style={{ colorScheme: 'light' }}>
       <body className={inter.className}>
         {children}
+        <WhatsAppButton />
         <Analytics />
       </body>
     </html>

@@ -154,7 +154,7 @@ export async function POST(req: Request) {
 
         // 2. Forward to the n8n Master Workflow
         // We use the simplified format that Bazz_Connect_Master expects
-        const n8nWebhookUrl = process.env.N8N_CONNECT_MASTER_URL || 'https://n8n.bazztech.co.ke/webhook/bazz-connect-master';
+        const n8nWebhookUrl = process.env.N8N_CONNECT_MASTER_URL || 'https://tentacled-goldfish.pikapod.net/webhook/bazz-connect-master';
 
         const n8nRes = await fetch(n8nWebhookUrl, {
             method: 'POST',

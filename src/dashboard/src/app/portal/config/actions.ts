@@ -149,7 +149,7 @@ export async function triggerTestWorkflow() {
 
     // This typically calls the n8n webhook
     // We attempt an actual fetch request to the connected automation flow
-    const n8nUrl = process.env.N8N_WEBHOOK_URL || 'https://n8n.bazztech.co.ke/webhook';
+    const n8nUrl = process.env.N8N_WEBHOOK_URL || 'https://tentacled-goldfish.pikapod.net/webhook';
     try {
         await fetch(`${n8nUrl}/${config.webhookId}`, {
             method: 'POST',
