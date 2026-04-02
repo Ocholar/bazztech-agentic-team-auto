@@ -53,10 +53,13 @@ export async function GET(req: Request) {
             businessName: config.user.companyName || config.user.name,
             systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
             knowledgeBase: config.knowledgeBase || '',
-            userMessage: searchParams.get('userMessage') || searchParams.get('message') || null, // Echo back
+            userMessage: searchParams.get('userMessage') || searchParams.get('message') || null,
+            whatsappUrl: config.whatsappUrl || 'https://graph.facebook.com/v17.0', // Also at top level
+            whatsappPhoneId: config.whatsappPhoneId || null,
+            whatsappToken: config.whatsappToken || null,
             whatsapp: {
                 phoneId: config.whatsappPhoneId || null,
-                url: config.whatsappUrl || 'https://graph.facebook.com/v17.0', // Default Meta URL
+                url: config.whatsappUrl || 'https://graph.facebook.com/v17.0',
                 token: config.whatsappToken || null,
             }
         });
