@@ -174,7 +174,7 @@ export async function triggerTestWorkflow() {
                 userMessage: 'Hello BazzAI! This is a test message from my dashboard.',
                 message: 'Hello BazzAI! This is a test message from my dashboard.',
                 text: 'Hello BazzAI! This is a test message from my dashboard.',
-                from: '254700000000', // Added dummy phone number for 'to' parameter
+                from: '254781751937', // User's requested phone number
                 client: session.user.id,
                 timestamp: new Date().toISOString()
             })
