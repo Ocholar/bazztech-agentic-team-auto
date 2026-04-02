@@ -149,24 +149,36 @@ export async function triggerTestWorkflow() {
 
     // This typically calls the n8n webhook
     // We attempt an actual fetch request to the connected automation flow
-    const n8nUrl = process.env.N8N_WEBHOOK_URL || 'https://tentacled-goldfish.pikapod.net/webhook';
-    try {
-        await fetch(`${n8nUrl}/${config.webhookId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                event: 'TEST_TRIGGER',
-                client: session.user.id,
-                message: 'This is a test message from your BazzAI Platform.',
-                timestamp: new Date().toISOString()
-            })
-        });
-        console.log(`Successfully triggered n8n for webhookId: ${config.webhookId}`);
-    } catch (e) {
-        console.error("Failed to trigger n8n, but UI will reflect attempt", e);
-    }
+    // NOTE: n8n test URLs use /webhook-test/ and often expect GET for simple pings.
+    const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://tentacled-goldfish.pikapod.net/webhook';
+    const isTestMode = true; // For the "Test" button, we default to the test path
+    const n8nUrl = isTestMode ? baseUrl.replace('/webhook', '/webhook-test') : baseUrl;
 
-    return { success: true, message: "AI Agent Test triggered! Check your WhatsApp/n8n." };
+    const webhookPath = config.webhookId || 'bazz-connect-master';
+
+    try {
+        const queryParams = new URLSearchParams({
+            event: 'TEST_TRIGGER',
+            client: session.user.id,
+            timestamp: new Date().toISOString()
+        });
+
+        const response = await fetch(`${n8nUrl}/${webhookPath}?${queryParams.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`n8n responded with ${response.status}: ${errorText}`);
+        }
+
+        console.log(`Successfully triggered n8n for path: ${webhookPath} via GET`);
+        return { success: true, message: "AI Agent Test triggered! Check your WhatsApp/n8n." };
+    } catch (e: any) {
+        console.error("Failed to trigger n8n:", e);
+        return { success: false, error: `Automation Error: ${e.message}` };
+    }
 }
 
 const productTypeSchema = z.enum(['BAZZ_CONNECT', 'BAZZ_FLOW', 'BAZZ_DOC', 'BAZZ_LEAD']);

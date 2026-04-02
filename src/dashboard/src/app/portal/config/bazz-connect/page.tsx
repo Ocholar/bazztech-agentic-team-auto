@@ -163,6 +163,15 @@ export default async function BazzConnectConfig() {
                                         Paste this URL into your Meta App's Webhook Configuration.
                                     </p>
                                 </div>
+                                <div className="pt-4 border-t border-slate-800">
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">n8n Webhook ID (Path)</p>
+                                    <code className="block w-full bg-slate-950 text-blue-400 p-3 rounded font-mono text-[10px] break-all">
+                                        {config?.webhookId || "bazz-connect-master"}
+                                    </code>
+                                    <p className="text-[10px] text-slate-400 mt-2 text-blue-300">
+                                        Your n8n Webhook node &quot;Path&quot; <b>MUST</b> match this exactly.
+                                    </p>
+                                </div>
                             </CardContent>
                         </Card>
 
