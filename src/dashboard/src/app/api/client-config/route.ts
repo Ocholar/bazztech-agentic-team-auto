@@ -53,6 +53,7 @@ export async function GET(req: Request) {
             businessName: config.user.companyName || config.user.name,
             systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
             knowledgeBase: config.knowledgeBase || '',
+            userMessage: searchParams.get('userMessage') || searchParams.get('message') || null, // Echo back
             whatsapp: {
                 phoneId: config.whatsappPhoneId || null,
                 url: config.whatsappUrl || 'https://graph.facebook.com/v17.0', // Default Meta URL
