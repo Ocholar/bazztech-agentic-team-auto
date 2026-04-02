@@ -43,6 +43,15 @@ export async function POST(req: Request) {
 
         const body = await req.json();
 
+        // --- DEBUG AUDIT LOG ---
+        await db.auditLog.create({
+            data: {
+                event: 'WHATSAPP_WEBHOOK_INGRESS',
+                toolName: 'Meta',
+                detail: JSON.stringify(body)
+            }
+        });
+
         // Meta's payload structure is deeply nested
         // entry[0].changes[0].value.messages[0]
         const entry = body.entry?.[0];
