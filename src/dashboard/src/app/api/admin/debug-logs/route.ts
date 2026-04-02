@@ -16,8 +16,7 @@ export async function GET(req: Request) {
     // Fetch the 50 most recent logs/audit events
     const logs = await db.auditLog.findMany({
         take: 50,
-        orderBy: { createdAt: 'desc' },
-        include: { user: { select: { email: true } } }
+        orderBy: { createdAt: 'desc' }
     });
 
     return NextResponse.json(logs);
