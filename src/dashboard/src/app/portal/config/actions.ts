@@ -172,6 +172,9 @@ export async function triggerTestWorkflow() {
                 webhookId: webhookPath,
                 event: 'TEST_TRIGGER',
                 userMessage: 'Hello BazzAI! This is a test message from my dashboard.',
+                message: 'Hello BazzAI! This is a test message from my dashboard.', // Redundant key
+                text: 'Hello BazzAI! This is a test message from my dashboard.', // Redundant key
+                body: 'Hello BazzAI! This is a test message from my dashboard.', // Redundant key
                 client: session.user.id,
                 timestamp: new Date().toISOString()
             })
