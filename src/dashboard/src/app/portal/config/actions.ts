@@ -148,24 +148,32 @@ export async function triggerTestWorkflow() {
     if (!config || !config.webhookId) throw new Error("No configuration found to trigger.");
 
     // This typically calls the n8n webhook
-    // We attempt an actual fetch request to the connected automation flow
-    // NOTE: n8n test URLs use /webhook-test/ and often expect GET for simple pings.
+    // NOTE: For the "Fetch Client AI Config" node to work, we need to send data in the BODY.
+    // This requires n8n to be set to POST mode.
     const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://tentacled-goldfish.pikapod.net/webhook';
-    const isTestMode = true; // For the "Test" button, we default to the test path
+    const isTestMode = true;
     const n8nUrl = isTestMode ? baseUrl.replace('/webhook', '/webhook-test') : baseUrl;
 
     const webhookPath = config.webhookId || 'bazz-connect-master';
 
     try {
         const queryParams = new URLSearchParams({
-            event: 'TEST_TRIGGER',
-            client: session.user.id,
-            timestamp: new Date().toISOString()
+            webhookId: webhookPath, // Included in query as fallback
+            event: 'TEST_TRIGGER'
         });
 
         const response = await fetch(`${n8nUrl}/${webhookPath}?${queryParams.toString()}`, {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' },
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                webhookId: webhookPath,
+                event: 'TEST_TRIGGER',
+                client: session.user.id,
+                timestamp: new Date().toISOString()
+            })
         });
 
         if (!response.ok) {
