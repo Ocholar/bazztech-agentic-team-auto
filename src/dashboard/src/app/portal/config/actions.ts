@@ -171,6 +171,7 @@ export async function triggerTestWorkflow() {
             body: JSON.stringify({
                 webhookId: webhookPath,
                 event: 'TEST_TRIGGER',
+                userMessage: 'Hello BazzAI! This is a test message from my dashboard.',
                 client: session.user.id,
                 timestamp: new Date().toISOString()
             })
