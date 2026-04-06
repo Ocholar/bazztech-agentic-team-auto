@@ -4,11 +4,14 @@ const prisma = new PrismaClient();
 async function main() {
     const email = 'reaochola@gmail.com';
     try {
-        const user = await prisma.user.findUnique({ where: { email }, include: { subscriptions: true } });
+        const user = await prisma.user.findUnique({ where: { email } });
         if (!user) { console.log('User not found'); return; }
 
-        console.log(`Found ${user.subscriptions.length} subscriptions for user.`);
-        console.log(JSON.stringify(user.subscriptions, null, 2));
+        const configs = await prisma.productConfig.findMany({
+            where: { userId: user.id }
+        });
+        console.log(`Found ${configs.length} configs for user.`);
+        console.log(JSON.stringify(configs, null, 2));
     } catch (e) {
         console.error(e);
     } finally {
