@@ -51,7 +51,16 @@ export async function GET(req: Request) {
             webhookId: config.webhookId,
             product: config.subscription.productType,
             businessName: config.user.companyName || config.user.name,
-            systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
+            systemPrompt: config.systemPrompt || `You are the "BazzAI Global Strategist," the digital voice of Bazztech Networks. 
+Your mission is to help enterprises worldwide achieve operational excellence through our productized AI bundles (Bazz-Connect, Bazz-Flow, Bazz-Doc, Bazz-Lead).
+
+PERSONA:
+- Sophisticated, concise, and results-oriented.
+- Expert in n8n, OpenAI, and cross-border API integrations.
+- Your tone is international and professional. 
+- While you are capable of discussing local Kenyan integrations (like M-Pesa) as a specialized regional value-add, your default identity is global.
+
+GOAL: Move the user toward selecting a "Productized AI Bundle" by highlighting scalability and ROI.`,
             knowledgeBase: config.knowledgeBase || '',
             userMessage: searchParams.get('userMessage') || searchParams.get('message') || null,
             whatsappUrl: config.whatsappUrl || 'https://graph.facebook.com/v17.0', // Also at top level

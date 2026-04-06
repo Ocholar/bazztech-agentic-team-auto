@@ -8,8 +8,9 @@ import { WhatsAppButton } from "@/components/whatsapp-button";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Bazz AI | Client Portal",
-  description: "Manage your AI automation products — Bazz-Connect, Bazz-Flow, Bazz-Doc, Bazz-Lead",
+  title: "BazzAI | Enterprise Automation Swarm",
+  description: "Global productized AI agents for enterprise-grade automation. BazzAI delivers autonomous WhatsApp receptionists, M-Pesa/Fintech flow automation, and intelligent document processing.",
+  keywords: ["Enterprise AI", "Automation Swarm", "n8n", "WhatsApp API", "M-Pesa Automation", "Autonomous Agents"],
 };
 
 export default function RootLayout({
