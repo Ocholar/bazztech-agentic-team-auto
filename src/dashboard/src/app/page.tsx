@@ -52,16 +52,16 @@ export default function LandingPage() {
                     <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-[10px] md:text-xs font-bold mb-8">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                            Productized AI Services for MSMEs
+                            Global Enterprise-Grade AI Automation Swarms
                         </div>
-                        
+
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-8">
                             Automate <br />
                             Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Growth</span>
                         </h1>
-                        
+
                         <p className="max-w-xl text-lg md:text-xl text-slate-500 mb-12 leading-relaxed">
-                            Ready-to-deploy AI solutions for Kenyan businesses. No complexity, just results.
+                            Scalable, ready-to-deploy AI solutions for forward-thinking global enterprises. No complexity, just autonomous results.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
@@ -106,7 +106,7 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <h2 className="text-3xl md:text-5xl font-black mb-4">Our Productized AI Bundles</h2>
                     <p className="text-slate-500 mb-16 text-lg">Ready-to-deploy systems built with precision. Choose the automation that <br className="hidden md:block" /> brings the most impact to your daily operations.</p>
-                    
+
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
                             { color: 'green', icon: <MessageSquare />, title: 'Bazz-Connect WhatsApp', sub: 'n8n + WhatsApp API + OpenAI', features: ['FAQ Automation', 'Lead Qualification', 'Order Status', 'CRM Backup'], productId: 'BAZZ_CONNECT' },
@@ -115,17 +115,16 @@ export default function LandingPage() {
                             { color: 'orange', icon: <Bot />, title: 'Bazz-Lead Agent', sub: 'n8n + CRM Integration', features: ['Social Media Capture', 'AI Nurturing', 'Meeting Scheduling', 'Pipeline Mgmt.'], productId: 'BAZZ_LEAD' },
                         ].map((b, i) => (
                             <div key={i} className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-2xl transition-all group flex flex-col text-left">
-                                <div className={`w-14 h-14 rounded-2xl mb-8 flex items-center justify-center transition-transform group-hover:scale-110 ${
-                                    b.color === 'green' ? 'bg-green-50 text-green-600' :
-                                    b.color === 'blue' ? 'bg-blue-50 text-blue-600' :
-                                    b.color === 'purple' ? 'bg-purple-50 text-purple-600' :
-                                    'bg-orange-50 text-orange-600'
-                                }`}>
+                                <div className={`w-14 h-14 rounded-2xl mb-8 flex items-center justify-center transition-transform group-hover:scale-110 ${b.color === 'green' ? 'bg-green-50 text-green-600' :
+                                        b.color === 'blue' ? 'bg-blue-50 text-blue-600' :
+                                            b.color === 'purple' ? 'bg-purple-50 text-purple-600' :
+                                                'bg-orange-50 text-orange-600'
+                                    }`}>
                                     {b.icon}
                                 </div>
                                 <h3 className="text-xl font-black mb-1">{b.title}</h3>
                                 <p className="text-[10px] font-bold text-slate-400 mb-8 uppercase tracking-wider">{b.sub}</p>
-                                
+
                                 <h4 className="text-sm font-black mb-4 flex items-center gap-2">Instant Sync</h4>
                                 <ul className="space-y-4 mb-10 flex-grow">
                                     {b.features.map((f, j) => (
@@ -147,9 +146,9 @@ export default function LandingPage() {
             {/* Productized Advantage - Matches Screenshot 3 */}
             <section className="py-24 px-6 bg-white">
                 <div className="max-w-7xl mx-auto text-center">
-                    <h2 className="text-3xl md:text-5xl font-black mb-4">The Productized Advantage</h2>
-                    <p className="text-slate-500 mb-20">We provide fixed-cost solutions, not open-ended consulting hours. Clear <br /> pricing and defined outcomes.</p>
-                    
+                    <h2 className="text-3xl md:text-5xl font-black mb-4">The Global Agentic Advantage</h2>
+                    <p className="text-slate-500 mb-20">We provide fixed-cost enterprise solutions, not open-ended consulting hours. <br /> International standards with clear, defined outcomes.</p>
+
                     <div className="grid md:grid-cols-3 gap-16">
                         {[
                             { icon: <Zap className="text-red-500" />, title: 'Fixed Cost Deployments', desc: 'Say goodbye to unpredictable hourly billing. You buy a tailored product with defined deliverables and clear outcomes.' },
@@ -176,13 +175,13 @@ export default function LandingPage() {
                             Bazz<span className="text-red-600">AI</span>
                         </div>
                         <p className="text-slate-400 max-w-sm mb-10 leading-relaxed">
-                            Bazztech Networks is your trusted partner for AI Automation in Kenya. We provide ready-to-deploy, productized automation solutions built on n8n.
+                            Bazztech Networks is your global partner for Agentic AI Automation. We provide ready-to-deploy, productized automation solutions built on n8n and enterprise grade LLMs.
                         </p>
                         <div className="flex gap-6">
                             <Link href="/portal" className="px-6 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-700 transition-all font-bold">Get Started Today</Link>
                         </div>
                     </div>
-                    
+
                     <div>
                         <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-8">Contact</h5>
                         <ul className="space-y-4 text-slate-400 text-sm">
@@ -202,7 +201,7 @@ export default function LandingPage() {
                         </ul>
                     </div>
                 </div>
-                
+
                 <div className="max-w-7xl mx-auto border-t border-white/10 mt-20 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-[10px] md:text-sm font-bold">© 2026 Bazztech Networks. All rights reserved.</p>
                 </div>
