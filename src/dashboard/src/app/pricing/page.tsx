@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
 import { Check, Info, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import PayPalButton from '@/components/paypal-button';
 
 const PRODUCT_LABELS: Record<string, string> = {
     BAZZ_CONNECT: 'Bazz-Connect (WhatsApp AI)',
@@ -22,8 +23,10 @@ function PricingContent() {
 
     const pricing = {
         KES: { price: 5000, maintenance: 1250, label: 'Kenyan Shilling' },
-        USD: { price: 50, maintenance: 12.5, label: 'US Dollar' },
+        USD: { price: 50, maintenance: 12.5, label: 'US Dollar', paypalId: 'LA2KMANSS6H86' },
     };
+
+    const clientId = "BAACRkqyxgAosaK7YfS6vuzt4vdBGWsyk1b3SRFz-9tiBpxCWdyQur_V8O2JYMsPNqTMPIXCTTuJ5-nzPM";
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
@@ -44,8 +47,8 @@ function PricingContent() {
                             key={c}
                             onClick={() => setCurrency(c)}
                             className={`px-8 py-3 rounded-xl font-bold text-sm transition-all ${currency === c
-                                    ? "bg-white text-slate-900 shadow-md scale-100"
-                                    : "text-slate-500 hover:text-slate-700 scale-95"
+                                ? "bg-white text-slate-900 shadow-md scale-100"
+                                : "text-slate-500 hover:text-slate-700 scale-95"
                                 }`}
                         >
                             {c === 'KES' ? 'Kenya (KES)' : 'Global (USD)'}
@@ -109,12 +112,23 @@ function PricingContent() {
                             </div>
 
                             <div className="pt-8 border-t border-slate-100">
-                                <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group">
-                                    Start Your Global Onboarding <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                                <p className="text-center text-slate-400 text-[10px] font-bold mt-6 uppercase tracking-widest">
-                                    Instant activation after payment verification
-                                </p>
+                                {currency === 'USD' ? (
+                                    <div className="space-y-4">
+                                        <PayPalButton hostedButtonId={pricing.USD.paypalId} clientId={clientId} />
+                                        <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                                            Instant activation after PayPal verification
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group text-center">
+                                            Start Your Global Onboarding <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                                        </Link>
+                                        <p className="text-center text-slate-400 text-[10px] font-bold mt-6 uppercase tracking-widest">
+                                            Instant activation after payment verification
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </CardContent>
