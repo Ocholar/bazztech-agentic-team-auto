@@ -9,11 +9,14 @@ export default async function ConfigPage() {
     const session = await auth();
     if (!session || !session.user) redirect('/login');
 
+    const user = await db.user.findUnique({ where: { id: session.user.id } });
+    const isAdmin = (session.user as any)?.role === 'ADMIN' || user?.role === 'ADMIN' || session.user.email === 'reaochola@gmail.com';
+
     const activeSubs = await db.subscription.findMany({
         where: { userId: session.user.id }
     });
 
-    const isSubActive = (type: string) => activeSubs.some(s => s.productType === type && s.status === 'ACTIVE');
+    const isSubActive = (type: string) => isAdmin || activeSubs.some(s => s.productType === type && s.status === 'ACTIVE');
     const isSubPending = (type: string) => activeSubs.some(s => s.productType === type && s.status === 'INACTIVE');
 
     const products = [

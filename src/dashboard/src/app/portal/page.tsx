@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { verifyAndAllotSlots } from './verify-payment';
+
 export const dynamic = 'force-dynamic';
 
-export default async function PortalDashboard() {
+export default async function PortalDashboard({ searchParams }: { searchParams: { orderId?: string, payment?: string } }) {
     const session = await auth();
 
     if (!session || !session.user) {
@@ -25,23 +27,25 @@ export default async function PortalDashboard() {
     }
 
     const userId = (session.user as any).id;
+    const orderId = searchParams.orderId;
 
-    // Fetch subscription data
-    const subscriptions = await db.subscription.findMany({
-        where: { userId },
-        orderBy: { startDate: 'desc' }
-    });
+    // Auto-verify if returning from PayPal
+    let paymentStatus: any = null;
+    if (orderId) {
+        paymentStatus = await verifyAndAllotSlots(orderId, userId);
+    }
 
-    // Fetch lead counts for summary
-    const totalLeads = await db.lead.count({ where: { userId } });
-    const saleLeads = await db.lead.count({ where: { userId, stage: 'SALE' } });
+    // Fetch user and subscriptions together
+    const [user, subscriptions, totalLeads, saleLeads, latestLogs] = await Promise.all([
+        db.user.findUnique({ where: { id: userId } }),
+        db.subscription.findMany({ where: { userId }, orderBy: { startDate: 'desc' } }),
+        db.lead.count({ where: { userId } }),
+        db.lead.count({ where: { userId, stage: 'SALE' } }),
+        db.auditLog.findMany({ where: { userId }, orderBy: { createdAt: 'desc' }, take: 5 })
+    ]);
 
-    // Fetch latest swarm activity
-    const latestLogs = await db.auditLog.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-        take: 5
-    });
+    const isAdmin = user?.role === 'ADMIN';
+    const availableSlots = isAdmin ? 999 : ((user as any)?.availableSlots || 0);
 
     // Identify primary subscription
     const activeSub = subscriptions.find(s => s.status === 'ACTIVE');
@@ -49,6 +53,22 @@ export default async function PortalDashboard() {
 
     return (
         <div className="flex flex-col min-h-screen bg-slate-50/50 p-6 md:p-10">
+            {/* Payment Status Banner */}
+            {paymentStatus && (
+                <div className={`mb-8 p-4 rounded-xl border flex items-center gap-4 animate-in fade-in slide-in-from-top-4 ${paymentStatus.success ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'
+                    }`}>
+                    {paymentStatus.success ? <CheckCircle2 className="text-green-600" /> : <AlertCircle className="text-red-600" />}
+                    <div className="flex-1">
+                        <p className="font-bold text-sm">
+                            {paymentStatus.success
+                                ? `Success! ${paymentStatus.quantity || ''} Universal Slot(s) have been added to your account.`
+                                : `Payment Error: ${paymentStatus.error || "Verification failed."}`}
+                        </p>
+                        {paymentStatus.success && <p className="text-xs opacity-80">You can now use these slots to activate any BazzAI product below.</p>}
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -93,21 +113,17 @@ export default async function PortalDashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="border-slate-200 shadow-sm transition-hover hover:shadow-md">
+                <Card className="border-red-200 border-2 shadow-lg bg-red-50/30">
                     <CardHeader className="pb-2">
-                        <CardDescription className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                            <CreditCard size={14} className="text-blue-500" />
-                            Subscription
+                        <CardDescription className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-red-900">
+                            <Zap size={14} className="text-red-600 animate-pulse" />
+                            Universal Setup Slots
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-xl font-black uppercase ${activeSub ? 'text-green-600' : 'text-red-600'}`}>
-                            {activeSub ? 'ACTIVE (Pro)' : 'INACTIVE'}
-                        </div>
-                        <div className="text-xs text-slate-400 mt-1">
-                            {activeSub?.expiresAt
-                                ? `Expires: ${new Date(activeSub.expiresAt).toLocaleDateString()}`
-                                : 'No active service'}
+                        <div className="text-4xl font-black text-slate-900">{isAdmin ? '∞' : availableSlots}</div>
+                        <div className="text-xs text-red-600 mt-1 font-bold">
+                            {isAdmin ? 'Business Owner Portal — Master Access' : (availableSlots > 0 ? 'Ready to Activate Agents' : 'All Slotted Units Active')}
                         </div>
                     </CardContent>
                 </Card>
@@ -245,6 +261,7 @@ export default async function PortalDashboard() {
                             <a
                                 href="https://wa.me/254781751937"
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500 text-white text-xs font-black shadow-lg shadow-green-100 hover:bg-green-600 transition-all active:scale-95"
                             >
                                 <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">

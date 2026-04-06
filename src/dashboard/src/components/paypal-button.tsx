@@ -5,9 +5,11 @@ import { useEffect, useRef } from 'react';
 interface PayPalButtonProps {
     hostedButtonId: string;
     clientId: string;
+    amount?: string;
+    quantity?: number;
 }
 
-export default function PayPalButton({ hostedButtonId, clientId }: PayPalButtonProps) {
+export default function PayPalButton({ hostedButtonId, clientId, amount, quantity }: PayPalButtonProps) {
     const containerId = `paypal-container-${hostedButtonId}`;
     const initialized = useRef(false);
 
@@ -20,9 +22,31 @@ export default function PayPalButton({ hostedButtonId, clientId }: PayPalButtonP
         let script = document.getElementById(scriptId) as HTMLScriptElement;
 
         const loadButton = () => {
-            if ((window as any).paypal?.HostedButtons) {
-                (window as any).paypal.HostedButtons({
-                    hostedButtonId: hostedButtonId,
+            if ((window as any).paypal?.Buttons) {
+                (window as any).paypal.Buttons({
+                    style: {
+                        shape: 'pill',
+                        color: 'gold',
+                        layout: 'vertical',
+                        label: 'pay',
+                    },
+                    createOrder: (data: any, actions: any) => {
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: amount || '49.99'
+                                },
+                                description: `BazzAI: Global Enterprise Automation (${quantity || 1} Slot${(quantity || 1) > 1 ? 's' : ''})`
+                            }]
+                        });
+                    },
+                    onApprove: async (data: any, actions: any) => {
+                        const order = await actions.order.capture();
+                        console.log('Capture result', order);
+                        // Optional: Redirect to a success page or call a server-side "Payment Verified" endpoint
+                        window.location.href = '/portal?payment=success&orderId=' + order.id;
+                    }
                 }).render(`#${containerId}`);
                 initialized.current = true;
             }
@@ -31,12 +55,11 @@ export default function PayPalButton({ hostedButtonId, clientId }: PayPalButtonP
         if (!script) {
             script = document.createElement('script');
             script.id = scriptId;
-            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&components=hosted-buttons&disable-funding=venmo&currency=USD`;
+            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
             script.async = true;
             script.onload = loadButton;
             document.head.appendChild(script);
         } else {
-            // Script already exists, just render if SDK is ready
             loadButton();
         }
 

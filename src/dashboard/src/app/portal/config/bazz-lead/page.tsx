@@ -11,16 +11,19 @@ export default async function BazzLeadConfig() {
     const session = await auth();
     if (!session?.user?.id) redirect('/login');
 
+    const user = await db.user.findUnique({ where: { id: session.user.id } });
+    const isAdmin = (session.user as any)?.role === 'ADMIN' || user?.role === 'ADMIN' || session.user.email === 'reaochola@gmail.com';
+
     const sub = await db.subscription.findFirst({
         where: { userId: session.user.id, productType: 'BAZZ_LEAD' }
     });
 
     const config = await db.productConfig.findFirst({
-        where: { userId: session.user.id }
+        where: { userId: session.user.id, productType: 'BAZZ_LEAD' }
     });
 
-    const isActive = sub?.status === 'ACTIVE';
-    const amount = sub?.oneTimeFee || 2500;
+    const isActive = isAdmin || sub?.status === 'ACTIVE';
+    const amount = sub?.oneTimeFee || 4999;
 
     return (
         <main className="flex min-h-screen flex-col p-8 bg-gray-50">

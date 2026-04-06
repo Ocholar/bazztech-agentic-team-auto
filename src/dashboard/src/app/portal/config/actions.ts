@@ -213,8 +213,7 @@ export async function createPendingSubscription(productTypeRaw: any) {
 
     if (existing) return { success: true };
 
-    let fee = 2500;
-    if (productType === 'BAZZ_DOC' || productType === 'BAZZ_FLOW') fee = 5000;
+    let fee = 4999;
 
     await db.subscription.create({
         data: {

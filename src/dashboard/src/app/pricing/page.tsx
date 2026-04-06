@@ -21,12 +21,15 @@ function PricingContent() {
     const productParam = searchParams.get('product') || '';
     const productLabel = PRODUCT_LABELS[productParam] || 'BazzAI';
 
+    const [quantity, setQuantity] = useState(1);
+
     const pricing = {
-        KES: { price: 5000, maintenance: 1250, label: 'Kenyan Shilling' },
-        USD: { price: 50, maintenance: 12.5, label: 'US Dollar', paypalId: 'LA2KMANSS6H86' },
+        KES: { price: 4999, maintenance: 1249, label: 'Kenyan Shilling' },
+        USD: { price: 49.99, maintenance: 12.49, label: 'US Dollar', paypalId: 'LA2KMANSS6H86' },
     };
 
-    const clientId = "BAACRkqyxgAosaK7YfS6vuzt4vdBGWsyk1b3SRFz-9tiBpxCWdyQur_V8O2JYMsPNqTMPIXCTTuJ5-nzPM";
+    const totalPrice = (pricing.USD.price * quantity).toFixed(2);
+    const clientId = "Ac_knSPsvEXZOg5rutYAGm5gY91z5pbdb6ayhQKe8E1fJkq1tqYDpKCOhtDH5slgZzZN0FNHkezcBSaz";
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-white">
@@ -113,10 +116,30 @@ function PricingContent() {
 
                             <div className="pt-8 border-t border-slate-100">
                                 {currency === 'USD' ? (
-                                    <div className="space-y-4">
-                                        <PayPalButton hostedButtonId={pricing.USD.paypalId} clientId={clientId} />
+                                    <div className="space-y-6">
+                                        <div className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                            <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">Setup Units (Quantity)</span>
+                                            <select
+                                                value={quantity}
+                                                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                                                title="Number of agent slots to purchase"
+                                                className="bg-white border border-slate-300 rounded-lg px-3 py-1 font-bold text-slate-900 focus:ring-2 focus:ring-blue-600 outline-none"
+                                            >
+                                                {[1, 2, 3, 4].map(n => (
+                                                    <option key={n} value={n}>{n} Agent Slot{n > 1 ? 's' : ''}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <PayPalButton
+                                            hostedButtonId={pricing.USD.paypalId}
+                                            clientId={clientId}
+                                            amount={totalPrice}
+                                            quantity={quantity}
+                                        />
+
                                         <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-                                            Instant activation after PayPal verification
+                                            Total: ${totalPrice} USD — Instant Slot Activation
                                         </p>
                                     </div>
                                 ) : (

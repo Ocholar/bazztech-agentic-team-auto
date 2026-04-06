@@ -12,16 +12,19 @@ export default async function BazzConnectConfig() {
     const session = await auth();
     if (!session || !session.user) redirect('/login');
 
+    const user = await db.user.findUnique({ where: { id: session.user.id } });
+    const isAdmin = (session.user as any)?.role === 'ADMIN' || user?.role === 'ADMIN' || session.user.email === 'reaochola@gmail.com';
+
     const sub = await db.subscription.findFirst({
         where: { userId: session.user.id, productType: 'BAZZ_CONNECT' }
     });
 
     const config = await db.productConfig.findFirst({
-        where: { userId: session.user.id } // Ideally tied to the subscription, but we'll use user's first config for now
+        where: { userId: session.user.id, productType: 'BAZZ_CONNECT' }
     });
 
-    const isActive = sub?.status === 'ACTIVE';
-    const amount = sub?.oneTimeFee || 2500;
+    const isActive = isAdmin || sub?.status === 'ACTIVE';
+    const amount = sub?.oneTimeFee || 4999;
 
     return (
         <main className="flex min-h-screen flex-col p-8 bg-gray-50">
