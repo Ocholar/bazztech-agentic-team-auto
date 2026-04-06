@@ -19,7 +19,7 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
     const base = role === 'ADMIN' ? '/admin' : '/portal';
     const prefix = pathname.startsWith(base) ? base : '';
 
-    const dashboardHref = prefix || '/';
+    const dashboardHref = role === 'ADMIN' ? '/portal' : (prefix || '/');
     // If an Admin is viewing the dashboard, force the workspace links to the /portal namespace
     const portalPrefix = role === 'ADMIN' ? '/portal' : prefix;
     const configHref = `${portalPrefix}/config`;
