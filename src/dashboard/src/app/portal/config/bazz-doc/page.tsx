@@ -2,7 +2,7 @@ import { auth } from '../../../../../auth';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui-card";
-import { Database, Webhook, AlertCircle, FileText, Upload } from "lucide-react";
+import { Database, Webhook, AlertCircle, FileText, Upload, Bot, CheckCircle2 } from "lucide-react";
 import { saveProductConfig, saveApiKeys, createPendingSubscription } from '../actions';
 import { PaymentVerification } from '@/components/payment-verification';
 import { TestAgentButton } from '@/components/test-agent-button';
@@ -127,25 +127,48 @@ export default async function BazzDocConfig() {
                     </div>
                 )}
 
-                {/* --- ACTIVE WEBHOOK CONNECTION CARD ---  */}
+                {/* --- ACTIVE WEBHOOK & SWARM CONNECTION CARD ---  */}
                 {isActive && (
-                    <div className="md:col-span-1 lg:col-span-1 space-y-6">
+                    <div className="md:col-span-1 lg:col-span-1 space-y-6 text-sm">
+                        {/* MULTIMODAL INGRESS (WHATSAPP) */}
+                        <Card className="border-purple-200 bg-purple-50 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-purple-900">
+                                    <Bot size={20} className="text-purple-600" />
+                                    1. Multimodal Swarm Ingress
+                                </CardTitle>
+                                <CardDescription className="text-purple-800/70">
+                                    Send images/PDFs directly via WhatsApp.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex items-center gap-2 text-green-700 font-bold bg-green-50 p-2 rounded border border-green-100">
+                                    <CheckCircle2 size={16} /> Bazz-Connect Link Active
+                                </div>
+                                <p className="text-[11px] text-purple-900/60 leading-relaxed">
+                                    Your <b>Bazz-Connect</b> agent automatically routes multimodal media (receipts, invoices) to this processor for extraction.
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* TECHNICAL INGRESS (EXTERNAL API) */}
                         <Card className="bg-slate-900 border-none text-white shadow-xl">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Webhook size={20} className="text-purple-400" />
-                                    1. Ingress Webhook
+                                    2. API Ingress (Technical)
                                 </CardTitle>
                                 <CardDescription className="text-slate-400">
-                                    Post raw PDF/JPG documents here.
+                                    Standard Webhook for ERPs or Scanners.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Production Ingress URL</p>
+                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Production Webhook URL</p>
                                     <code className="block w-full bg-slate-950 text-purple-400 p-3 rounded font-mono text-[10px] break-all">
                                         https://n8n.bazztech.co.ke/webhook/doc-ingest-{session.user.id.substring(0, 8)}
                                     </code>
+                                    <p className="text-[10px] text-slate-500 mt-2">Use this URL to post raw JSON metadata or binary files from external third-party systems.</p>
                                 </div>
                             </CardContent>
                         </Card>
