@@ -21,7 +21,7 @@ export default async function ConfigPage() {
 
     const products = [
         { id: 'BAZZ_CONNECT', title: 'Bazz-Connect', path: '/portal/config/bazz-connect', icon: Bot, desc: 'WhatsApp & Meta API Configuration', color: 'text-green-600', linkText: 'Configure WhatsApp Brain' },
-        { id: 'BAZZ_FLOW', title: 'Bazz-Flow M-Pesa', path: '/portal/config/bazz-flow', icon: Zap, desc: 'Daraja 3.0 & ERP Automation', color: 'text-blue-600', linkText: 'Configure Daraja Keys' },
+        { id: 'BAZZ_FLOW', title: 'Bazz-Flow Unified', path: '/portal/config/bazz-flow', icon: Zap, desc: 'Fintech & ERP Ledger Automation', color: 'text-blue-600', linkText: 'Configure Portal' },
         { id: 'BAZZ_DOC', title: 'Bazz-Doc AI', path: '/portal/config/bazz-doc', icon: Database, desc: 'Vision OCR Structured Parsing', color: 'text-purple-600', linkText: 'Define JSON Schema' },
         { id: 'BAZZ_LEAD', title: 'Bazz-Lead Agent', path: '/portal/config/bazz-lead', icon: Settings, desc: 'Social Media & Meeting Scheduling', color: 'text-orange-600', linkText: 'Configure CRM Agent' },
     ];

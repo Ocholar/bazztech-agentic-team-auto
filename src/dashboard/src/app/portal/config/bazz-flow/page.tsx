@@ -71,31 +71,31 @@ export default async function BazzFlowConfig() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <ShieldCheck className="text-blue-600" size={20} />
-                                    1. M-Pesa Daraja API Integration
+                                    1. Fintech API Integration (Stripe, PayPal, Daraja)
                                 </CardTitle>
-                                <CardDescription>Input your Safaricom Developer credentials for real-time sync.</CardDescription>
+                                <CardDescription>Input your payment gateway credentials for real-time ledger sync.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <form action={saveApiKeys} className="space-y-4">
                                     <input type="hidden" name="configId" value={config?.id || ""} />
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Consumer Key</label>
-                                            <input type="text" name="darajaConsumerKey" defaultValue={config?.darajaConsumerKey || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Daraja Key..." />
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">API Key / Client ID</label>
+                                            <input type="text" name="darajaConsumerKey" defaultValue={config?.darajaConsumerKey || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="e.g. pk_live_..." />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Consumer Secret</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">API Secret / Client Secret</label>
                                             <input type="password" name="darajaConsumerSecret" defaultValue={config?.darajaConsumerSecret || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="••••••••" />
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shortcode</label>
-                                            <input type="text" name="darajaShortcode" defaultValue={config?.darajaShortcode || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Paybill / Till..." />
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Account / Shortcode</label>
+                                            <input type="text" name="darajaShortcode" defaultValue={config?.darajaShortcode || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Merchant ID or Paybill..." />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Passkey</label>
-                                            <input type="text" name="darajaPasskey" defaultValue={config?.darajaPasskey || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Daraja LNM Passkey..." />
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Access Passkey (if required)</label>
+                                            <input type="text" name="darajaPasskey" defaultValue={config?.darajaPasskey || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Gateway specific passkey..." />
                                         </div>
                                     </div>
                                     <div className="flex justify-end pt-4 border-t">
