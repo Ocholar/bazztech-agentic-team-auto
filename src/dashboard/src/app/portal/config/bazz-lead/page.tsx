@@ -141,7 +141,7 @@ export default async function BazzLeadConfig() {
                                 <div>
                                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Lead Source URL</p>
                                     <code className="block w-full bg-slate-950 text-orange-400 p-3 rounded font-mono text-[10px] break-all">
-                                        https://n8n.bazztech.co.ke/webhook/ig-lead-{session.user.id.substring(0, 8)}
+                                        https://tentacled-goldfish.pikapod.net/webhook/ig-lead-{session.user.id.substring(0, 8)}
                                     </code>
                                 </div>
                             </CardContent>

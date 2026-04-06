@@ -166,7 +166,7 @@ export default async function BazzDocConfig() {
                                 <div>
                                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Production Webhook URL</p>
                                     <code className="block w-full bg-slate-950 text-purple-400 p-3 rounded font-mono text-[10px] break-all">
-                                        https://n8n.bazztech.co.ke/webhook/doc-ingest-{session.user.id.substring(0, 8)}
+                                        https://tentacled-goldfish.pikapod.net/webhook/doc-ingest-{session.user.id.substring(0, 8)}
                                     </code>
                                     <p className="text-[10px] text-slate-500 mt-2">Use this URL to post raw JSON metadata or binary files from external third-party systems.</p>
                                 </div>
