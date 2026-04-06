@@ -80,7 +80,13 @@ export default async function BazzLeadConfig() {
                                             name="systemPrompt"
                                             rows={6}
                                             className="flex w-full rounded-md border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-orange-600"
-                                            defaultValue={config?.systemPrompt || "Ask the user about their monthly budget. If it is over 50,000 KES, mark them as HOT. Ensure you capture their email address and phone number before proceeding."}
+                                            defaultValue={config?.systemPrompt || `You are the BazzAI Senior Sales Representative. You monitor social DMs and leads. Use the BANT framework:
+1. Budget: Is the project budget over $2,500 (KES 250,000)?
+2. Authority: Are you speaking to the CEO, CTO, or Operations Manager?
+3. Need: Do they have a manual process (WhatsApp, ERP, Documents) they want to automate with an Agentic Swarm?
+4. Time: Do they want to deploy within 30 days?
+
+Tone: Sophisticated, efficient, and premium. If BANT is qualified, offer the Strategy Call link.`}
                                         />
                                     </div>
                                     <div className="flex justify-end pt-4 border-t">

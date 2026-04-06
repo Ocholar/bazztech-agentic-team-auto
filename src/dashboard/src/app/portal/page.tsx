@@ -72,9 +72,16 @@ export default async function PortalDashboard({ searchParams }: { searchParams: 
             {/* Header */}
             <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-                        Welcome back, {(session.user as any).name || 'Client'}
-                    </h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                            Welcome back, {(session.user as any).name || 'Client'}
+                        </h1>
+                        {isAdmin && (
+                            <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-red-200">
+                                Business Owner
+                            </span>
+                        )}
+                    </div>
                     <p className="text-slate-500 mt-1">Manage your AI Digital Employees and CRM metrics.</p>
                 </div>
                 <div className="flex items-center gap-3">

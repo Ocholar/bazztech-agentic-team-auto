@@ -94,7 +94,7 @@ export default async function BazzConnectConfig() {
                                             rows={4}
                                             className="flex w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-green-600"
                                             placeholder="e.g. You are the digital receptionist. Answer FAQs, qualify leads, and check Order Status..."
-                                            defaultValue={config?.systemPrompt || ""}
+                                            defaultValue={config?.systemPrompt || "You are the BazzAI Global Orchestrator—a sophisticated, results-oriented AI executive. Your mission is to educate high-growth enterprises on the power of Agentic Swarms. You are concise, professional, and world-class. You help clients understand how BazzAI (Connect, Flow, Doc, Lead) works together as a unified team. If a client shows high interest, your goal is to book a Strategy Call."}
                                         />
                                     </div>
                                     <div className="space-y-2">
