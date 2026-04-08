@@ -45,7 +45,33 @@ export async function POST(req: Request) {
 
                 const refCode = `BAZ-${user.id.substring(0, 5).toUpperCase()}-${product.split('_')[1]}`;
 
-                const isUSD = currency === 'USD';
+                // --- AGGRESSIVE IP GEOLOCATION PRICING ENFORCEMENT ---
+                let isUSD = currency === 'USD'; // Local dev fallback
+                const countryHeader = req.headers.get('x-vercel-ip-country') || req.headers.get('cf-ipcountry');
+
+                if (countryHeader) {
+                    // CDN explicitly provided the country code
+                    isUSD = countryHeader.toUpperCase() !== 'KE';
+                } else {
+                    // Raw IP check via fallback API
+                    const forwardedFor = req.headers.get('x-forwarded-for');
+                    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : null;
+
+                    if (clientIp && clientIp !== '::1' && clientIp !== '127.0.0.1') {
+                        try {
+                            const geoRes = await fetch(`https://ipapi.co/${clientIp}/country/`);
+                            if (geoRes.ok) {
+                                const geoCountry = (await geoRes.text()).trim();
+                                if (geoCountry.length === 2) {
+                                    isUSD = geoCountry.toUpperCase() !== 'KE';
+                                }
+                            }
+                        } catch (e) {
+                            console.error("[register] IP fallback failed:", e);
+                        }
+                    }
+                }
+
                 const baseFee = isUSD ? 49.99 : 4999;
                 const finalQuantity = qty && qty > 0 ? Number(qty) : 1;
                 const totalFee = baseFee * finalQuantity;
