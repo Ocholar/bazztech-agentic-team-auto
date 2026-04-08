@@ -7,9 +7,10 @@ interface PayPalButtonProps {
     clientId: string;
     amount?: string;
     quantity?: number;
+    onSuccess?: (order: any) => void;
 }
 
-export default function PayPalButton({ hostedButtonId, clientId, amount, quantity }: PayPalButtonProps) {
+export default function PayPalButton({ hostedButtonId, clientId, amount, quantity, onSuccess }: PayPalButtonProps) {
     const containerId = `paypal-container-${hostedButtonId}`;
     const initialized = useRef(false);
 
@@ -44,8 +45,11 @@ export default function PayPalButton({ hostedButtonId, clientId, amount, quantit
                     onApprove: async (data: any, actions: any) => {
                         const order = await actions.order.capture();
                         console.log('Capture result', order);
-                        // Optional: Redirect to a success page or call a server-side "Payment Verified" endpoint
-                        window.location.href = '/portal?payment=success&orderId=' + order.id;
+                        if (onSuccess) {
+                            onSuccess(order);
+                        } else {
+                            window.location.href = '/portal?payment=success&orderId=' + order.id;
+                        }
                     }
                 }).render(`#${containerId}`);
                 initialized.current = true;

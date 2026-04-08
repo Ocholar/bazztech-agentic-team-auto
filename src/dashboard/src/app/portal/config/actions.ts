@@ -232,3 +232,16 @@ export async function createPendingSubscription(productTypeRaw: any) {
     revalidatePath('/admin');
     return { success: true };
 }
+
+export async function activateSubscription(subscriptionId: string) {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
+
+    await db.subscription.updateMany({
+        where: { id: subscriptionId, userId: session.user.id },
+        data: { status: 'ACTIVE' }
+    });
+
+    revalidatePath('/portal/config');
+    return { success: true };
+}

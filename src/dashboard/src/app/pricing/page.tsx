@@ -115,43 +115,27 @@ function PricingContent() {
                             </div>
 
                             <div className="pt-8 border-t border-slate-100">
-                                {currency === 'USD' ? (
-                                    <div className="space-y-6">
-                                        <div className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                            <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">Setup Units (Quantity)</span>
-                                            <select
-                                                value={quantity}
-                                                onChange={(e) => setQuantity(parseInt(e.target.value))}
-                                                title="Number of agent slots to purchase"
-                                                className="bg-white border border-slate-300 rounded-lg px-3 py-1 font-bold text-slate-900 focus:ring-2 focus:ring-blue-600 outline-none"
-                                            >
-                                                {[1, 2, 3, 4].map(n => (
-                                                    <option key={n} value={n}>{n} Agent Slot{n > 1 ? 's' : ''}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <PayPalButton
-                                            hostedButtonId={pricing.USD.paypalId}
-                                            clientId={clientId}
-                                            amount={totalPrice}
-                                            quantity={quantity}
-                                        />
-
-                                        <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-                                            Total: ${totalPrice} USD — Instant Slot Activation
-                                        </p>
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">Setup Units (Quantity)</span>
+                                        <select
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(parseInt(e.target.value))}
+                                            title="Number of agent slots to purchase"
+                                            className="bg-white border border-slate-300 rounded-lg px-3 py-1 font-bold text-slate-900 focus:ring-2 focus:ring-blue-600 outline-none"
+                                        >
+                                            {[1, 2, 3, 4].map(n => (
+                                                <option key={n} value={n}>{n} Agent Slot{n > 1 ? 's' : ''}</option>
+                                            ))}
+                                        </select>
                                     </div>
-                                ) : (
-                                    <>
-                                        <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group text-center">
-                                            Start Your Global Onboarding <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                        <p className="text-center text-slate-400 text-[10px] font-bold mt-6 uppercase tracking-widest">
-                                            Instant activation after payment verification
-                                        </p>
-                                    </>
-                                )}
+                                    <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group text-center">
+                                        Start Your Global Onboarding <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                                    </Link>
+                                    <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                                        Total: {currency === 'KES' ? 'KES' : '$'}{((currency === 'KES' ? pricing.KES.price : pricing.USD.price) * quantity).toLocaleString()} {currency} — Instant activation after payment verification
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </CardContent>
