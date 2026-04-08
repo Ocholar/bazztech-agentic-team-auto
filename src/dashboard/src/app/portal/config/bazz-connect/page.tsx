@@ -44,7 +44,7 @@ export default async function BazzConnectConfig() {
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {/* --- PAYMENT VERIFICATION --- */}
-                {!isActive && sub && (
+                {!isActive && sub ? (
                     <div className="md:col-span-1 lg:col-span-1 space-y-4">
                         <PaymentVerification
                             subscriptionId={sub.id}
@@ -54,26 +54,15 @@ export default async function BazzConnectConfig() {
                             expiresAt={sub.expiresAt?.toISOString()}
                         />
                     </div>
-                )}
-                {!isActive && !sub && (
+                ) : !isActive ? (
                     <div className="md:col-span-1 lg:col-span-1">
-                        <form action={createPendingSubscription.bind(null, 'BAZZ_CONNECT')} className="space-y-3">
-                            <div className="bg-slate-900 rounded-lg p-4 text-white font-mono text-sm space-y-2">
-                                <div className="flex justify-between border-b border-slate-700 pb-2">
-                                    <span className="text-slate-400">Bank:</span>
-                                    <span className="font-bold">Equity Bank</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-400">Account:</span>
-                                    <span className="font-bold text-red-400">0290170458002</span>
-                                </div>
-                            </div>
-                            <button className="w-full inline-flex justify-center items-center gap-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 px-4 py-3 rounded-lg shadow-lg transition-colors">
-                                <PlusCircle size={16} />
-                                Subscribe to Bazz-Connect
-                            </button>
-                        </form>
+                        <div className="flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
+                            <AlertCircle size={16} />
+                            No Subscription Found. Return to Hub to subscribe.
+                        </div>
                     </div>
+                ) : (
+                    <></>
                 )}
 
                 {/* --- CONFIGURATION PORTAL --- */}

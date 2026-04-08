@@ -2,8 +2,9 @@ import { auth } from '../../../../../auth';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui-card";
-import { Zap, CreditCard, Link as LinkIcon, ShieldCheck, PlusCircle } from "lucide-react";
+import { Zap, CreditCard, Link as LinkIcon, ShieldCheck, PlusCircle, AlertCircle } from "lucide-react";
 import { saveProductConfig, createPendingSubscription, saveApiKeys } from '../actions';
+import { PaymentVerification } from '@/components/payment-verification';
 
 export default async function BazzFlowConfig() {
     const session = await auth();
@@ -41,27 +42,26 @@ export default async function BazzFlowConfig() {
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {/* --- ACTIVATION CARD --- */}
-                {!isActive && (
-                    <div className="md:col-span-1 lg:col-span-1">
-                        <form action={createPendingSubscription.bind(null, 'BAZZ_FLOW')} className="space-y-4">
-                            <Card className="border-blue-200 bg-blue-50/50 shadow-sm border-2">
-                                <CardHeader>
-                                    <CardTitle className="text-blue-900">Activate Bazz-Flow</CardTitle>
-                                    <CardDescription>Target: M-Pesa + Stripe + PayPal Sync</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4 text-sm text-blue-800">
-                                    <p>Unlock autonomous ledger reconciliation to your ERP (QuickBooks, Xero, etc.)</p>
-                                    <div className="bg-white p-3 rounded border border-blue-200 font-mono text-xs">
-                                        Amount: KES {amount.toLocaleString()} / $49.99
-                                    </div>
-                                    <button className="w-full inline-flex justify-center items-center gap-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-xl shadow-lg transition-all active:scale-95">
-                                        <PlusCircle size={18} />
-                                        Unlock Bazz-Flow Slot
-                                    </button>
-                                </CardContent>
-                            </Card>
-                        </form>
+                {/* --- payment verification --- */}
+                {!isActive && sub ? (
+                    <div className="md:col-span-1 lg:col-span-1 space-y-4">
+                        <PaymentVerification
+                            subscriptionId={sub.id}
+                            productName="Bazz-Flow"
+                            amount={amount}
+                            status={sub.status as any}
+                            expiresAt={sub.expiresAt?.toISOString()}
+                        />
                     </div>
+                ) : !isActive ? (
+                    <div className="md:col-span-1 lg:col-span-1">
+                        <div className="flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
+                            <AlertCircle size={16} />
+                            No Subscription Found. Return to Hub to subscribe.
+                        </div>
+                    </div>
+                ) : (
+                    <></>
                 )}
 
                 {/* --- CONFIGURATION PORTAL --- */}
