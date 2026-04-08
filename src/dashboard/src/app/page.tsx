@@ -416,9 +416,9 @@ export default function LandingPage() {
                                         ))}
                                     </ul>
 
-                                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
+                                    <Link href={`/register?product=${p.productId}`}
                                         className={`w-full py-3.5 rounded-xl bg-slate-900 text-white text-sm font-black text-center ${c.btn} transition-colors flex items-center justify-center gap-2`}>
-                                        Book a Free Audit <ArrowRight size={16} />
+                                        Get Started <ArrowRight size={16} />
                                     </Link>
                                 </div>
                             );
