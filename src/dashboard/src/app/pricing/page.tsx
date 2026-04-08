@@ -129,7 +129,7 @@ function PricingContent() {
                                             ))}
                                         </select>
                                     </div>
-                                    <Link href={`/register${productParam ? `?product=${productParam}` : ''}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group text-center">
+                                    <Link href={`/register?product=${productParam || ''}&currency=${currency}&qty=${quantity}`} className="w-full inline-flex justify-center items-center gap-3 rounded-2xl bg-slate-900 px-8 py-5 text-xl font-black text-white hover:bg-red-600 shadow-xl transition-all hover:scale-[1.02] active:scale-95 group text-center">
                                         Start Your Global Onboarding <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                     <p className="text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest">

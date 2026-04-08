@@ -29,7 +29,10 @@ export function PaymentVerification({
     const maintenanceFee = Math.round(amount * 0.2);
     const expectedAmount = isRenewal ? maintenanceFee : amount;
 
-    const amountInUSD = (expectedAmount / 130).toFixed(2);
+    const isUSD = amount < 1000;
+    const amountInUSD = isUSD ? expectedAmount.toFixed(2) : (expectedAmount / 130).toFixed(2);
+    const displayAmount = isUSD ? `$${expectedAmount.toFixed(2)} USD` : `KES ${expectedAmount.toLocaleString()}`;
+
     const clientId = "Ac_knSPsvEXZOg5rutYAGm5gY91z5pbdb6ayhQKe8E1fJkq1tqYDpKCOhtDH5slgZzZN0FNHkezcBSaz";
     const paypalId = "LA2KMANSS6H86";
 
@@ -65,7 +68,7 @@ export function PaymentVerification({
                 <div className="bg-slate-900 rounded-lg p-4 text-white font-mono text-sm space-y-2.5">
                     <div className="flex justify-between border-b border-slate-700 pb-2">
                         <span className="text-slate-400">Total Amount:</span>
-                        <span className="font-bold text-green-400">KES {expectedAmount.toLocaleString()}</span>
+                        <span className="font-bold text-green-400">{displayAmount}</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-slate-400">PayPal Equivalent:</span>

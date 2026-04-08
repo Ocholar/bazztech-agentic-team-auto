@@ -48,6 +48,8 @@ function RegisterForm() {
                 email: form.email,
                 password: form.password,
                 product: product,
+                currency: searchParams.get('currency') || 'KES',
+                qty: parseInt(searchParams.get('qty') || '1'),
             }),
         });
 

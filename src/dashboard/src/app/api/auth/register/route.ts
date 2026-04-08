@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
     try {
-        const { name, companyName, email, password, product } = await req.json();
+        const { name, companyName, email, password, product, currency, qty } = await req.json();
 
         if (!process.env.DATABASE_URL) {
             console.error('[register] CRITICAL: DATABASE_URL is not defined in environment variables.');
@@ -45,14 +45,19 @@ export async function POST(req: Request) {
 
                 const refCode = `BAZ-${user.id.substring(0, 5).toUpperCase()}-${product.split('_')[1]}`;
 
+                const isUSD = currency === 'USD';
+                const baseFee = isUSD ? 49.99 : 4999;
+                const finalQuantity = qty && qty > 0 ? Number(qty) : 1;
+                const totalFee = baseFee * finalQuantity;
+
                 await db.subscription.create({
                     data: {
                         userId: user.id,
                         productType: product as any,
                         status: 'INACTIVE',
                         businessSizeTier: 'MICRO',
-                        oneTimeFee: 5000,
-                        amountExpected: 5000,
+                        oneTimeFee: totalFee,
+                        amountExpected: totalFee,
                         paymentReference: refCode,
                     }
                 });
