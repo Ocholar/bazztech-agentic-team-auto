@@ -1,0 +1,166 @@
+{
+    "name": "BazzAI Core - WhatsApp Maintenance Reminders",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "bazzai-reminders",
+                "options": {}
+            },
+            "id": "e0ca4e24-4f94-4b5b-9d7a-1c8a6f4e1f7d",
+            "name": "Webhook Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fieldToSplitOut": "body.updates",
+                "options": {}
+            },
+            "id": "b1ca2f44-8d94-4d5b-9e7a-1f8a6f4e1f8e",
+            "name": "Item Lists",
+            "type": "n8n-nodes-base.itemLists",
+            "typeVersion": 3,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "dataType": "string",
+                "value1": "={{ $json.urgency }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "value2": "3_DAYS"
+                        },
+                        {
+                            "value2": "1_DAY"
+                        },
+                        {
+                            "value2": "PAST_DUE"
+                        }
+                    ]
+                }
+            },
+            "id": "e2da1f44-8d94-4d5b-9e7a-1f8a6f4e1f9f",
+            "name": "Switch (Urgency Routing)",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "sendTemplate",
+                "phoneNumberId": "your-phone-id-here",
+                "recipientPhoneNumber": "={{ $json.client.email }}",
+                "template": "bazzai_renewal_3day",
+                "language": "en"
+            },
+            "id": "f3ea3f44-8d94-4d5b-9e7a-1f8a6f4e2f0a",
+            "name": "WhatsApp (3 Day Warning)",
+            "type": "n8n-nodes-base.whatsApp",
+            "typeVersion": 1,
+            "position": [
+                900,
+                100
+            ],
+            "notesInFlow": true,
+            "notes": "Replace recipientPhoneNumber with client's phone number or use standard message instead of sendTemplate if you prefer."
+        },
+        {
+            "parameters": {
+                "operation": "sendTemplate",
+                "phoneNumberId": "your-phone-id-here",
+                "recipientPhoneNumber": "={{ $json.client.email }}",
+                "template": "bazzai_renewal_1day",
+                "language": "en"
+            },
+            "id": "f4ea4f44-8d94-4d5b-9e7a-1f8a6f4e3f1b",
+            "name": "WhatsApp (1 Day Warning)",
+            "type": "n8n-nodes-base.whatsApp",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "sendTemplate",
+                "phoneNumberId": "your-phone-id-here",
+                "recipientPhoneNumber": "={{ $json.client.email }}",
+                "template": "bazzai_renewal_suspended",
+                "language": "en"
+            },
+            "id": "f5ea5f44-8d94-4d5b-9e7a-1f8a6f4e4f2c",
+            "name": "WhatsApp (Suspension Notice)",
+            "type": "n8n-nodes-base.whatsApp",
+            "typeVersion": 1,
+            "position": [
+                900,
+                500
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Item Lists",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Item Lists": {
+            "main": [
+                [
+                    {
+                        "node": "Switch (Urgency Routing)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Switch (Urgency Routing)": {
+            "main": [
+                [
+                    {
+                        "node": "WhatsApp (3 Day Warning)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "WhatsApp (1 Day Warning)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "WhatsApp (Suspension Notice)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    }
+}
