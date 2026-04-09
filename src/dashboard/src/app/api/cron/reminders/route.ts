@@ -65,6 +65,7 @@ export async function GET(req: Request) {
                     select: {
                         name: true,
                         email: true,
+                        phone: true,
                         companyName: true
                     }
                 }
@@ -94,6 +95,7 @@ export async function GET(req: Request) {
                     id: sub.userId,
                     name: sub.user.name,
                     email: sub.user.email,
+                    phone: sub.user.phone,
                     companyName: sub.user.companyName
                 }
             };

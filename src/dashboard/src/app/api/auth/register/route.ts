@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
     try {
-        const { name, companyName, email, password, product, currency, qty } = await req.json();
+        const { name, companyName, email, phone, password, product, currency, qty } = await req.json();
 
         if (!process.env.DATABASE_URL) {
             console.error('[register] CRITICAL: DATABASE_URL is not defined in environment variables.');
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
                     name,
                     companyName,
                     email,
+                    phone: phone || null,
                     passwordHash,
                     role: 'CLIENT',
                 },

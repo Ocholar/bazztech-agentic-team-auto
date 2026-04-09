@@ -14,6 +14,7 @@ function RegisterForm() {
         name: '',
         companyName: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
     });
@@ -46,6 +47,7 @@ function RegisterForm() {
                 name: form.name,
                 companyName: form.companyName,
                 email: form.email,
+                phone: form.phone,
                 password: form.password,
                 product: product,
                 currency: searchParams.get('currency') || 'KES',
@@ -110,6 +112,19 @@ function RegisterForm() {
                                     className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
                                 />
                             </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-slate-300">WhatsApp Phone Number</label>
+                            <input
+                                name="phone"
+                                type="tel"
+                                value={form.phone}
+                                onChange={handleChange}
+                                placeholder="+254712345678"
+                                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                            />
+                            <p className="text-[11px] text-slate-500">Used for automated renewal reminders via WhatsApp.</p>
                         </div>
 
                         <div className="space-y-1.5">
