@@ -5,7 +5,8 @@ import {
     Bot, MessageSquare, Zap, FileText, ArrowRight, Check,
     Globe, Shield, Phone, Mail, MapPin, Menu, X, Star,
     TrendingUp, Users, Clock, Database, ChevronRight,
-    Building2, Scale, Heart, Factory, Play, ExternalLink
+    Building2, Scale, Heart, Factory, Play, ExternalLink,
+    Lock, Award, Info, ChevronDown, AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -14,6 +15,13 @@ export const dynamic = 'force-dynamic';
 const WHATSAPP_NUMBER = '15558219787';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
+
+const autonomyDefs: Record<number, { label: string; color: string; desc: string }> = {
+    1: { label: 'Human-Assisted', color: 'bg-blue-100 text-blue-700 border-blue-200', desc: 'AI recommends, human approves every action.' },
+    2: { label: 'Human-in-the-Loop', color: 'bg-purple-100 text-purple-700 border-purple-200', desc: 'AI performs tasks autonomously; human oversees and can intervene.' },
+    3: { label: 'Conditional Autonomy', color: 'bg-orange-100 text-orange-700 border-orange-200', desc: 'AI operates within set parameters; escalates exceptions to humans.' },
+    4: { label: 'Fully Autonomous', color: 'bg-green-100 text-green-700 border-green-200', desc: 'AI operates independently with self-correction. No human approval needed.' },
+};
 
 /* ─── Marquee Partners ──────────────────────────────────────────── */
 const partners = [
@@ -43,6 +51,7 @@ const products = [
         after: ['Instant AI-powered responses in < 1 second', 'Qualified leads flow directly into your CRM'],
         benefits: ['Auto-qualifies leads with smart questions', 'Answers product FAQs instantly', 'Escalates hot leads to your team', 'Runs 24/7 with zero staffing cost'],
         productId: 'BAZZ_CONNECT',
+        autonomyLevel: 3,
     },
     {
         color: 'blue',
@@ -54,6 +63,7 @@ const products = [
         after: ['Automated ledger sync across Stripe & M-Pesa', 'Anomalies flagged instantly before they become problems'],
         benefits: ['Cross-border payment reconciliation', 'Real-time liquidity dashboard', 'Anomaly detection & alerts', 'Automated monthly financial reports'],
         productId: 'BAZZ_FLOW',
+        autonomyLevel: 2,
     },
     {
         color: 'purple',
@@ -65,6 +75,7 @@ const products = [
         after: ['2 minutes of AI verification replaces hours of work', 'Data extracted, structured, and synced automatically'],
         benefits: ['AI reads any invoice format', 'Extracts amounts, dates, vendors automatically', 'Syncs to your accounting software', 'Handles bulk uploads in seconds'],
         productId: 'BAZZ_DOC',
+        autonomyLevel: 2,
     },
     {
         color: 'orange',
@@ -76,6 +87,7 @@ const products = [
         after: ['Every lead captured and entered into a nurture sequence', 'Meetings booked automatically — zero back-and-forth'],
         benefits: ['Captures leads from LinkedIn, Facebook & Instagram', 'AI personalises follow-up messages', 'Auto-schedules discovery calls', 'Full pipeline visibility in real time'],
         productId: 'BAZZ_LEAD',
+        autonomyLevel: 3,
     },
 ];
 
@@ -144,11 +156,22 @@ const colorMap: Record<string, { icon: string; badge: string; border: string; bt
 
 export default function LandingPage() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [caseTab, setCaseTab] = useState<'exec' | 'tech'>('exec');
+    const [emailModalOpen, setEmailModalOpen] = useState(false);
+    const [emailValue, setEmailValue] = useState('');
+    const [emailSent, setEmailSent] = useState(false);
+    const [solutionsOpen, setSolutionsOpen] = useState(false);
+
+    const handleEmailSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setEmailSent(true);
+        setTimeout(() => { setEmailModalOpen(false); setEmailSent(false); setEmailValue(''); }, 2500);
+    };
 
     return (
         <div className="flex min-h-screen flex-col bg-white text-slate-900 font-sans overflow-x-hidden">
 
-            {/* ── GLOBAL CSS FOR MARQUEE ── */}
+            {/* ── GLOBAL CSS FOR MARQUEE + TOOLTIPS + DROPDOWN ── */}
             <style>{`
                 @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
                 .marquee-track { display: flex; gap: 1rem; animation: marquee 28s linear infinite; width: max-content; }
@@ -157,7 +180,22 @@ export default function LandingPage() {
                 .fade-up { animation: fadeInUp 0.6s ease both; }
                 @keyframes floatPulse { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
                 .float { animation: floatPulse 4s ease-in-out infinite; }
-                @keyframes dash { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+                .autonomy-tooltip { position: relative; display: inline-flex; }
+                .autonomy-tooltip .tip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+                    background: #1e293b; color: #fff; font-size: 11px; padding: 6px 10px; border-radius: 8px; white-space: nowrap; z-index: 99; max-width: 240px; white-space: normal; text-align: center; line-height: 1.4; }
+                .autonomy-tooltip:hover .tip { display: block; }
+                .solutions-dropdown { position: relative; }
+                .solutions-dropdown-menu { display: none; position: absolute; top: calc(100% + 8px); left: -24px;
+                    background: white; border: 1px solid #f1f5f9; border-radius: 16px; padding: 8px;
+                    min-width: 240px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 100; }
+                .solutions-dropdown:hover .solutions-dropdown-menu { display: block; }
+                .solutions-dropdown-menu a { display: block; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+                    color: #334155; transition: background 0.15s; text-decoration: none; }
+                .solutions-dropdown-menu a:hover { background: #f8fafc; color: #dc2626; }
+                .sticky-mobile-cta { position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; display: none; }
+                @media (max-width: 767px) { .sticky-mobile-cta { display: block; } }
+                @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                .slide-up { animation: slideUp 0.4s ease both; }
             `}</style>
 
             {/* ═══════════════════════════════════════════════════════════
@@ -175,17 +213,30 @@ export default function LandingPage() {
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-                        <Link href="#products" className="hover:text-red-600 transition-colors">Solutions</Link>
+                        <div className="solutions-dropdown">
+                            <button className="flex items-center gap-1 hover:text-red-600 transition-colors">
+                                Solutions <ChevronDown size={14} />
+                            </button>
+                            <div className="solutions-dropdown-menu">
+                                <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">By Role</div>
+                                <a href="/solutions/for-ctos">🔧 For CTOs &amp; Engineering Leaders</a>
+                                <a href="/solutions/for-coos">⚙️ For COOs &amp; Operations Leaders</a>
+                                <a href="/solutions/for-cfos">📊 For CFOs &amp; Finance Leaders</a>
+                                <div className="border-t border-slate-100 my-1" />
+                                <a href="#products">All Solutions</a>
+                            </div>
+                        </div>
                         <Link href="#how-it-works" className="hover:text-red-600 transition-colors">How It Works</Link>
                         <Link href="#industries" className="hover:text-red-600 transition-colors">Industries</Link>
                         <Link href="#case-study" className="hover:text-red-600 transition-colors">Case Study</Link>
+                        <Link href="/enterprise" className="hover:text-red-600 transition-colors">Enterprise</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
                             Chat with an Expert
                         </Link>
                         <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
                             className="px-6 py-2.5 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 text-sm">
-                            Book Free Audit
+                            Book Assessment
                         </Link>
                     </nav>
 
@@ -196,15 +247,21 @@ export default function LandingPage() {
 
                 {isMenuOpen && (
                     <div className="md:hidden bg-white border-b border-slate-100 p-6 flex flex-col gap-4">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Solutions by Role</p>
+                        <Link href="/solutions/for-ctos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">🔧 For CTOs & Engineering Leaders</Link>
+                        <Link href="/solutions/for-coos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">⚙️ For COOs & Operations Leaders</Link>
+                        <Link href="/solutions/for-cfos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">📊 For CFOs & Finance Leaders</Link>
+                        <div className="border-t border-slate-100" />
                         {['#products', '#how-it-works', '#industries', '#case-study'].map((href, i) => (
                             <Link key={i} href={href} onClick={() => setIsMenuOpen(false)}
                                 className="font-semibold text-slate-700 capitalize">{href.replace('#', '').replace('-', ' ')}</Link>
                         ))}
+                        <Link href="/enterprise" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700">Enterprise Playbook</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="font-bold text-green-600">💬 Chat with an Expert</Link>
                         <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)}
                             className="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-center">
-                            Book Free Audit
+                            Book AI Opportunity Assessment
                         </Link>
                     </div>
                 )}
@@ -220,28 +277,32 @@ export default function LandingPage() {
 
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-                    {/* Left: Copy */}
                     <div className="flex flex-col items-start fade-up">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold mb-7">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            AI Automation for African & Global Businesses
+                            Already powering 50+ businesses across East Africa and beyond
                         </div>
 
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.07] mb-7">
-                            Put Your Business<br />
-                            on <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Autopilot</span><br />
-                            with Custom AI Agents
+                            Stop Revenue Leakage<br />
+                            with{' '}<span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Autonomous</span><br />
+                            AI Agents
                         </h1>
 
-                        <p className="text-lg md:text-xl text-slate-500 mb-10 leading-relaxed max-w-lg">
-                            Replace manual data entry and repetitive tasks with intelligent workflows that work <strong className="text-slate-700">24/7</strong>.
-                            Save <strong className="text-slate-700">20+ hours a week</strong> and focus on what actually grows your business.
+                        <p className="text-lg md:text-xl text-slate-500 mb-4 leading-relaxed max-w-lg">
+                            We replace manual bottlenecks with intelligent workflows that work <strong className="text-slate-700">24/7</strong>.
+                            Save <strong className="text-slate-700">20+ hours a week</strong> and eliminate the hidden cost of human error.
                         </p>
+
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold mb-8">
+                            <AlertTriangle size={13} className="text-amber-500 flex-shrink-0" />
+                            While your competitors automate, manual processes are costing you 15–30% in operational waste.
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
                             <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
                                 className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-base md:text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                                Book a Free 15-Min Automation Audit <ArrowRight size={20} />
+                                Book a 15-Min AI Opportunity Assessment &amp; ROI Projection <ArrowRight size={20} />
                             </Link>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                                 className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-green-400 text-green-700 font-bold text-base md:text-lg hover:bg-green-50 transition-all flex items-center justify-center gap-2">
@@ -250,7 +311,7 @@ export default function LandingPage() {
                         </div>
 
                         <p className="text-xs text-slate-400 mt-5 flex items-center gap-2">
-                            <Check size={14} className="text-green-500" /> No commitment required &nbsp;·&nbsp;
+                            <Check size={14} className="text-green-500" /> No commitment, just clarity on your AI potential &nbsp;&middot;&nbsp;
                             <Check size={14} className="text-green-500" /> Results within 14 days
                         </p>
                     </div>
@@ -317,24 +378,33 @@ export default function LandingPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                TRUST BAR (Marquee)
+                SECURITY & COMPLIANCE TRUST BAR (Module 1)
             ═══════════════════════════════════════════════════════════ */}
-            <section className="py-8 border-y border-slate-100 bg-white overflow-hidden">
-                <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">
-                    Powered By &amp; Integrated With Industry Leaders
+            <section className="py-6 border-y border-slate-100 bg-slate-900">
+                <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5 px-6">
+                    Enterprise-Grade Security &amp; Compliance
                 </p>
-                <div className="overflow-hidden">
-                    <div className="marquee-track">
-                        {partners.map((p, i) => (
-                            <div key={i}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-bold whitespace-nowrap flex-shrink-0"
-                                style={{ background: p.bg, borderColor: p.color + '40', color: p.color }}>
-                                <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-                                {p.name}
+                <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                        { icon: <Shield size={20} />, label: 'GDPR & Kenya DPA Compliant', sub: 'Full regulatory compliance', color: 'text-blue-400' },
+                        { icon: <Lock size={20} />, label: 'Data Encrypted at Rest', sub: 'AES-256 & TLS 1.3', color: 'text-green-400' },
+                        { icon: <Award size={20} />, label: 'Private LLM Options', sub: 'Your data never trains public models', color: 'text-purple-400' },
+                        { icon: <Shield size={20} />, label: 'SOC 2 Ready Architecture', sub: 'Enterprise audit trail', color: 'text-red-400' },
+                    ].map((badge, i) => (
+                        <div key={i} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-3">
+                            <span className={badge.color}>{badge.icon}</span>
+                            <div>
+                                <p className="text-white text-xs font-bold leading-tight">{badge.label}</p>
+                                <p className="text-slate-400 text-[10px] mt-0.5">{badge.sub}</p>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
+                <p className="text-center mt-4">
+                    <Link href="/security" className="text-red-400 text-xs font-semibold hover:text-red-300 transition-colors underline underline-offset-2">
+                        View full Security &amp; Data Governance page →
+                    </Link>
+                </p>
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
@@ -385,7 +455,20 @@ export default function LandingPage() {
                                     </div>
 
                                     <h3 className="text-xl md:text-2xl font-black mb-1">{p.title}</h3>
-                                    <p className="text-slate-500 text-sm mb-6">{p.subtitle}</p>
+                                    <p className="text-slate-500 text-sm mb-3">{p.subtitle}</p>
+
+                                    {/* Autonomy Level Badge (Module 3) */}
+                                    {p.autonomyLevel && (() => {
+                                        const al = autonomyDefs[p.autonomyLevel];
+                                        return (
+                                            <div className="autonomy-tooltip mb-5">
+                                                <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border cursor-help ${al.color}`}>
+                                                    <Info size={10} /> L{p.autonomyLevel} — {al.label}
+                                                </span>
+                                                <span className="tip">{al.desc}</span>
+                                            </div>
+                                        );
+                                    })()}
 
                                     {/* Before vs After */}
                                     <div className="grid grid-cols-2 gap-3 mb-7 p-4 rounded-2xl bg-slate-50 border border-slate-100">
@@ -549,83 +632,133 @@ export default function LandingPage() {
                         </p>
                     </div>
 
-                    {/* Feature Highlights */}
-                    <div className="grid md:grid-cols-3 gap-6 mb-16">
-                        {[
-                            {
-                                icon: '🧠',
-                                title: 'Domain-Aware RAG',
-                                desc: 'Instant natural-language access to OEE metrics, machine fault logs, and shift data. Ask "What caused the Line 3 shutdown?" — get an answer in seconds.',
-                            },
-                            {
-                                icon: '📦',
-                                title: 'Predictive Forecasting',
-                                desc: 'Automated inventory planning using Holt-Winters Triple Exponential Smoothing. Reduces stockouts and overstock waste by up to 40%.',
-                            },
-                            {
-                                icon: '⚡',
-                                title: 'Live Anomaly Monitoring',
-                                desc: 'Real-time telemetry ingestion flags production anomalies before they become line stoppages. Alerts sent directly to ops managers via WhatsApp.',
-                            },
-                        ].map((f, i) => (
-                            <div key={i} className="bg-white/5 rounded-[24px] p-7 border border-white/10 hover:bg-white/8 hover:border-white/20 transition-all">
-                                <div className="text-3xl mb-4">{f.icon}</div>
-                                <h4 className="text-xl font-black text-white mb-3">{f.title}</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                    {/* Dual-Track Tab Nav (Module 5) */}
+                    <div className="flex justify-center mb-12">
+                        <div className="inline-flex bg-white/10 rounded-2xl p-1.5 gap-1">
+                            <button onClick={() => setCaseTab('exec')}
+                                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${caseTab === 'exec' ? 'bg-red-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+                                📊 Executive Summary
+                            </button>
+                            <button onClick={() => setCaseTab('tech')}
+                                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${caseTab === 'tech' ? 'bg-red-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+                                🔧 Technical Deep Dive
+                            </button>
+                        </div>
+                    </div>
+
+                    {caseTab === 'exec' && (
+                        <div className="fade-up">
+                            {/* ROI Metrics */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
+                                {[
+                                    { value: '40%', label: 'Reduction in Stockouts', sub: 'vs. pre-deployment baseline' },
+                                    { value: '15%', label: 'OEE Improvement', sub: 'Overall Equipment Effectiveness' },
+                                    { value: '2min', label: 'Query Response Time', sub: 'from hours of manual report pulling' },
+                                    { value: '99%', label: 'Forecast Accuracy', sub: 'inventory planning model' },
+                                ].map((m, i) => (
+                                    <div key={i} className="bg-white/5 border border-white/10 rounded-[20px] p-5 text-center">
+                                        <p className="text-3xl font-black text-white mb-1">{m.value}</p>
+                                        <p className="text-xs font-bold text-red-400 mb-1">{m.label}</p>
+                                        <p className="text-[10px] text-slate-500">{m.sub}</p>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Architecture Flow Diagram */}
-                    <div className="bg-white/5 rounded-[28px] border border-white/10 p-8 md:p-10 mb-10">
-                        <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-8 text-center">System Architecture</p>
-                        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-                            {[
-                                { label: 'Factory Data', sub: 'Sensors & PLCs', icon: '🏭', color: 'bg-orange-500/20 border-orange-500/40 text-orange-300' },
-                                null,
-                                { label: 'n8n Orchestration', sub: 'Workflow Engine', icon: '⚙️', color: 'bg-pink-500/20 border-pink-500/40 text-pink-300' },
-                                null,
-                                { label: 'Pinecone Memory', sub: 'Vector Database', icon: '🗄️', color: 'bg-blue-500/20 border-blue-500/40 text-blue-300' },
-                                null,
-                                { label: 'GPT-4o Intelligence', sub: 'AI Reasoning', icon: '🤖', color: 'bg-green-500/20 border-green-500/40 text-green-300' },
-                                null,
-                                { label: 'Chat Interface', sub: 'User Queries', icon: '💬', color: 'bg-purple-500/20 border-purple-500/40 text-purple-300' },
-                            ].map((node, i) =>
-                                node === null ? (
-                                    <div key={i} className="flex items-center">
-                                        <div className="hidden md:flex items-center gap-1">
-                                            <div className="w-6 h-px bg-white/20" />
-                                            <ChevronRight size={14} className="text-white/30" />
-                                        </div>
-                                        <ArrowRight size={16} className="text-white/30 md:hidden" />
+                            {/* Problem / Solution / Result */}
+                            <div className="grid md:grid-cols-3 gap-6 mb-10">
+                                {[
+                                    { label: '🔴 Problem', color: 'border-red-500/30', heading: 'text-red-400', text: 'Factory managers spent 3–4 hours daily manually pulling shift reports, querying multiple disconnected systems, and chasing anomalies reactively — after production losses had already occurred.' },
+                                    { label: '🟡 Solution', color: 'border-yellow-500/30', heading: 'text-yellow-400', text: 'BazzAI deployed a domain-aware RAG pipeline over factory telemetry, enabling natural language queries. An n8n orchestration layer paired with Holt-Winters forecasting automated inventory signals and anomaly alerts.' },
+                                    { label: '🟢 Result', color: 'border-green-500/30', heading: 'text-green-400', text: 'Stockouts dropped 40%, OEE improved 15% within 90 days. Ops managers moved from reactive firefighting to proactive planning — saving 3+ hours/day and eliminating costly production pauses.' },
+                                ].map((s, i) => (
+                                    <div key={i} className={`bg-white/5 border ${s.color} rounded-[20px] p-6`}>
+                                        <p className={`text-xs font-black uppercase tracking-widest mb-3 ${s.heading}`}>{s.label}</p>
+                                        <p className="text-slate-300 text-sm leading-relaxed">{s.text}</p>
                                     </div>
-                                ) : (
-                                    <div key={i} className={`flex flex-col items-center px-5 py-4 rounded-2xl border ${node.color} min-w-[110px] text-center`}>
-                                        <span className="text-2xl mb-1">{node.icon}</span>
-                                        <p className="text-sm font-black">{node.label}</p>
-                                        <p className="text-[10px] opacity-60 mt-0.5">{node.sub}</p>
-                                    </div>
-                                )
-                            )}
+                                ))}
+                            </div>
+                            <div className="text-center">
+                                <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105">
+                                    Get an ROI Projection for Your Factory <ArrowRight size={18} />
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* CTA */}
-                    <div className="text-center">
-                        <a href="https://github.com/Ocholar/manufacturing-rag-system"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-slate-900 font-black text-base hover:bg-red-50 transition-all hover:scale-105 shadow-xl">
-                            View Technical Architecture <ExternalLink size={18} />
-                        </a>
-                        <p className="text-slate-500 text-sm mt-4">Opens in GitHub — full source, diagrams, and documentation available.</p>
-                        <div className="mt-8">
-                            <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-red-400 font-bold hover:text-red-300 transition-colors text-sm">
-                                Interested in a similar system for your factory? Book a free audit →
-                            </Link>
+                    {caseTab === 'tech' && (
+                        <div className="fade-up">
+                            {/* Tech Stack */}
+                            <div className="grid md:grid-cols-3 gap-6 mb-10">
+                                {[
+                                    { icon: '🧠', title: 'Domain-Aware RAG', desc: 'Instant natural-language access to OEE metrics, machine fault logs, and shift data. Ask "What caused the Line 3 shutdown?" — get an answer in seconds.' },
+                                    { icon: '📦', title: 'Predictive Forecasting', desc: 'Automated inventory planning using Holt-Winters Triple Exponential Smoothing. Reduces stockouts and overstock waste by up to 40%.' },
+                                    { icon: '⚡', title: 'Live Anomaly Monitoring', desc: 'Real-time telemetry ingestion flags production anomalies before they become line stoppages. Alerts sent directly to ops managers via WhatsApp.' },
+                                ].map((f, i) => (
+                                    <div key={i} className="bg-white/5 rounded-[24px] p-7 border border-white/10">
+                                        <div className="text-3xl mb-4">{f.icon}</div>
+                                        <h4 className="text-xl font-black text-white mb-3">{f.title}</h4>
+                                        <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Tech Stack Chips */}
+                            <div className="bg-white/5 rounded-[24px] border border-white/10 p-6 mb-8">
+                                <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">Technology Stack</p>
+                                <div className="flex flex-wrap gap-3">
+                                    {['Pinecone (Vector DB)', 'n8n (Orchestration)', 'GPT-4o-mini (Reasoning)', 'Holt-Winters Forecasting', 'WhatsApp Business API', 'PostgreSQL', 'Python FastAPI'].map((t, i) => (
+                                        <span key={i} className="px-3 py-1.5 bg-white/10 text-slate-200 text-xs font-semibold rounded-full border border-white/10">{t}</span>
+                                    ))}
+                                </div>
+                                {/* Autonomy Badge */}
+                                <div className="mt-4 autonomy-tooltip">
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border cursor-help bg-orange-100 text-orange-700 border-orange-200">
+                                        <Info size={10} /> L3 — Conditional Autonomy
+                                    </span>
+                                    <span className="tip">AI operates within set parameters; escalates exceptions to human operators.</span>
+                                </div>
+                            </div>
+                            {/* Architecture Diagram */}
+                            <div className="bg-white/5 rounded-[28px] border border-white/10 p-8 md:p-10 mb-10">
+                                <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-8 text-center">System Architecture</p>
+                                <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+                                    {[
+                                        { label: 'Factory Data', sub: 'Sensors & PLCs', icon: '🏭', color: 'bg-orange-500/20 border-orange-500/40 text-orange-300' },
+                                        null,
+                                        { label: 'n8n Orchestration', sub: 'Workflow Engine', icon: '⚙️', color: 'bg-pink-500/20 border-pink-500/40 text-pink-300' },
+                                        null,
+                                        { label: 'Pinecone Memory', sub: 'Vector Database', icon: '🗄️', color: 'bg-blue-500/20 border-blue-500/40 text-blue-300' },
+                                        null,
+                                        { label: 'GPT-4o Intelligence', sub: 'AI Reasoning', icon: '🤖', color: 'bg-green-500/20 border-green-500/40 text-green-300' },
+                                        null,
+                                        { label: 'Chat Interface', sub: 'User Queries', icon: '💬', color: 'bg-purple-500/20 border-purple-500/40 text-purple-300' },
+                                    ].map((node, i) =>
+                                        node === null ? (
+                                            <div key={i} className="flex items-center">
+                                                <div className="hidden md:flex items-center gap-1">
+                                                    <div className="w-6 h-px bg-white/20" />
+                                                    <ChevronRight size={14} className="text-white/30" />
+                                                </div>
+                                                <ArrowRight size={16} className="text-white/30 md:hidden" />
+                                            </div>
+                                        ) : (
+                                            <div key={i} className={`flex flex-col items-center px-5 py-4 rounded-2xl border ${node.color} min-w-[110px] text-center`}>
+                                                <span className="text-2xl mb-1">{node.icon}</span>
+                                                <p className="text-sm font-black">{node.label}</p>
+                                                <p className="text-[10px] opacity-60 mt-0.5">{node.sub}</p>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <a href="https://github.com/Ocholar/manufacturing-rag-system" target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-slate-900 font-black text-base hover:bg-red-50 transition-all hover:scale-105 shadow-xl">
+                                    View Full Source on GitHub <ExternalLink size={18} />
+                                </a>
+                                <p className="text-slate-500 text-sm mt-4">Opens in GitHub — full source, diagrams, and documentation available.</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
 
@@ -733,6 +866,8 @@ export default function LandingPage() {
                             <li><Link href="#products" className="hover:text-white transition-colors">Solutions</Link></li>
                             <li><Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
                             <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                            <li><Link href="/enterprise" className="hover:text-white transition-colors">Enterprise Playbook</Link></li>
+                            <li><Link href="/security" className="hover:text-white transition-colors">Security & Compliance</Link></li>
                             <li><Link href="/blog" className="hover:text-white transition-colors">AI News &amp; Blog</Link></li>
                             <li>
                                 <a href="https://github.com/Ocholar/manufacturing-rag-system" target="_blank" rel="noopener noreferrer"
@@ -752,6 +887,59 @@ export default function LandingPage() {
                     </div>
                 </div>
             </footer>
+
+            {/* ─── STICKY MOBILE CTA BAR (Module 4) ─── */}
+            <div className="sticky-mobile-cta slide-up border-t border-slate-200 bg-white shadow-2xl">
+                <div className="flex gap-2 p-3">
+                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
+                        className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs text-center flex items-center justify-center gap-1">
+                        📅 Book AI Assessment
+                    </Link>
+                    <button onClick={() => setEmailModalOpen(true)}
+                        className="flex-1 py-3 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center gap-1">
+                        📧 Email Me Case Study
+                    </button>
+                </div>
+            </div>
+
+            {/* ─── EMAIL CAPTURE MODAL ─── */}
+            {emailModalOpen && (
+                <div className="fixed inset-0 bg-black/60 z-[999] flex items-end sm:items-center justify-center p-4" onClick={() => setEmailModalOpen(false)}>
+                    <div className="relative bg-white rounded-[24px] p-7 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <button onClick={() => setEmailModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+                            <X size={18} />
+                        </button>
+                        {emailSent ? (
+                            <div className="text-center py-4">
+                                <p className="text-4xl mb-3">🎉</p>
+                                <p className="font-black text-lg">On its way!</p>
+                                <p className="text-slate-500 text-sm mt-2">Check your inbox within a few minutes.</p>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="font-black text-xl mb-1">Get the Case Study</p>
+                                <p className="text-slate-500 text-sm mb-5">We'll email you the Manufacturing Intelligence case study with full ROI metrics and architecture diagrams.</p>
+                                <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3">
+                                    <input
+                                        type="email"
+                                        required
+                                        placeholder="your@company.com"
+                                        value={emailValue}
+                                        onChange={e => setEmailValue(e.target.value)}
+                                        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-red-400 text-sm"
+                                    />
+                                    <button type="submit"
+                                        className="w-full py-3 rounded-xl bg-red-600 text-white font-black text-sm hover:bg-red-700 transition-colors">
+                                        Send Me the Case Study →
+                                    </button>
+                                </form>
+                                <p className="text-[10px] text-slate-400 text-center mt-3">No spam. One email, one case study.</p>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+
