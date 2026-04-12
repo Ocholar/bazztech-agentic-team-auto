@@ -10,6 +10,13 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Phase 1 & 2 Components
+import CurrencyToggle from '@/components/CurrencyToggle';
+import KenyaGrantBanner from '@/components/KenyaGrantBanner';
+import ROICalculator from '@/components/ROICalculator';
+import { logAnalyticsEvent } from '@/lib/analytics';
+import TrustBadges from '@/components/TrustBadges';
+
 export const dynamic = 'force-dynamic';
 
 const WHATSAPP_NUMBER = '15558219787';
@@ -161,11 +168,35 @@ export default function LandingPage() {
     const [emailValue, setEmailValue] = useState('');
     const [emailSent, setEmailSent] = useState(false);
     const [solutionsOpen, setSolutionsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const handleEmailSubmit = (e: React.FormEvent) => {
+    const handleEmailSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setEmailSent(true);
-        setTimeout(() => { setEmailModalOpen(false); setEmailSent(false); setEmailValue(''); }, 2500);
+        setLoading(true);
+        try {
+            const res = await fetch('/api/leads/capture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: emailValue,
+                    type: 'case_study_request',
+                    metadata: { page: 'homepage' }
+                })
+            });
+            if (res.ok) {
+                logAnalyticsEvent("lead_captured", { type: 'case_study_request', page: 'homepage' });
+                setEmailSent(true);
+                setTimeout(() => {
+                    setEmailModalOpen(false);
+                    setEmailSent(false);
+                    setEmailValue('');
+                    setLoading(false);
+                }, 3000);
+            }
+        } catch (err) {
+            console.error('Submission failed', err);
+            setLoading(false);
+        }
     };
 
     return (
@@ -310,10 +341,14 @@ export default function LandingPage() {
                             </Link>
                         </div>
 
-                        <p className="text-xs text-slate-400 mt-5 flex items-center gap-2">
+                        <p className="text-xs text-slate-400 mt-5 flex items-center gap-2 mb-8">
                             <Check size={14} className="text-green-500" /> No commitment, just clarity on your AI potential &nbsp;&middot;&nbsp;
                             <Check size={14} className="text-green-500" /> Results within 14 days
                         </p>
+
+                        <div className="fade-up" style={{ animationDelay: '0.4s' }}>
+                            <TrustBadges />
+                        </div>
                     </div>
 
                     {/* Right: Dashboard visual (HTML/CSS) */}
@@ -434,9 +469,15 @@ export default function LandingPage() {
                             Automation Built for the{' '}
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-pink-500">Job to be Done</span>
                         </h2>
-                        <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                        <p className="text-slate-500 text-lg max-w-2xl mx-auto mb-8">
                             Four ready-to-deploy AI systems, each designed to eliminate a specific category of manual work — and deliver measurable results from day one.
                         </p>
+                        <div className="flex flex-col items-center gap-6">
+                            <CurrencyToggle />
+                            <div className="max-w-md w-full">
+                                <KenyaGrantBanner />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-8">
@@ -777,7 +818,7 @@ export default function LandingPage() {
                         {[
                             { industry: 'Real Estate Agency', result: '23 hours/week saved on lead follow-up', quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing." ', stars: 5 },
                             { industry: 'Healthcare Clinic', result: '90% reduction in missed appointments', quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up."', stars: 5 },
-                            { industry: 'Import/Export Company', result: 'KES 400K recovered in billing errors', quote: '"The reconciliation engine found mismatches we had been missing for months. ROI in the first week."', stars: 5 },
+                            { industry: 'Import/Export Company', result: '$3,000+ recovered in billing errors', quote: '"The reconciliation engine found mismatches we had been missing for months. ROI in the first week."', stars: 5 },
                         ].map((t, i) => (
                             <div key={i} className="bg-slate-50 rounded-[24px] p-8 border border-slate-100 text-left hover:shadow-lg transition-all">
                                 <div className="flex gap-0.5 mb-4">

@@ -32,6 +32,7 @@ model User {
   leads         Lead[]
   configs       ProductConfig[]
   memories      AgentMemory[]
+  currencyPreferred String @default("USD")
   }
 
 enum UserRole {
@@ -228,4 +229,64 @@ model AgentMemory {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// -------------------------------------------------------------
+// CURRENCY & PRICING (Work Stream 1)
+// -------------------------------------------------------------
+model ExchangeRate {
+  id Int @id @default(autoincrement())
+  fromCurrency String
+  toCurrency String
+  rate Decimal @db.Decimal(10, 4)
+  effectiveDate DateTime
+  createdAt DateTime @default(now())
+  
+  @@unique([fromCurrency, toCurrency, effectiveDate])
+}
+
+model PricingFigure {
+  id Int @id @default(autoincrement())
+  featureId String @unique
+  usdAmount Decimal @db.Decimal(10, 2)
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// -------------------------------------------------------------
+// INSURANCE & HITL GOVERNANCE (Work Stream 2)
+// -------------------------------------------------------------
+model InsurancePolicy {
+  id Int @id @default(autoincrement())
+  policyName String
+  provider String
+  policyNumber String @unique
+  coverageAmount Decimal @db.Decimal(12, 2)
+  coverageType String?
+  effectiveDate DateTime
+  expiryDate DateTime
+  certificateUrl String?
+  verified Boolean @default(false)
+  verifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HITLGuarantee {
+  id Int @id @default(autoincrement())
+  agentLevel Int
+  guaranteeText String
+  humanApprovalRequired Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ComplianceAuditLog {
+  id Int @id @default(autoincrement())
+  eventType String
+  agentLevel Int?
+  decisionId String?
+  humanApproval Boolean?
+  timestamp DateTime @default(now())
 }

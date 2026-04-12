@@ -2,92 +2,108 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-    // Clear existing data
-    await prisma.submission.deleteMany();
-    await prisma.lead.deleteMany();
-    await prisma.analytics.deleteMany();
-    await prisma.config.deleteMany();
-
     console.log('Seeding data...');
 
-    // Seed Leads
-    const lead1 = await prisma.lead.create({
+    // 1. Currency & Pricing
+    await prisma.pricingFigure.deleteMany();
+    await prisma.exchangeRate.deleteMany();
+
+    await prisma.exchangeRate.create({
         data: {
-            name: 'John Doe',
-            phone: '254712345678',
-            email: 'john@example.com',
-            source: 'LinkedIn',
-            status: 'QUALIFIED',
-            tags: 'high_value',
-        },
+            fromCurrency: 'USD',
+            toCurrency: 'KES',
+            rate: 100.0000, // Fixed subsidy rate
+            effectiveDate: new Date(),
+        }
     });
 
-    const lead2 = await prisma.lead.create({
-        data: {
-            name: 'Jane Smith',
-            phone: '254723456789',
-            source: 'WhatsApp',
-            status: 'NEW',
-            tags: 'high_volume',
-        },
+    await prisma.pricingFigure.createMany({
+        data: [
+            { featureId: 'starter_plan', usdAmount: 5000, description: 'Starter AI Transformation (Single Workflow)' },
+            { featureId: 'growth_plan', usdAmount: 25000, description: 'Growth AI Suite (Cross-Departmental)' },
+            { featureId: 'enterprise_plan', usdAmount: 75000, description: 'Enterprise AI Ecosystem (Fully Autonomous)' },
+        ]
     });
 
-    const lead3 = await prisma.lead.create({
+    // 2. Insurance & HITL
+    await prisma.complianceAuditLog.deleteMany();
+    await prisma.hITLGuarantee.deleteMany();
+    await prisma.insurancePolicy.deleteMany();
+
+    await prisma.insurancePolicy.create({
         data: {
-            name: 'Alice Johnson',
-            phone: '254734567890',
-            email: 'alice@business.com',
-            source: 'Google Maps',
-            status: 'SUBMITTED',
-            tags: 'high_value',
-        },
+            policyName: 'AI Errors & Omissions Insurance',
+            provider: 'Global Tech Assurance Co.',
+            policyNumber: 'EO-2024-88392-BZ',
+            coverageAmount: 5000000,
+            coverageType: 'Professional Indemnity / AI Liability',
+            effectiveDate: new Date('2024-01-01'),
+            expiryDate: new Date('2025-12-31'),
+            certificateUrl: '/docs/insurance-certificate.pdf',
+            verified: true,
+            verifiedAt: new Date()
+        }
     });
 
-    // Seed Submissions
-    await prisma.submission.create({
-        data: {
-            leadId: lead3.id,
-            status: 'SUCCESS',
-            response: '{"id": "123", "message": "Form submitted successfully"}',
-        },
-    });
-
-    // Seed Analytics
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-
-        await prisma.analytics.create({
-            data: {
-                date: date,
-                metric: 'gross_adds',
-                value: Math.floor(Math.random() * 5),
+    await prisma.hITLGuarantee.createMany({
+        data: [
+            {
+                agentLevel: 2,
+                guaranteeText: 'Humans-in-the-Loop review and approve all Level 2 agent actions before execution.',
+                humanApprovalRequired: true
             },
-        });
-
-        await prisma.analytics.create({
-            data: {
-                date: date,
-                metric: 'leads',
-                value: Math.floor(Math.random() * 20) + 10,
-            },
-        });
-    }
-
-    // Seed Config
-    await prisma.config.create({
-        data: {
-            key: 'lead_gen_allocation_high_value',
-            value: '60',
-        },
+            {
+                agentLevel: 3,
+                guaranteeText: 'Supervised agents where humans remain the final authority and can override AI decisions in real-time.',
+                humanApprovalRequired: true
+            }
+        ]
     });
 
-    await prisma.config.create({
+    // 3. User & Leas (matching current schema)
+    await prisma.lead.deleteMany();
+    await prisma.user.deleteMany();
+
+    const adminUser = await prisma.user.create({
         data: {
-            key: 'upsell_30mbps_priority',
-            value: 'true',
-        },
+            email: 'admin@bazztech.co.ke',
+            name: 'BazzAI Admin',
+            role: 'ADMIN',
+            companyName: 'Bazztech Solutions',
+            currencyPreferred: 'USD'
+        }
+    });
+
+    const clientUser = await prisma.user.create({
+        data: {
+            email: 'reagan@bazztech.co.ke',
+            name: 'Reagan',
+            role: 'CLIENT',
+            companyName: 'Acme Corp',
+            currencyPreferred: 'KES'
+        }
+    });
+
+    await prisma.lead.createMany({
+        data: [
+            {
+                userId: clientUser.id,
+                name: 'John Doe',
+                phone: '254712345678',
+                email: 'john@example.com',
+                source: 'LinkedIn',
+                stage: 'PROSPECTIVE',
+                lastMessage: 'Interested in the $100k manufacturing solution.'
+            },
+            {
+                userId: clientUser.id,
+                name: 'Jane Smith',
+                phone: '254723456789',
+                source: 'WhatsApp',
+                stage: 'LEAD',
+                lastMessage: 'Need a demo for the Bazz-Flow integration.'
+            }
+        ]
     });
 
     console.log('Seeding complete.');

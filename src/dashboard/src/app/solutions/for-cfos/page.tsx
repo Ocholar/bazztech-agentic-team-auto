@@ -2,6 +2,11 @@
 import Link from 'next/link';
 import { Bot, DollarSign, TrendingUp, ArrowRight, AlertTriangle, Calculator } from 'lucide-react';
 
+// Phase 1 Foundation Components
+import CurrencyToggle from '@/components/CurrencyToggle';
+import KenyaGrantBanner from '@/components/KenyaGrantBanner';
+import TrustBadges from '@/components/TrustBadges';
+
 const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
 
 export default function ForCFOsPage() {
@@ -53,9 +58,9 @@ export default function ForCFOsPage() {
                         <p className="text-slate-600 mb-10 max-w-2xl">Every month your operations remain manual, these costs compound silently in your P&amp;L:</p>
                         <div className="grid md:grid-cols-2 gap-6">
                             {[
-                                { label: 'Labour cost for repetitive tasks', est: 'KES 150k–400k / month per department', desc: 'Salary allocated to manual data entry, report generation, and follow-ups that AI can handle.' },
-                                { label: 'Error correction & dispute resolution', est: 'KES 50k–200k / month', desc: 'Billing errors, invoice disputes, and reconciliation corrections from manual data handling.' },
-                                { label: 'Delayed revenue collection', est: '15–25 day average delay', desc: 'Manual invoice processing and follow-up cycles延长 receivable collection timelines.' },
+                                { label: 'Labour cost for repetitive tasks', est: '$1,150–$3,000 / month per department', desc: 'Salary allocated to manual data entry, report generation, and follow-ups that AI can handle.' },
+                                { label: 'Error correction & dispute resolution', est: '$400–$1,500 / month', desc: 'Billing errors, invoice disputes, and reconciliation corrections from manual data handling.' },
+                                { label: 'Delayed revenue collection', est: '15–25 day average delay', desc: 'Manual invoice processing and follow-up cycles extend receivable collection timelines.' },
                                 { label: 'Missed leads from slow response', est: '30–60% lead decay rate', desc: 'Leads that don\'t receive a response within 1 hour convert at 7x lower rates.' },
                             ].map((c, i) => (
                                 <div key={i} className="bg-white border border-amber-200 rounded-[20px] p-6">
@@ -72,7 +77,15 @@ export default function ForCFOsPage() {
                 <section className="py-20 px-6 border-b border-slate-100">
                     <div className="max-w-5xl mx-auto">
                         <h2 className="text-3xl font-black mb-3 text-center">Indicative ROI Model</h2>
-                        <p className="text-slate-500 text-center mb-12 max-w-xl mx-auto">Based on a mid-sized company (50–200 employees) deploying 2–3 BazzAI automation pipelines.</p>
+                        <p className="text-slate-500 text-center mb-8 max-w-xl mx-auto">Based on a mid-sized company (50–200 employees) deploying 2–3 BazzAI automation pipelines.</p>
+
+                        <div className="flex flex-col items-center gap-6 mb-12">
+                            <CurrencyToggle />
+                            <div className="max-w-md w-full">
+                                <KenyaGrantBanner />
+                            </div>
+                        </div>
+
                         <div className="bg-slate-50 border border-slate-200 rounded-[24px] overflow-hidden">
                             <table className="w-full text-sm">
                                 <thead>
@@ -85,11 +98,11 @@ export default function ForCFOsPage() {
                                 </thead>
                                 <tbody>
                                     {[
-                                        ['Monthly reconciliation labour', 'KES 180,000', 'KES 20,000', 'KES 160,000'],
-                                        ['Invoice error cost', 'KES 80,000', 'KES 4,000', 'KES 76,000'],
-                                        ['Lead response labour', 'KES 120,000', 'KES 15,000', 'KES 105,000'],
-                                        ['Report generation', 'KES 60,000', 'KES 5,000', 'KES 55,000'],
-                                        ['Total monthly operational cost', 'KES 440,000', 'KES 44,000', 'KES 396,000/mo'],
+                                        ['Monthly reconciliation labour', '$1,400', '$150', '$1,250'],
+                                        ['Invoice error cost', '$600', '$30', '$570'],
+                                        ['Lead response labour', '$900', '$115', '$785'],
+                                        ['Report generation', '$450', '$40', '$410'],
+                                        ['Total monthly operational cost', '$3,400', '$340', '$3,060/mo'],
                                     ].map((row, i) => (
                                         <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                                             <td className="p-4 font-semibold text-slate-700">{row[0]}</td>
