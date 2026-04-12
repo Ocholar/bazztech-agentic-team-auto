@@ -5,9 +5,13 @@
   
   [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FOcholar%2Fbazzai-enterprise&env=DATABASE_URL,NEXTAUTH_SECRET)
   [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-  [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
-  [![Coverage](https://img.shields.io/badge/Coverage-72%25-green.svg)]()
+  [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](#)
+  [![Coverage](https://img.shields.io/badge/Coverage-72%25-green.svg)](#)
 </div>
+
+---
+
+**[▶️ Watch the 5-Minute Enterprise Platform Walkthrough & Architecture Deep-Dive](#)**
 
 ---
 

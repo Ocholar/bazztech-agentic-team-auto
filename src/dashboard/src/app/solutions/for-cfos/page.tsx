@@ -21,8 +21,7 @@ export default function ForCFOsPage() {
                     <div className="flex items-center gap-4">
                         <Link href="/solutions/for-ctos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For CTOs</Link>
                         <Link href="/solutions/for-coos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For COOs</Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700">Book Call</Link>
+                        <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Book Call</button>
                     </div>
                 </div>
             </header>
@@ -41,10 +40,9 @@ export default function ForCFOsPage() {
                         <p className="text-slate-400 text-lg max-w-2xl mb-10">
                             Manual operations carry a hidden tax: errors, delays, overtime, and missed revenue windows. BazzAI quantifies and eliminates that cost — with a payback period measured in weeks, not years.
                         </p>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700 transition-all hover:scale-105">
+                        <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Get My ROI Projection <ArrowRight size={18} />
-                        </Link>
+                        </button>
                     </div>
                 </section>
 
@@ -152,10 +150,9 @@ export default function ForCFOsPage() {
                     <h2 className="text-3xl font-black mb-4">Get a Custom ROI Projection for Your Business</h2>
                     <p className="text-emerald-200 mb-8">In 15 minutes, we'll calculate the exact cost of your current manual processes and project your first-year savings.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-white text-emerald-900 font-black hover:bg-emerald-50 transition-all hover:scale-105">
+                        <button className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-white text-emerald-900 font-black hover:bg-emerald-50 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             <Calculator size={18} /> Book My ROI Assessment
-                        </Link>
+                        </button>
                         <Link href="/enterprise"
                             className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl border border-white/30 text-white font-bold hover:bg-white/10 transition-all">
                             View Enterprise Playbook

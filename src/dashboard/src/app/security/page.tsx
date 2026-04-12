@@ -16,10 +16,9 @@ export default function SecurityPage() {
                         </div>
                         <span className="text-xl font-black">Bazz<span className="text-red-500">AI</span></span>
                     </Link>
-                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                        className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-colors">
+                    <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-colors" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                         Book Assessment
-                    </Link>
+                    </button>
                 </div>
             </header>
 
@@ -107,10 +106,9 @@ export default function SecurityPage() {
                     <h2 className="text-3xl font-black mb-4">Need a Security Brief for Your Procurement Team?</h2>
                     <p className="text-slate-400 mb-8">Book a security-focused call with our team. We'll walk through our data governance posture and prepare a custom security brief for your CISO or Legal team.</p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105">
+                        <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Book Security Briefing <ArrowRight size={18} />
-                        </Link>
+                        </button>
                         <Link href="/enterprise"
                             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border border-white/20 text-white font-bold hover:bg-white/10 transition-all">
                             View Enterprise Playbook

@@ -93,8 +93,7 @@ export default function EnterprisePage() {
                     <div className="flex items-center gap-6">
                         <Link href="/solutions/for-cfos" className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">CFO View</Link>
                         <Link href="/security" className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">Security</Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-all">Contact Sales</Link>
+                        <button className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-all" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Contact Sales</button>
                     </div>
                 </div>
             </header>
@@ -243,10 +242,9 @@ export default function EnterprisePage() {
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,#dc262625,transparent)] pointer-events-none" />
                             <h3 className="text-3xl font-black mb-8 relative z-10 leading-tight">Start Your 14-Day Transformation</h3>
                             <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
-                                <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                    className="px-10 py-5 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-red-900/30">
+                                <button className="px-10 py-5 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all flex items-center justify-center gap-3 group shadow-2xl shadow-red-900/30" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                     Book Step 1 Assessment <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -351,10 +349,9 @@ export default function EnterprisePage() {
                 <section className="py-32 px-6 bg-slate-950 text-white text-center">
                     <div className="max-w-4xl mx-auto px-6">
                         <h2 className="text-4xl md:text-6xl font-black mb-10 tracking-tight leading-tight">Ready for Infrastructure <br />Grade Intelligence?</h2>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 px-12 py-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105 shadow-2xl shadow-red-900/40 text-lg">
+                        <button className="inline-flex items-center gap-3 px-12 py-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105 shadow-2xl shadow-red-900/40 text-lg" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Schedule Technical Briefing <ArrowRight size={24} />
-                        </Link>
+                        </button>
                     </div>
                 </section>
             </main>
@@ -362,10 +359,9 @@ export default function EnterprisePage() {
             {/* ─── STICKY MOBILE CTA BAR ─── */}
             <div className="sticky-mobile-cta slide-up border-t border-slate-200 bg-white shadow-2xl">
                 <div className="flex gap-2 p-3">
-                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                        className="flex-1 py-3.5 rounded-xl bg-red-600 text-white font-black text-xs text-center flex items-center justify-center gap-1 shadow-lg shadow-red-900/10">
+                    <button className="flex-1 py-3.5 rounded-xl bg-red-600 text-white font-black text-xs text-center flex items-center justify-center gap-1 shadow-lg shadow-red-900/10" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                         📅 Book Briefing
-                    </Link>
+                    </button>
                     <button onClick={() => setEmailModalOpen(true)}
                         className="flex-1 py-3.5 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center gap-1">
                         🏢 SOW Package

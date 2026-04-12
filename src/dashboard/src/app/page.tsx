@@ -265,10 +265,9 @@ export default function LandingPage() {
                             className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
                             Chat with an Expert
                         </Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-6 py-2.5 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 text-sm">
+                        <button className="px-6 py-2.5 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 text-sm" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Book Assessment
-                        </Link>
+                        </button>
                     </nav>
 
                     <button className="md:hidden text-slate-900 p-2" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
@@ -290,10 +289,10 @@ export default function LandingPage() {
                         <Link href="/enterprise" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700">Enterprise Playbook</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="font-bold text-green-600">💬 Chat with an Expert</Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)}
+                        <button onClick={() => setIsMenuOpen(false)}
                             className="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-center">
                             Book AI Opportunity Assessment
-                        </Link>
+                        </button>
                     </div>
                 )}
             </header>
@@ -331,10 +330,9 @@ export default function LandingPage() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
-                            <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-base md:text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                            <button className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-base md:text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                 Book a 15-Min AI Opportunity Assessment &amp; ROI Projection <ArrowRight size={20} />
-                            </Link>
+                            </button>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                                 className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-green-400 text-green-700 font-bold text-base md:text-lg hover:bg-green-50 transition-all flex items-center justify-center gap-2">
                                 <MessageSquare size={20} /> Chat with an Expert
@@ -585,10 +583,9 @@ export default function LandingPage() {
                     </div>
 
                     <div className="text-center mt-14">
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105">
+                        <button className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-red-600 text-white font-black text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Start Step 1 Today — It's Free <ArrowRight size={22} />
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -637,10 +634,9 @@ export default function LandingPage() {
                                             <Play size={14} fill="currentColor" /> See the Manufacturing Case Study
                                         </Link>
                                     ) : (
-                                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-red-600 transition-colors group/link">
+                                        <button className="inline-flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-red-600 transition-colors group/link" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                             Book a Free Audit <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                                        </Link>
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -718,10 +714,9 @@ export default function LandingPage() {
                                 ))}
                             </div>
                             <div className="text-center">
-                                <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105">
+                                <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                     Get an ROI Projection for Your Factory <ArrowRight size={18} />
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     )}
@@ -849,10 +844,9 @@ export default function LandingPage() {
                         Book a free 15-minute call. We'll map your biggest manual bottlenecks and show you exactly which workflows we'd automate first — no commitment, no jargon.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-10 py-4 rounded-2xl bg-white text-red-700 font-black text-lg hover:bg-red-50 transition-all hover:scale-105 shadow-2xl flex items-center gap-2">
+                        <button className="px-10 py-4 rounded-2xl bg-white text-red-700 font-black text-lg hover:bg-red-50 transition-all hover:scale-105 shadow-2xl flex items-center gap-2" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Book My Free Audit <ArrowRight size={20} />
-                        </Link>
+                        </button>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-10 py-4 rounded-2xl border-2 border-white/50 text-white font-bold text-lg hover:bg-white/10 transition-all flex items-center gap-2">
                             <MessageSquare size={20} /> Chat with an Expert
@@ -874,10 +868,9 @@ export default function LandingPage() {
                             Bazztech Networks helps businesses replace manual, repetitive work with intelligent AI workflows — so your team can focus on growth. Based in Nairobi. Serving the world.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3">
-                            <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all text-sm text-center">
+                            <button className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all text-sm text-center" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                 Book a Free Audit
-                            </Link>
+                            </button>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                                 className="px-6 py-3 border border-green-600 text-green-400 font-bold rounded-xl hover:bg-green-600 hover:text-white transition-all text-sm text-center">
                                 💬 Chat with an Expert
@@ -932,10 +925,9 @@ export default function LandingPage() {
             {/* ─── STICKY MOBILE CTA BAR (Module 4) ─── */}
             <div className="sticky-mobile-cta slide-up border-t border-slate-200 bg-white shadow-2xl">
                 <div className="flex gap-2 p-3">
-                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                        className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs text-center flex items-center justify-center gap-1">
+                    <button className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs text-center flex items-center justify-center gap-1" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                         📅 Book AI Assessment
-                    </Link>
+                    </button>
                     <button onClick={() => setEmailModalOpen(true)}
                         className="flex-1 py-3 rounded-xl bg-slate-900 text-white font-black text-xs flex items-center justify-center gap-1">
                         📧 Email Me Case Study

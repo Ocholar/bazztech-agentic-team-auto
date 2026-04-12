@@ -1,0 +1,100 @@
+{
+    "name": "Bazz_Booking_Master",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "bazzai-enterprise-booking",
+                "options": {}
+            },
+            "id": "1",
+            "name": "Webhook (Enterprise UI)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "calendar": "primary",
+                "start": "={{$json.body.date}}",
+                "end": "={{new Date(new Date($json.body.date).getTime() + 30*60000).toISOString()}}",
+                "summary": "=BazzAI Assessment: {{$json.body.company}}",
+                "description": "=Client: {{$json.body.name}}\\tEmail: {{$json.body.email}}\\nUse Case: {{$json.body.useCase}}\\nSource: {{$json.body.source}}",
+                "attendees": [
+                    "={{$json.body.email}}"
+                ]
+            },
+            "id": "2",
+            "name": "Google Calendar",
+            "type": "n8n-nodes-base.googleCalendar",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "channel": "#enterprise-bookings",
+                "text": "=🔔 *New Enterprise Booking!*\\n*Company:* {{$json.body.company}}\\n*Contact:* {{$json.body.name}} ({{$json.body.email}})\\n*Date:* {{$json.body.date}}\\n*Use Case:* {{$json.body.useCase}}"
+            },
+            "id": "3",
+            "name": "Slack Alert",
+            "type": "n8n-nodes-base.slack",
+            "typeVersion": 1,
+            "position": [
+                650,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "sales@bazztech.co.ke",
+                "toEmail": "={{$json.body.email}}",
+                "subject": "BazzAI Enterprise Assessment Confirmation",
+                "html": "=Hi {{$json.body.name}},<br><br>Your BazzAI assessment is confirmed for <strong>{{$json.body.date}}</strong>. We will review your use case regarding '{{$json.body.useCase}}' and provide a custom architecture roadmap and ROI projection.<br><br>Best,<br>Reagan<br>BazzAI Team"
+            },
+            "id": "4",
+            "name": "Send Confirmation Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                650,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook (Enterprise UI)": {
+            "main": [
+                [
+                    {
+                        "node": "Google Calendar",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Calendar": {
+            "main": [
+                [
+                    {
+                        "node": "Slack Alert",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Send Confirmation Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {}
+}

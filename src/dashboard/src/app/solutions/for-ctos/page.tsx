@@ -17,8 +17,7 @@ export default function ForCTOsPage() {
                     <div className="flex items-center gap-4">
                         <Link href="/solutions/for-coos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For COOs</Link>
                         <Link href="/solutions/for-cfos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For CFOs</Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700">Book Call</Link>
+                        <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Book Call</button>
                     </div>
                 </div>
             </header>
@@ -42,10 +41,9 @@ export default function ForCTOsPage() {
                                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white text-slate-900 font-black hover:bg-slate-100 transition-all">
                                 <GitBranch size={16} /> View Architecture on GitHub
                             </Link>
-                            <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border border-white/20 text-white font-bold hover:bg-white/10 transition-all">
+                            <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border border-white/20 text-white font-bold hover:bg-white/10 transition-all" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                 Book Technical Review <ArrowRight size={16} />
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -110,10 +108,9 @@ export default function ForCTOsPage() {
                         <Link href="/security" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-slate-900 font-black hover:bg-slate-100">
                             <Shield size={16} /> View Security & Data Governance
                         </Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 text-white font-black hover:bg-red-700">
+                        <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 text-white font-black hover:bg-red-700" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Book Technical Review <ArrowRight size={16} />
-                        </Link>
+                        </button>
                     </div>
                 </section>
             </main>

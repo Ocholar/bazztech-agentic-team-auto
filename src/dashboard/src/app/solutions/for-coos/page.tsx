@@ -16,8 +16,7 @@ export default function ForCOOsPage() {
                     <div className="flex items-center gap-4">
                         <Link href="/solutions/for-ctos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For CTOs</Link>
                         <Link href="/solutions/for-cfos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For CFOs</Link>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700">Book Call</Link>
+                        <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Book Call</button>
                     </div>
                 </div>
             </header>
@@ -36,10 +35,9 @@ export default function ForCOOsPage() {
                         <p className="text-slate-300 text-lg max-w-2xl mb-10">
                             BazzAI agents handle the repetitive, rules-based work so your operations team can focus on judgment-heavy decisions, client relationships, and strategic execution.
                         </p>
-                        <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105">
+                        <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                             Book Operational Assessment <ArrowRight size={18} />
-                        </Link>
+                        </button>
                     </div>
                 </section>
 
@@ -116,10 +114,9 @@ export default function ForCOOsPage() {
                 <section className="py-20 px-6 bg-gradient-to-r from-slate-800 to-slate-700 text-white text-center">
                     <h2 className="text-3xl font-black mb-4">Ready to Free Your Team from Repetitive Work?</h2>
                     <p className="text-slate-400 mb-8">Book a 15-minute call. We'll identify the top 3 manual processes slowing your operations and show you exactly how we'd automate them.</p>
-                    <Link href={AUDIT_URL} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105">
+                    <button className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                         Book Operational Deep Dive <ArrowRight size={18} />
-                    </Link>
+                    </button>
                 </section>
             </main>
         </div>
