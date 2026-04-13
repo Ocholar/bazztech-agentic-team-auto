@@ -14,7 +14,7 @@ const controls = [
         color: 'text-emerald-500',
         bg: 'bg-emerald-50',
         title: 'GDPR & Kenya DPA Compliant',
-        body: 'We maintain full compliance with the EU GDPR and Kenya's Data Protection Act(2019).Data subject rights are honoured within 72 hours.',
+        body: "We maintain full compliance with the EU GDPR and Kenya's Data Protection Act (2019). Data subject rights are honoured within 72 hours.",
     },
     {
         icon: <Eye size={24} />,
