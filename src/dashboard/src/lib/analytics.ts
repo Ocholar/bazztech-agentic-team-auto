@@ -7,6 +7,8 @@ export const logAnalyticsEvent = (eventName: string, eventData?: Record<string, 
     try {
         if (typeof window !== 'undefined') {
             track(eventName, eventData);
+        } else {
+            console.log(`[Analytics Server-Side] Event: ${eventName}`, eventData);
         }
     } catch (error) {
         console.error('Failed to log analytics event:', error);
