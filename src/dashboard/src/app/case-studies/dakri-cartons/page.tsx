@@ -1,3 +1,4 @@
+"use client";
 import { ArrowRight, BarChart3, Clock, TrendingUp, Download, Factory } from 'lucide-react';
 import Link from 'next/link';
 

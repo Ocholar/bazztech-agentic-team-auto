@@ -1,3 +1,4 @@
+"use client";
 import { ArrowRight, ExternalLink, Zap } from 'lucide-react';
 
 const integrations = [

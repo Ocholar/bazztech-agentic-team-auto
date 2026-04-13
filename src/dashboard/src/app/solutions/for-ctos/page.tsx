@@ -1,3 +1,4 @@
+"use client";
 import { ArrowRight, Code2, Database, ShieldCheck, Zap } from 'lucide-react';
 import Link from 'next/link';
 

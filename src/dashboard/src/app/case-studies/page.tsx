@@ -1,3 +1,4 @@
+"use client";
 import { ArrowRight, ExternalLink, Factory, DollarSign, Eye, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 

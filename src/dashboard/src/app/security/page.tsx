@@ -1,3 +1,4 @@
+"use client";
 import { Shield, Lock, Award, AlertOctagon, Server, Eye } from 'lucide-react';
 import Link from 'next/link';
 
