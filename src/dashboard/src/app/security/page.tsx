@@ -1,122 +1,161 @@
-"use client";
+import { Shield, Lock, Award, AlertOctagon, Server, Eye } from 'lucide-react';
 import Link from 'next/link';
-import { Shield, Lock, Award, FileText, AlertTriangle, CheckCircle, ArrowRight, Bot } from 'lucide-react';
 
-const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
+const controls = [
+    {
+        icon: <Lock size={24} />,
+        color: 'text-blue-500',
+        bg: 'bg-blue-50',
+        title: 'Data Encrypted at Rest & In Transit',
+        body: 'All data is encrypted using AES-256 at rest and TLS 1.3 in transit. No unencrypted channels are permitted at any layer of the stack.',
+    },
+    {
+        icon: <Shield size={24} />,
+        color: 'text-emerald-500',
+        bg: 'bg-emerald-50',
+        title: 'GDPR & Kenya DPA Compliant',
+        body: 'We maintain full compliance with the EU GDPR and Kenya's Data Protection Act(2019).Data subject rights are honoured within 72 hours.',
+    },
+    {
+        icon: <Eye size={24} />,
+        color: 'text-purple-500',
+        bg: 'bg-purple-50',
+        title: 'Zero-Retention LLM Policy',
+        body: 'Prompts and completions sent to third-party LLMs (OpenAI, Anthropic) are processed under zero-retention agreements — your data never trains public models.',
+    },
+    {
+        icon: <Server size={24} />,
+        color: 'text-amber-500',
+        bg: 'bg-amber-50',
+        title: 'Private Deployment Available',
+        body: 'For highly regulated sectors (healthcare, legal, finance), we offer self-hosted LLM deployment on your own VPC using open-source models (Llama 3, Mistral).',
+    },
+    {
+        icon: <Award size={24} />,
+        color: 'text-red-500',
+        bg: 'bg-red-50',
+        title: 'SOC 2 Ready Architecture',
+        body: 'All platform controls are designed to meet SOC 2 Type II criteria: Security, Availability, Confidentiality, and Processing Integrity. Full audit trail via structured logs.',
+    },
+    {
+        icon: <AlertOctagon size={24} />,
+        color: 'text-slate-500',
+        bg: 'bg-slate-100',
+        title: 'Multi-Tenant Isolation',
+        body: 'Each client environment is strictly isolated at the database and vector store level. No cross-tenant data access is architecturally possible.',
+    },
+];
+
+const faqs = [
+    {
+        q: 'Does BazzAI access our internal documents or databases?',
+        a: 'Only the data you explicitly connect to the pipeline — typically via read-only API credentials or secure SFTP. We never require write access unless the workflow demands it, and even then, scoped to specific collections.',
+    },
+    {
+        q: 'Where is our data stored geographically?',
+        a: 'By default, compute runs in your preferred region (EU, US, or Africa/Nairobi). We can enforce data residency requirements and provide a written Data Processing Agreement (DPA) for regulated workloads.',
+    },
+    {
+        q: 'What happens to our data if we terminate?',
+        a: 'Upon termination, all client data is purged from our systems within 30 days. You receive a signed data deletion confirmation and full export of your workflow configurations.',
+    },
+    {
+        q: 'Can we conduct a security audit before signing?',
+        a: 'Yes. Enterprise clients may request a security questionnaire, architecture review, and penetration test evidence as part of the sales process at no additional cost.',
+    },
+];
 
 export default function SecurityPage() {
     return (
-        <div className="min-h-screen bg-slate-950 text-white font-sans">
-            {/* NAV */}
-            <header className="bg-slate-900 border-b border-white/10 py-5 px-6">
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center">
-                            <Bot size={18} />
-                        </div>
-                        <span className="text-xl font-black">Bazz<span className="text-red-500">AI</span></span>
-                    </Link>
-                    <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-colors" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                        Book Assessment
-                    </button>
-                </div>
-            </header>
+        <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
 
-            {/* HERO */}
-            <section className="py-24 px-6 border-b border-white/10">
-                <div className="max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 text-xs font-bold mb-6">
-                        <Shield size={12} /> Enterprise Security & Data Governance
+            {/* Hero */}
+            <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">
+                <div className="absolute bottom-0 left-0 w-96 h-64 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="max-w-4xl mx-auto relative z-10 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                        Security & Compliance
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                        Your Data Stays <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">Yours.</span><br />
-                        Always.
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
+                        Your Data is a First-Class Asset. We Treat It That Way.
                     </h1>
-                    <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                        BazzAI is built from the ground up for enterprise security requirements. Every pipeline, every model interaction, every integration — governed by strict data controls.
+                    <p className="text-lg text-slate-400 font-medium max-w-2xl mx-auto">
+                        BazzAI is built with enterprise-grade security controls at every layer — from data ingestion to LLM inference.
                     </p>
                 </div>
-            </section>
+            </div>
 
-            {/* COMPLIANCE BADGES */}
-            <section className="py-20 px-6 border-b border-white/10">
-                <div className="max-w-5xl mx-auto">
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-10 text-center">Compliance & Certifications</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                        {[
-                            { icon: <Shield size={32} />, title: 'GDPR Compliant', sub: 'Full EU data protection regulation compliance', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
-                            { icon: <Award size={32} />, title: 'Kenya DPA 2019', sub: 'Kenya Data Protection Act compliant', color: 'text-green-400 bg-green-500/10 border-green-500/20' },
-                            { icon: <Lock size={32} />, title: 'AES-256 Encryption', sub: 'Data encrypted at rest and in transit', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
-                            { icon: <FileText size={32} />, title: 'SOC 2 Architecture', sub: 'Full audit trail and access logging', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
-                        ].map((b, i) => (
-                            <div key={i} className={`border rounded-[20px] p-6 text-center ${b.color}`}>
-                                <div className="flex justify-center mb-3">{b.icon}</div>
-                                <p className="font-black text-sm mb-1">{b.title}</p>
-                                <p className="text-[11px] opacity-70 leading-snug">{b.sub}</p>
+            {/* Controls Grid */}
+            <section className="w-full max-w-5xl px-8 py-20">
+                <h2 className="text-3xl font-black mb-12 text-center">Security Controls</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {controls.map((c, i) => (
+                        <div key={i} className="bg-slate-50 border border-slate-200 rounded-3xl p-7 shadow-sm">
+                            <div className={`w-12 h-12 rounded-2xl ${c.bg} ${c.color} flex items-center justify-center mb-5`}>
+                                {c.icon}
                             </div>
-                        ))}
-                    </div>
+                            <h3 className="text-lg font-black mb-3">{c.title}</h3>
+                            <p className="text-slate-600 text-sm leading-relaxed">{c.body}</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 
-            {/* DETAIL SECTIONS */}
-            <section className="py-20 px-6 border-b border-white/10">
-                <div className="max-w-5xl mx-auto space-y-12">
-                    {[
-                        {
-                            icon: <Award size={24} className="text-purple-400" />,
-                            title: 'Private LLM Options — Your Data Never Trains Public Models',
-                            body: 'By default, BazzAI pipelines route only to opt-out API endpoints (OpenAI zero-data-retention policy). For clients with stricter requirements, we offer fully private LLM deployments on your own cloud infrastructure (AWS, GCP, Azure, or on-premise). No inference data is logged, stored, or used for model training.',
-                            points: ['OpenAI Zero Data Retention mode enabled by default', 'Private Azure OpenAI deployment available', 'On-premise Ollama/LLaMA deployment for air-gapped environments', 'No data used for model fine-tuning'],
-                        },
-                        {
-                            icon: <Lock size={24} className="text-green-400" />,
-                            title: 'Data Encryption at Rest & in Transit',
-                            body: 'All data processed through BazzAI pipelines is encrypted using AES-256 at rest and TLS 1.3 in transit. Vector embeddings stored in Pinecone are namespace-isolated per client with role-based access controls.',
-                            points: ['AES-256 encryption at rest', 'TLS 1.3 for all API communications', 'Pinecone namespace isolation per client', 'Secrets managed via environment-level vaults (no hardcoded credentials)'],
-                        },
-                        {
-                            icon: <AlertTriangle size={24} className="text-red-400" />,
-                            title: 'Incident Response & Business Continuity',
-                            body: 'BazzAI maintains a formal Incident Response Plan (IRP) covering detection, containment, eradication, and recovery. All clients have a designated point of contact for security incidents with defined SLAs for response.',
-                            points: ['P1 incidents: 2-hour response SLA', 'P2 incidents: 8-hour response SLA', 'Automatic workflow suspension on anomaly detection', 'Post-incident root cause analysis and report'],
-                        },
-                    ].map((s, i) => (
-                        <div key={i} className="bg-white/5 border border-white/10 rounded-[24px] p-8">
-                            <div className="flex items-center gap-3 mb-4">
-                                {s.icon}
-                                <h2 className="text-xl font-black">{s.title}</h2>
-                            </div>
-                            <p className="text-slate-400 text-sm leading-relaxed mb-6">{s.body}</p>
-                            <ul className="grid sm:grid-cols-2 gap-3">
-                                {s.points.map((pt, j) => (
-                                    <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
-                                        <CheckCircle size={14} className="text-green-400 mt-0.5 flex-shrink-0" /> {pt}
-                                    </li>
-                                ))}
-                            </ul>
+            {/* Architecture Diagram */}
+            <section className="w-full max-w-5xl px-8 pb-20">
+                <div className="bg-slate-900 text-white rounded-[32px] p-10 md:p-14 shadow-2xl">
+                    <h2 className="text-3xl font-black mb-8 text-center">Data Flow Architecture</h2>
+                    <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-10">
+                        {[
+                            { label: 'Your Data Sources', sub: 'APIs, DBs, Files', color: 'bg-blue-500/20 border-blue-500/40 text-blue-300' },
+                            { label: '→', sub: '', color: 'bg-transparent border-transparent text-slate-500' },
+                            { label: 'Encrypted Ingestion', sub: 'TLS 1.3 in transit', color: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' },
+                            { label: '→', sub: '', color: 'bg-transparent border-transparent text-slate-500' },
+                            { label: 'Isolated Pipeline', sub: 'Per-client environment', color: 'bg-purple-500/20 border-purple-500/40 text-purple-300' },
+                            { label: '→', sub: '', color: 'bg-transparent border-transparent text-slate-500' },
+                            { label: 'Zero-Retention LLM', sub: 'No training on your data', color: 'bg-red-500/20 border-red-500/40 text-red-300' },
+                            { label: '→', sub: '', color: 'bg-transparent border-transparent text-slate-500' },
+                            { label: 'Your Outputs', sub: 'Alerts, Reports, Actions', color: 'bg-amber-500/20 border-amber-500/40 text-amber-300' },
+                        ].map((node, i) => (
+                            node.sub === '' ? (
+                                <span key={i} className="text-slate-600 font-black text-xl hidden md:block">→</span>
+                            ) : (
+                                <div key={i} className={`flex flex-col items-center px-5 py-4 rounded-2xl border ${node.color} text-center min-w-[120px]`}>
+                                    <p className="text-sm font-black">{node.label}</p>
+                                    <p className="text-[10px] opacity-60 mt-1">{node.sub}</p>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                    <p className="text-center text-slate-400 text-sm font-medium">All data is processed in your designated region. AES-256 encryption at rest.</p>
+                </div>
+            </section>
+
+            {/* Security FAQ */}
+            <section className="w-full max-w-3xl px-8 pb-20">
+                <h2 className="text-3xl font-black mb-10 text-center">Security Questions, Answered</h2>
+                <div className="space-y-5">
+                    {faqs.map((f, i) => (
+                        <div key={i} className="bg-slate-50 border border-slate-200 rounded-2xl p-7">
+                            <h4 className="font-black text-slate-900 mb-3">{f.q}</h4>
+                            <p className="text-slate-600 text-sm leading-relaxed">{f.a}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
             {/* CTA */}
-            <section className="py-20 px-6">
-                <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="text-3xl font-black mb-4">Need a Security Brief for Your Procurement Team?</h2>
-                    <p className="text-slate-400 mb-8">Book a security-focused call with our team. We'll walk through our data governance posture and prepare a custom security brief for your CISO or Legal team.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                            Book Security Briefing <ArrowRight size={18} />
-                        </button>
-                        <Link href="/enterprise"
-                            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border border-white/20 text-white font-bold hover:bg-white/10 transition-all">
-                            View Enterprise Playbook
-                        </Link>
-                    </div>
-                    <p className="text-slate-500 text-xs mt-6">📄 A downloadable PDF security brief is available on request during your assessment call.</p>
+            <section className="w-full max-w-4xl px-8">
+                <div className="bg-slate-900 text-white rounded-[32px] p-12 text-center shadow-xl">
+                    <h2 className="text-3xl font-black mb-4">Request a Security Questionnaire</h2>
+                    <p className="text-slate-400 mb-8 max-w-lg mx-auto font-medium">
+                        Enterprise clients can request our full security package — architecture diagrams, DPA template, and penetration test evidence.
+                    </p>
+                    <button className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition-all shadow-lg" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                        Contact Enterprise Security Team
+                    </button>
                 </div>
             </section>
-        </div>
+        </main>
     );
 }

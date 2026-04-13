@@ -1,124 +1,137 @@
-import { ArrowRight, BookOpen, Calendar, Clock, Share2, Tag } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const posts = [
+    {
+        tag: 'RAG Architecture',
+        date: 'April 2026',
+        title: 'Why Most Enterprise RAG Pipelines Fail After 90 Days — and How to Fix It',
+        excerpt: 'The hidden issue is not the model — it\'s data drift. When your internal documents update, your vector index doesn\'t. Here\'s how we solve it at BazzAI using continuous re-embedding pipelines.',
+        slug: 'enterprise-rag-failure-modes',
+        readTime: '8 min read',
+    },
+    {
+        tag: 'Operational Efficiency',
+        date: 'March 2026',
+        title: 'The Real Cost of Manual Reconciliation: A CFO\'s Hidden $100k Problem',
+        excerpt: 'Most CFOs underestimate how much manual ledger reconciliation actually costs when you factor in error correction, delayed closes, and the opportunity cost of finance staff time.',
+        slug: 'manual-reconciliation-true-cost',
+        readTime: '6 min read',
+    },
+    {
+        tag: 'Manufacturing AI',
+        date: 'March 2026',
+        title: 'How Holt-Winters Forecasting Eliminated 16 Stockouts Per Month at Dakri Cartons',
+        excerpt: 'A technical walkthrough of the Triple Exponential Smoothing model we deployed over real factory inventory data — and the n8n orchestration layer that made it autonomous.',
+        slug: 'holt-winters-manufacturing-forecasting',
+        readTime: '10 min read',
+    },
+    {
+        tag: 'AI Strategy',
+        date: 'February 2026',
+        title: 'Build vs Buy vs BazzAI: The 2026 Enterprise Decision Framework',
+        excerpt: 'Hiring 3 ML engineers or buying a $200k SaaS license are not your only options. Here\'s how we position against both in an honest, data-driven way.',
+        slug: 'build-vs-buy-vs-bazzai',
+        readTime: '7 min read',
+    },
+    {
+        tag: 'n8n Workflows',
+        date: 'February 2026',
+        title: 'Why We Chose n8n Over Apache Airflow for Our Enterprise Orchestration Layer',
+        excerpt: 'Airflow is powerful — but it\'s also operationally heavy. For event-driven, API-heavy enterprise automation at scale, n8n edges it out on every metric that matters in 2026.',
+        slug: 'n8n-vs-airflow-enterprise',
+        readTime: '9 min read',
+    },
+    {
+        tag: 'Computer Vision',
+        date: 'January 2026',
+        title: 'From Camera Feed to WhatsApp Alert in 400ms: Our Defect Detection Architecture',
+        excerpt: 'A technical deep-dive into the real-time computer vision pipeline we built for production line quality control — OpenCV, FastAPI, and WhatsApp Business API working in concert.',
+        slug: 'defect-detection-pipeline-deep-dive',
+        readTime: '12 min read',
+    },
+];
 
-export default function BlogHome() {
-    const posts = [
-        {
-            id: 1,
-            title: "How BazzAI is Revolutionizing MSMEs in Kenya",
-            excerpt: "Discover how specialized AI agents are helping local businesses save over 40 hours a week on customer service and payments.",
-            date: "Mar 23, 2026",
-            readTime: "5 min read",
-            category: "Case Study",
-            image: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80&w=800"
-        },
-        {
-            id: 2,
-            title: "Understanding Jenga API: Automated Accounting",
-            excerpt: "A deep dive into how Bazz-Flow integrates with Equity Bank to reconcile your bank statement with 100% accuracy.",
-            date: "Mar 20, 2026",
-            readTime: "8 min read",
-            category: "Technical",
-            image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800"
-        },
-        {
-            id: 3,
-            title: "The Rise of Agentic AI: Why Chatbots are Dead",
-            excerpt: "Moving beyond simple Q&A. Why autonomous agents are the next big frontier for business efficiency in Africa.",
-            date: "Mar 15, 2026",
-            readTime: "6 min read",
-            category: "Insights",
-            image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800"
-        }
-    ];
+const tagColors: Record<string, string> = {
+    'RAG Architecture': 'bg-blue-50 text-blue-700 border-blue-200',
+    'Operational Efficiency': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'Manufacturing AI': 'bg-orange-50 text-orange-700 border-orange-200',
+    'AI Strategy': 'bg-purple-50 text-purple-700 border-purple-200',
+    'n8n Workflows': 'bg-pink-50 text-pink-700 border-pink-200',
+    'Computer Vision': 'bg-red-50 text-red-700 border-red-200',
+};
 
+export default function BlogIndex() {
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans">
-            {/* Blog Header */}
-            <header className="border-b border-slate-100 py-12 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <div className="flex items-center gap-2 mb-4 text-red-600 font-bold uppercase tracking-widest text-xs">
-                        <BookOpen size={16} /> Bazztech AI Insights
+        <main className="flex min-h-screen flex-col items-center bg-slate-50 text-slate-900 pb-24">
+
+            {/* Hero */}
+            <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">
+                <div className="absolute top-0 right-1/4 w-96 h-64 bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
+                <div className="max-w-4xl mx-auto relative z-10 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-slate-300 text-[10px] font-black uppercase tracking-widest mb-6">
+                        Thought Leadership
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
-                        The Future of <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">Business Automation.</span>
-                    </h1>
-                    <p className="text-lg text-slate-500 max-w-2xl">
-                        Deep dives, case studies, and the latest updates on the AI Agentic revolution in Kenya.
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">Insights From the Automation Frontier</h1>
+                    <p className="text-lg text-slate-400 font-medium max-w-2xl mx-auto">
+                        Technical depth. Practical ROI frameworks. No fluff. Written by the engineers and strategists building enterprise AI for Africa and beyond.
                     </p>
                 </div>
-            </header>
+            </div>
 
-            {/* Main Feed */}
-            <main className="py-16 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <div className="grid gap-16">
-                        {posts.map((post) => (
-                            <article key={post.id} className="group grid md:grid-cols-2 gap-8 items-center cursor-pointer">
-                                <div className="overflow-hidden rounded-3xl aspect-video bg-slate-100 border border-slate-200 shadow-sm transition-all group-hover:shadow-xl group-hover:border-red-100">
-                                    <img
-                                        src={post.image}
-                                        alt={post.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-4 text-xs font-bold text-slate-400 mb-4">
-                                        <span className="px-2 py-1 rounded bg-slate-100 text-slate-600 uppercase tracking-wider">{post.category}</span>
-                                        <span className="flex items-center gap-1"><Calendar size={14} /> {post.date}</span>
-                                        <span className="flex items-center gap-1"><Clock size={14} /> {post.readTime}</span>
-                                    </div>
-                                    <h2 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-red-600 transition-colors">
-                                        {post.title}
-                                    </h2>
-                                    <p className="text-slate-500 leading-relaxed mb-6">
-                                        {post.excerpt}
-                                    </p>
-                                    <div className="flex items-center gap-2 text-red-600 font-bold group-hover:translate-x-2 transition-transform">
-                                        Read Story <ArrowRight size={18} />
-                                    </div>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-
-                    {/* Newsletter Section */}
-                    <div className="mt-24 p-6 md:p-12 rounded-[40px] bg-slate-900 text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 opacity-10">
-                            <Share2 size={120} />
+            {/* Featured Post */}
+            <section className="w-full max-w-5xl px-8 py-16">
+                <div className="bg-white border-2 border-red-100 rounded-[32px] p-10 md:p-14 shadow-lg flex flex-col md:flex-row gap-10 items-start">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-black border ${tagColors[posts[2].tag]}`}>{posts[2].tag}</span>
+                            <span className="text-slate-400 text-xs font-medium">{posts[2].date} · {posts[2].readTime}</span>
                         </div>
-                        <div className="relative z-10 max-w-xl">
-                            <h3 className="text-3xl font-bold mb-4">Get the weekly digest.</h3>
-                            <p className="text-slate-400 mb-8">Join 500+ forward-thinking business owners getting AI insights delivered straight to their inbox.</p>
-                            <div className="flex flex-col sm:flex-row gap-3">
-                                <input
-                                    type="email"
-                                    placeholder="name@business.com"
-                                    className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none focus:border-red-500 transition-colors"
-                                />
-                                <button className="px-6 py-3 bg-red-600 rounded-xl font-bold hover:bg-red-700 transition-all">
-                                    Subscribe
-                                </button>
+                        <h2 className="text-2xl md:text-3xl font-black mb-4 tracking-tight">{posts[2].title}</h2>
+                        <p className="text-slate-600 leading-relaxed mb-8">{posts[2].excerpt}</p>
+                        <Link href={`/blog/${posts[2].slug}`} className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl text-sm transition-colors">
+                            Read Article <ArrowRight size={16} />
+                        </Link>
+                    </div>
+                    <div className="md:w-48 shrink-0">
+                        <div className="w-full aspect-square bg-gradient-to-br from-orange-600 to-red-700 rounded-3xl shadow-xl flex items-center justify-center text-6xl select-none">
+                            🏭
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* All Posts */}
+            <section className="w-full max-w-5xl px-8 pb-20">
+                <h2 className="text-2xl font-black mb-8">All Articles</h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                    {posts.map((p, i) => i !== 2 && (
+                        <Link key={i} href={`/blog/${p.slug}`} className="bg-white border border-slate-200 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all block">
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className={`px-3 py-1 rounded-full text-xs font-black border ${tagColors[p.tag]}`}>{p.tag}</span>
+                                <span className="text-slate-400 text-xs font-medium">{p.readTime}</span>
                             </div>
-                        </div>
-                    </div>
+                            <h3 className="text-lg font-black mb-3 tracking-tight">{p.title}</h3>
+                            <p className="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-3">{p.excerpt}</p>
+                            <span className="text-red-600 text-sm font-black flex items-center gap-1">Read More <ArrowRight size={14} /></span>
+                        </Link>
+                    ))}
                 </div>
-            </main>
+            </section>
 
-            {/* Footer */}
-            <footer className="py-12 border-t border-slate-100">
-                <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
-                    <div className="text-2xl font-black tracking-tighter">
-                        Bazz<span className="text-red-600">AI</span>
-                    </div>
-                    <Link href="/" className="text-sm font-bold text-slate-400 hover:text-red-600 transition-colors">
-                        Back to Home
-                    </Link>
+            {/* Newsletter CTA */}
+            <section className="w-full max-w-4xl px-8">
+                <div className="bg-slate-900 text-white rounded-[32px] p-12 text-center shadow-xl">
+                    <h2 className="text-2xl font-black mb-3">Get the Automation Edge</h2>
+                    <p className="text-slate-400 mb-6 max-w-lg mx-auto text-sm font-medium">
+                        Monthly deep-dives on enterprise AI, RAG architecture, and operational ROI frameworks — directly to your inbox.
+                    </p>
+                    <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+                        <input type="email" placeholder="your@company.com" className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-slate-500 text-sm outline-none focus:border-red-500 transition-colors" />
+                        <button type="submit" className="px-6 py-3 bg-red-600 hover:bg-red-500 font-black text-white rounded-xl text-sm transition-colors whitespace-nowrap">Subscribe</button>
+                    </form>
                 </div>
-            </footer>
-        </div>
+            </section>
+        </main>
     );
 }

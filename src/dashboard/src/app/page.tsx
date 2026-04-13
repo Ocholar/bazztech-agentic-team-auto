@@ -257,10 +257,11 @@ export default function LandingPage() {
                                 <a href="#products">All Solutions</a>
                             </div>
                         </div>
+                        <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
                         <Link href="#how-it-works" className="hover:text-red-600 transition-colors">How It Works</Link>
-                        <Link href="#industries" className="hover:text-red-600 transition-colors">Industries</Link>
-                        <Link href="#case-study" className="hover:text-red-600 transition-colors">Case Study</Link>
-                        <Link href="/enterprise" className="hover:text-red-600 transition-colors">Enterprise</Link>
+                        <Link href="/why-bazzai" className="hover:text-red-600 transition-colors">Why BazzAI</Link>
+                        <Link href="/security" className="hover:text-red-600 transition-colors">Security</Link>
+                        <Link href="#case-study" className="hover:text-red-600 transition-colors">Resources</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
                             Chat with an Expert
@@ -282,11 +283,10 @@ export default function LandingPage() {
                         <Link href="/solutions/for-coos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">⚙️ For COOs & Operations Leaders</Link>
                         <Link href="/solutions/for-cfos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">📊 For CFOs & Finance Leaders</Link>
                         <div className="border-t border-slate-100" />
-                        {['#products', '#how-it-works', '#industries', '#case-study'].map((href, i) => (
+                        {['/pricing', '#how-it-works', '/why-bazzai', '/security', '#case-study'].map((href, i) => (
                             <Link key={i} href={href} onClick={() => setIsMenuOpen(false)}
-                                className="font-semibold text-slate-700 capitalize">{href.replace('#', '').replace('-', ' ')}</Link>
+                                className="font-semibold text-slate-700 capitalize">{href.replace('#', '').replace('/', '').replace('-', ' ')}</Link>
                         ))}
-                        <Link href="/enterprise" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700">Enterprise Playbook</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="font-bold text-green-600">💬 Chat with an Expert</Link>
                         <button onClick={() => setIsMenuOpen(false)}
@@ -310,32 +310,36 @@ export default function LandingPage() {
                     <div className="flex flex-col items-start fade-up">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold mb-7">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            Already powering 50+ businesses across East Africa and beyond
+                            Powering enterprise manufacturing automation for Dakri Cartons (Mauritius)
                         </div>
 
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.07] mb-7">
-                            Stop Revenue Leakage<br />
-                            with{' '}<span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Autonomous</span><br />
-                            AI Agents
+                            Automate Your Operations<br />
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-pink-500 to-red-400">Before Your Competitors Do</span><br />
+                            — and reclaim 20+ hours/week
                         </h1>
 
-                        <p className="text-lg md:text-xl text-slate-500 mb-4 leading-relaxed max-w-lg">
-                            We replace manual bottlenecks with intelligent workflows that work <strong className="text-slate-700">24/7</strong>.
-                            Save <strong className="text-slate-700">20+ hours a week</strong> and eliminate the hidden cost of human error.
-                        </p>
+                        <div className="text-lg md:text-xl text-slate-500 mb-4 leading-relaxed max-w-lg space-y-2">
+                            <p><strong>For CTOs:</strong> Deploy custom AI workflows without a 6-month hiring cycle</p>
+                            <p><strong>For COOs:</strong> Eliminate manual bottlenecks in 4–8 weeks</p>
+                            <p><strong>For CFOs:</strong> 3–6 month payback on every dollar invested</p>
+                        </div>
 
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold mb-8">
                             <AlertTriangle size={13} className="text-amber-500 flex-shrink-0" />
                             While your competitors automate, manual processes are costing you 15–30% in operational waste.
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto">
-                            <button className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-base md:text-lg hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                                Book a 15-Min AI Opportunity Assessment &amp; ROI Projection <ArrowRight size={20} />
+                        <div className="flex flex-col sm:flex-row gap-4 items-center w-full lg:w-auto flex-wrap">
+                            <button className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-red-600 text-white font-black text-base hover:bg-red-700 shadow-2xl shadow-red-100 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                                Book Assessment
                             </button>
+                            <Link href="/pricing" className="w-full sm:w-auto px-8 py-3 rounded-2xl bg-slate-900 text-white font-black text-base hover:bg-slate-800 shadow-2xl shadow-slate-900/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                                View Pricing
+                            </Link>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                                className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-green-400 text-green-700 font-bold text-base md:text-lg hover:bg-green-50 transition-all flex items-center justify-center gap-2">
-                                <MessageSquare size={20} /> Chat with an Expert
+                                className="w-full sm:w-auto px-8 py-3 rounded-2xl border-2 border-green-400 text-green-700 font-bold text-base hover:bg-green-50 transition-all flex items-center justify-center gap-2">
+                                <MessageSquare size={18} /> Chat with an Expert
                             </Link>
                         </div>
 

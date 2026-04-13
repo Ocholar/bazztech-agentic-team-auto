@@ -1,165 +1,81 @@
 "use client";
+import { ArrowRight, TrendingUp, DollarSign, PieChart } from 'lucide-react';
 import Link from 'next/link';
-import { Bot, DollarSign, TrendingUp, ArrowRight, AlertTriangle, Calculator } from 'lucide-react';
 
-// Phase 1 Foundation Components
-import CurrencyToggle from '@/components/CurrencyToggle';
-import KenyaGrantBanner from '@/components/KenyaGrantBanner';
-import TrustBadges from '@/components/TrustBadges';
+const items = [
+    { icon: <DollarSign size={22} className="text-emerald-400" />, title: "Predictable Fixed Retainer", body: "Enterprise intelligence starts at $2,500/mo — replacing 3–5 FTE operations roles and unpredictable consulting day-rates." },
+    { icon: <PieChart size={22} className="text-blue-400" />, title: "OpEx Model, Not CapEx", body: "No $500k platform license. BazzAI runs on your existing cloud infrastructure under a fully managed OpEx retainer." },
+    { icon: <TrendingUp size={22} className="text-red-400" />, title: "3–6 Month Payback", body: "Based on our Dakri Cartons deployment, the $35k implementation recovered its full cost within the first 35 operating days." },
+];
 
-const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
-
-export default function ForCFOsPage() {
+export default function ForCFOs() {
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans">
-            <header className="fixed top-0 w-full z-50 bg-white/96 backdrop-blur-sm border-b border-slate-100 shadow-sm">
-                <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center text-white"><Bot size={18} /></div>
-                        <span className="text-xl font-black">Bazz<span className="text-red-600">AI</span></span>
-                    </Link>
-                    <div className="flex items-center gap-4">
-                        <Link href="/solutions/for-ctos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For CTOs</Link>
-                        <Link href="/solutions/for-coos" className="text-sm font-semibold text-slate-500 hover:text-slate-900">For COOs</Link>
-                        <button className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Book Call</button>
+        <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+
+            {/* Hero */}
+            <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">
+                <div className="absolute top-0 left-1/3 w-96 h-96 bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
+                <div className="max-w-5xl mx-auto relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                        For CFOs & Finance Leaders
                     </div>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight max-w-3xl">
+                        Every Dollar Invested Has a Calculated Return.
+                    </h1>
+                    <p className="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed max-w-2xl">
+                        AI automation is not a cost center. With measurable ROI frameworks, predictable retainer pricing, and zero CapEx overhead, BazzAI is the most defensible OpEx line item on your P&L.
+                    </p>
+                    <button className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 w-max" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                        <DollarSign size={20} /> Get a Financial ROI Projection
+                    </button>
                 </div>
-            </header>
+            </div>
 
-            <main className="pt-24">
-                {/* HERO */}
-                <section className="py-20 px-6 bg-gradient-to-b from-emerald-950 to-slate-900 text-white">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold mb-6">
-                            📊 For CFOs &amp; Finance Leaders
+            {/* 3 Financial Pillars */}
+            <section className="w-full max-w-5xl px-8 py-20">
+                <h2 className="text-3xl font-black mb-12 text-center">The Financial Case for BazzAI</h2>
+                <div className="grid md:grid-cols-3 gap-8">
+                    {items.map((item, i) => (
+                        <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-sm">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-200 flex items-center justify-center mb-5">{item.icon}</div>
+                            <h3 className="text-xl font-black mb-3">{item.title}</h3>
+                            <p className="text-slate-600 text-sm leading-relaxed">{item.body}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                            Every Manual Process<br />
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-green-400">Has a Price Tag.</span>
-                        </h1>
-                        <p className="text-slate-400 text-lg max-w-2xl mb-10">
-                            Manual operations carry a hidden tax: errors, delays, overtime, and missed revenue windows. BazzAI quantifies and eliminates that cost — with a payback period measured in weeks, not years.
-                        </p>
-                        <button className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                            Get My ROI Projection <ArrowRight size={18} />
-                        </button>
-                    </div>
-                </section>
+                    ))}
+                </div>
+            </section>
 
-                {/* COST OF INACTION */}
-                <section className="py-20 px-6 bg-amber-50 border-b border-amber-100">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="flex items-center gap-3 mb-8">
-                            <AlertTriangle size={24} className="text-amber-600" />
-                            <h2 className="text-3xl font-black">The Cost of Inaction</h2>
+            {/* ROI Breakdown Card */}
+            <section className="w-full max-w-4xl px-8 pb-20">
+                <div className="bg-white border-2 border-emerald-100 rounded-[32px] p-10 shadow-xl">
+                    <h2 className="text-2xl font-black mb-8 text-slate-900">Dakri Cartons ROI Breakdown</h2>
+                    <div className="space-y-4 mb-8">
+                        <div className="flex justify-between items-center py-4 border-b border-slate-100">
+                            <span className="text-slate-600 font-medium">Implementation Fee</span>
+                            <span className="font-black text-slate-900">$35,000</span>
                         </div>
-                        <p className="text-slate-600 mb-10 max-w-2xl">Every month your operations remain manual, these costs compound silently in your P&amp;L:</p>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {[
-                                { label: 'Labour cost for repetitive tasks', est: '$1,150–$3,000 / month per department', desc: 'Salary allocated to manual data entry, report generation, and follow-ups that AI can handle.' },
-                                { label: 'Error correction & dispute resolution', est: '$400–$1,500 / month', desc: 'Billing errors, invoice disputes, and reconciliation corrections from manual data handling.' },
-                                { label: 'Delayed revenue collection', est: '15–25 day average delay', desc: 'Manual invoice processing and follow-up cycles extend receivable collection timelines.' },
-                                { label: 'Missed leads from slow response', est: '30–60% lead decay rate', desc: 'Leads that don\'t receive a response within 1 hour convert at 7x lower rates.' },
-                            ].map((c, i) => (
-                                <div key={i} className="bg-white border border-amber-200 rounded-[20px] p-6">
-                                    <p className="font-black mb-1">{c.label}</p>
-                                    <p className="text-amber-700 text-sm font-bold mb-3">{c.est}</p>
-                                    <p className="text-slate-500 text-sm">{c.desc}</p>
-                                </div>
-                            ))}
+                        <div className="flex justify-between items-center py-4 border-b border-slate-100">
+                            <span className="text-slate-600 font-medium">Monthly Retainer × 12</span>
+                            <span className="font-black text-slate-900">$48,000</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4 border-b border-slate-100">
+                            <span className="text-slate-600 font-medium">Total Year 1 Investment</span>
+                            <span className="font-black text-slate-900">$83,000</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4 border-b border-slate-100">
+                            <span className="text-slate-600 font-medium">Stockout + Downtime Savings</span>
+                            <span className="font-black text-emerald-600">$1,159,200</span>
+                        </div>
+                        <div className="flex justify-between items-center py-4 bg-emerald-50 rounded-2xl px-4">
+                            <span className="text-emerald-800 font-black text-lg">Year 1 Net ROI</span>
+                            <span className="font-black text-emerald-600 text-2xl">1,295%</span>
                         </div>
                     </div>
-                </section>
-
-                {/* ROI MODEL */}
-                <section className="py-20 px-6 border-b border-slate-100">
-                    <div className="max-w-5xl mx-auto">
-                        <h2 className="text-3xl font-black mb-3 text-center">Indicative ROI Model</h2>
-                        <p className="text-slate-500 text-center mb-8 max-w-xl mx-auto">Based on a mid-sized company (50–200 employees) deploying 2–3 BazzAI automation pipelines.</p>
-
-                        <div className="flex flex-col items-center gap-6 mb-12">
-                            <CurrencyToggle />
-                            <div className="max-w-md w-full">
-                                <KenyaGrantBanner />
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-50 border border-slate-200 rounded-[24px] overflow-hidden">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="bg-slate-900 text-white">
-                                        <th className="p-4 text-left font-black">Metric</th>
-                                        <th className="p-4 text-right font-black">Before</th>
-                                        <th className="p-4 text-right font-black">After BazzAI</th>
-                                        <th className="p-4 text-right font-black text-green-400">Saving</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        ['Monthly reconciliation labour', '$1,400', '$150', '$1,250'],
-                                        ['Invoice error cost', '$600', '$30', '$570'],
-                                        ['Lead response labour', '$900', '$115', '$785'],
-                                        ['Report generation', '$450', '$40', '$410'],
-                                        ['Total monthly operational cost', '$3,400', '$340', '$3,060/mo'],
-                                    ].map((row, i) => (
-                                        <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                                            <td className="p-4 font-semibold text-slate-700">{row[0]}</td>
-                                            <td className="p-4 text-right text-red-600">{row[1]}</td>
-                                            <td className="p-4 text-right text-slate-600">{row[2]}</td>
-                                            <td className="p-4 text-right text-green-600 font-black">{row[3]}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <p className="text-[10px] text-slate-400 mt-3 text-center">* Estimates based on client benchmarks. Actual results vary. Your ROI projection will be calculated during your assessment call.</p>
-                    </div>
-                </section>
-
-                {/* PRICING TIERS */}
-                <section className="py-20 px-6 bg-slate-50 border-b border-slate-100">
-                    <div className="max-w-5xl mx-auto">
-                        <h2 className="text-3xl font-black mb-3 text-center">Pricing Tiers (Indicative Ranges)</h2>
-                        <p className="text-slate-500 text-center mb-12 max-w-xl mx-auto">Exact pricing is scoped per engagement. These ranges reflect typical project sizes.</p>
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {[
-                                { tier: 'Starter', range: '$5k – $20k', sub: 'Single pipeline deployment', points: ['1 AI agent / workflow', '14-day deployment', '3-month support included', 'Best for: 1 process automation'] },
-                                { tier: 'Growth', range: '$25k – $60k', sub: 'Multi-pipeline integration', points: ['2–4 AI agents', 'CRM + payment integration', '6-month SLA support', 'Best for: dept-wide automation'], featured: true },
-                                { tier: 'Enterprise', range: '$75k – $200k+', sub: 'Full-stack AI transformation', points: ['5+ agents across departments', 'Custom LLM deployment', '12-month retainer', 'Best for: org-wide rollout'] },
-                            ].map((t, i) => (
-                                <div key={i} className={`rounded-[24px] p-7 border-2 ${t.featured ? 'border-red-200 bg-red-50 shadow-lg' : 'border-slate-200 bg-white'}`}>
-                                    {t.featured && <p className="text-[10px] font-black uppercase tracking-widest text-red-600 mb-2">Most Popular</p>}
-                                    <p className="font-black text-lg mb-1">{t.tier}</p>
-                                    <p className="text-3xl font-black mb-1">{t.range}</p>
-                                    <p className="text-slate-500 text-xs mb-5">{t.sub}</p>
-                                    <ul className="space-y-2">
-                                        {t.points.map((pt, j) => (
-                                            <li key={j} className="flex items-start gap-2 text-sm text-slate-600">
-                                                <TrendingUp size={12} className="text-green-500 mt-1 flex-shrink-0" /> {pt}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* CTA */}
-                <section className="py-20 px-6 bg-emerald-900 text-white text-center">
-                    <h2 className="text-3xl font-black mb-4">Get a Custom ROI Projection for Your Business</h2>
-                    <p className="text-emerald-200 mb-8">In 15 minutes, we'll calculate the exact cost of your current manual processes and project your first-year savings.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-white text-emerald-900 font-black hover:bg-emerald-50 transition-all hover:scale-105" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                            <Calculator size={18} /> Book My ROI Assessment
-                        </button>
-                        <Link href="/enterprise"
-                            className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl border border-white/30 text-white font-bold hover:bg-white/10 transition-all">
-                            View Enterprise Playbook
-                        </Link>
-                    </div>
-                </section>
-            </main>
-        </div>
+                    <Link href="/case-studies/dakri-cartons" className="inline-flex items-center gap-2 font-black text-red-600 hover:text-red-700 transition-colors">
+                        Read Full Case Study <ArrowRight size={16} />
+                    </Link>
+                </div>
+            </section>
+        </main>
     );
 }
