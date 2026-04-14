@@ -73,6 +73,7 @@ export async function saveProductConfig(formData: FormData) {
                 data: {
                     userId,
                     subscriptionId: sub.id,
+                    productType: sub.productType,
                     systemPrompt: validated.systemPrompt,
                     knowledgeBase: validated.knowledgeBase,
                     ...((hasCore ? { isConfigured: true } : {}) as any),
@@ -84,7 +85,7 @@ export async function saveProductConfig(formData: FormData) {
         return { success: true, message: "Configuration saved successfully" };
     } catch (e: any) {
         if (e instanceof z.ZodError) {
-            return { success: false, error: (e as any).errors[0].message };
+            return { success: false, error: e.issues?.[0]?.message || "Validation error" };
         }
         return { success: false, error: e.message || "Failed to save configuration" };
     }
@@ -131,7 +132,7 @@ export async function saveApiKeys(formData: FormData) {
         return { success: true };
     } catch (e: any) {
         if (e instanceof z.ZodError) {
-            return { success: false, error: "Validation failed: " + (e as any).errors[0].message };
+            return { success: false, error: "Validation failed: " + (e.issues?.[0]?.message || "Invalid input") };
         }
         return { success: false, error: e.message || "Failed to save API keys" };
     }
