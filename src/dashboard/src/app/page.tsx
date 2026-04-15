@@ -633,6 +633,66 @@ export default function LandingPage() {
 
 
             {/* ═══════════════════════════════════════════════════════════
+                TESTIMONIALS (Social Proof)
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="bg-white py-24 border-t border-slate-100 pb-32">
+                <div className="max-w-7xl mx-auto px-6 mb-16">
+                    <div className="text-center">
+                        <div className="inline-block px-4 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-bold mb-5">
+                            Client Results
+                        </div>
+                        <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Don't Take Our Word For It</h2>
+                        <p className="text-slate-500 font-medium max-w-2xl mx-auto">We measure our success entirely by the financial returns our deployments generate for our clients. Stories that speak for themselves.</p>
+                    </div>
+                </div>
+
+                <div className="relative w-full overflow-hidden">
+                    {/* Gradient masks for smooth edges */}
+                    <div className="absolute inset-y-0 left-0 w-8 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-8 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+                    <div className="marquee-track px-4 py-6">
+                        {[
+                            { initials: 'VP', role: 'VP Operations', company: 'Leading Mauritius Manufacturer', quote: '"BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it\'s almost frightening how flawless their system works. Paid for itself in week 3."', dark: false },
+                            { initials: 'HG', role: 'Head of Growth', company: 'Pan-African Fintech', quote: '"Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."', dark: true },
+                            { initials: 'RE', role: 'Principal Agent', company: 'Real Estate Agency', quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing. 23 hours/week saved on lead follow-up alone."', dark: false },
+                            { initials: 'HC', role: 'Operations Manager', company: 'Healthcare Clinic', quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up. A 90% reduction in missed appointments."', dark: false },
+                            { initials: 'IE', role: 'Finance Director', company: 'Import/Export Company', quote: '"The reconciliation engine found mismatches we had been missing for months. We recovered over $3,000 in billing errors. Total ROI achieved in the very first week."', dark: true },
+
+                            { initials: 'VP', role: 'VP Operations', company: 'Leading Mauritius Manufacturer', quote: '"BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it\'s almost frightening how flawless their system works. Paid for itself in week 3."', dark: false },
+                            { initials: 'HG', role: 'Head of Growth', company: 'Pan-African Fintech', quote: '"Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."', dark: true },
+                            { initials: 'RE', role: 'Principal Agent', company: 'Real Estate Agency', quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing. 23 hours/week saved on lead follow-up alone."', dark: false },
+                            { initials: 'HC', role: 'Operations Manager', company: 'Healthcare Clinic', quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up. A 90% reduction in missed appointments."', dark: false },
+                            { initials: 'IE', role: 'Finance Director', company: 'Import/Export Company', quote: '"The reconciliation engine found mismatches we had been missing for months. We recovered over $3,000 in billing errors. Total ROI achieved in the very first week."', dark: true }
+                        ].map((t, i) => (
+                            <div key={i} className={`w-[350px] md:w-[480px] flex-shrink-0 whitespace-normal p-8 md:p-10 rounded-3xl relative transition-all duration-300 flex flex-col ${t.dark ? 'bg-slate-900 text-white border-2 border-red-600/30' : 'bg-slate-50 border border-slate-100 shrink-0'}`}>
+                                <div className={`absolute top-8 right-8 ${t.dark ? 'text-red-500/20' : 'text-slate-200'}`}>
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
+                                </div>
+                                <div className="flex items-center gap-2 mb-6">
+                                    {[...Array(5)].map((_, j) => <Star key={j} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
+                                </div>
+                                <div className="flex-1">
+                                    <p className={`font-medium text-lg leading-relaxed mb-8 ${t.dark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                        {t.quote}
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-4 mt-auto">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black flex-shrink-0 ${t.dark ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                                        {t.initials}
+                                    </div>
+                                    <div>
+                                        <div className={`font-bold ${t.dark ? 'text-white' : 'text-slate-900'}`}>{t.role}</div>
+                                        <div className={`text-[10px] uppercase tracking-widest font-black ${t.dark ? 'text-red-400' : 'text-slate-500'}`}>{t.company}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
                 FINAL CTA BAND
             ═══════════════════════════════════════════════════════════ */}
             <section className="py-24 px-6 bg-gradient-to-br from-red-600 via-red-700 to-pink-700 relative overflow-hidden">
@@ -653,82 +713,6 @@ export default function LandingPage() {
                             className="px-10 py-4 rounded-2xl border-2 border-white/50 text-white font-bold text-lg hover:bg-white/10 transition-all flex items-center gap-2">
                             <MessageSquare size={20} /> Chat with an Expert
                         </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════════════════════════
-                TESTIMONIALS (Social Proof)
-            ═══════════════════════════════════════════════════════════ */}
-            <section className="bg-white py-24 px-6 border-t border-slate-100 pb-32">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16">
-                        <div className="inline-block px-4 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-bold mb-5">
-                            Client Results
-                        </div>
-                        <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Don't Take Our Word For It</h2>
-                        <p className="text-slate-500 font-medium max-w-2xl mx-auto">We measure our success entirely by the financial returns our deployments generate for our clients. Stories that speak for themselves.</p>
-                    </div>
-
-                    <div className="columns-1 md:columns-2 lg:columns-2 xl:columns-3 gap-8 space-y-8">
-                        {[
-                            {
-                                initials: 'VP',
-                                role: 'VP Operations',
-                                company: 'Leading Mauritius Manufacturer',
-                                quote: '"BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it\'s almost frightening how flawless their system works. Paid for itself in week 3."',
-                                dark: false
-                            },
-                            {
-                                initials: 'HG',
-                                role: 'Head of Growth',
-                                company: 'Pan-African Fintech',
-                                quote: '"Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."',
-                                dark: true
-                            },
-                            {
-                                initials: 'RE',
-                                role: 'Principal Agent',
-                                company: 'Real Estate Agency',
-                                quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing. 23 hours/week saved on lead follow-up alone."',
-                                dark: false
-                            },
-                            {
-                                initials: 'HC',
-                                role: 'Operations Manager',
-                                company: 'Healthcare Clinic',
-                                quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up. A 90% reduction in missed appointments."',
-                                dark: false
-                            },
-                            {
-                                initials: 'IE',
-                                role: 'Finance Director',
-                                company: 'Import/Export Company',
-                                quote: '"The reconciliation engine found mismatches we had been missing for months. We recovered over $3,000 in billing errors. Total ROI achieved in the very first week."',
-                                dark: true
-                            }
-                        ].map((t, i) => (
-                            <div key={i} className={`break-inside-avoid p-8 md:p-10 rounded-3xl relative transition-all duration-300 ${t.dark ? 'bg-slate-900 text-white border-2 border-red-600/30 shadow-2xl' : 'bg-slate-50 border border-slate-100 hover:shadow-lg'}`}>
-                                <div className={`absolute top-8 right-8 ${t.dark ? 'text-red-500/20' : 'text-slate-200'}`}>
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
-                                </div>
-                                <div className="flex items-center gap-2 mb-6">
-                                    {[...Array(5)].map((_, j) => <Star key={j} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
-                                </div>
-                                <p className={`font-medium text-lg lg:text-xl leading-relaxed mb-8 ${t.dark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                    {t.quote}
-                                </p>
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black ${t.dark ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                                        {t.initials}
-                                    </div>
-                                    <div>
-                                        <div className={`font-bold ${t.dark ? 'text-white' : 'text-slate-900'}`}>{t.role}</div>
-                                        <div className={`text-[10px] uppercase tracking-widest font-black ${t.dark ? 'text-red-400' : 'text-slate-500'}`}>{t.company}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
                     </div>
                 </div>
             </section>
