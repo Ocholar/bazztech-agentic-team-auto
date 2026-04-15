@@ -4,11 +4,13 @@ import { useState } from 'react';
 import {
     Bot, MessageSquare, Zap, FileText, ArrowRight, Check,
     Globe, Shield, Phone, Mail, MapPin, Menu, X, Star,
+    Instagram, Facebook, Linkedin, Twitter,
     TrendingUp, Users, Clock, Database, ChevronRight,
     Building2, Scale, Heart, Factory, Play, ExternalLink,
     Lock, Award, Info, ChevronDown, AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 // Phase 1 & 2 Components
 import CurrencyToggle from '@/components/CurrencyToggle';
@@ -162,7 +164,6 @@ const colorMap: Record<string, { icon: string; badge: string; border: string; bt
 };
 
 export default function LandingPage() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [caseTab, setCaseTab] = useState<'exec' | 'tech'>('exec');
     const [emailModalOpen, setEmailModalOpen] = useState(false);
     const [emailValue, setEmailValue] = useState('');
@@ -232,70 +233,7 @@ export default function LandingPage() {
             {/* ═══════════════════════════════════════════════════════════
                 HEADER
             ═══════════════════════════════════════════════════════════ */}
-            <header className="fixed top-0 w-full z-50 bg-white/96 backdrop-blur-sm border-b border-slate-100 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white">
-                            <Bot size={22} />
-                        </div>
-                        <span className="text-2xl font-black tracking-tight">
-                            Bazz<span className="text-red-600">AI</span>
-                        </span>
-                    </Link>
-
-                    <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-                        <div className="solutions-dropdown">
-                            <button className="flex items-center gap-1 hover:text-red-600 transition-colors">
-                                Solutions <ChevronDown size={14} />
-                            </button>
-                            <div className="solutions-dropdown-menu">
-                                <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">By Role</div>
-                                <a href="/solutions/for-ctos">🔧 For CTOs &amp; Engineering Leaders</a>
-                                <a href="/solutions/for-coos">⚙️ For COOs &amp; Operations Leaders</a>
-                                <a href="/solutions/for-cfos">📊 For CFOs &amp; Finance Leaders</a>
-                                <div className="border-t border-slate-100 my-1" />
-                                <a href="#products">All Solutions</a>
-                            </div>
-                        </div>
-                        <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
-                        <Link href="#how-it-works" className="hover:text-red-600 transition-colors">How It Works</Link>
-                        <Link href="/why-bazzai" className="hover:text-red-600 transition-colors">Why BazzAI</Link>
-                        <Link href="/security" className="hover:text-red-600 transition-colors">Security</Link>
-                        <Link href="#case-study" className="hover:text-red-600 transition-colors">Resources</Link>
-                        <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
-                            Chat with an Expert
-                        </Link>
-                        <button className="px-6 py-2.5 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 transition-all shadow-md shadow-red-100 text-sm" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                            Book Assessment
-                        </button>
-                    </nav>
-
-                    <button className="md:hidden text-slate-900 p-2" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
-                        {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-                    </button>
-                </div>
-
-                {isMenuOpen && (
-                    <div className="md:hidden bg-white border-b border-slate-100 p-6 flex flex-col gap-4">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Solutions by Role</p>
-                        <Link href="/solutions/for-ctos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">🔧 For CTOs & Engineering Leaders</Link>
-                        <Link href="/solutions/for-coos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">⚙️ For COOs & Operations Leaders</Link>
-                        <Link href="/solutions/for-cfos" onClick={() => setIsMenuOpen(false)} className="font-semibold text-slate-700 hover:text-red-600">📊 For CFOs & Finance Leaders</Link>
-                        <div className="border-t border-slate-100" />
-                        {['/pricing', '#how-it-works', '/why-bazzai', '/security', '#case-study'].map((href, i) => (
-                            <Link key={i} href={href} onClick={() => setIsMenuOpen(false)}
-                                className="font-semibold text-slate-700 capitalize">{href.replace('#', '').replace('/', '').replace('-', ' ')}</Link>
-                        ))}
-                        <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                            className="font-bold text-green-600">💬 Chat with an Expert</Link>
-                        <button onClick={() => setIsMenuOpen(false)}
-                            className="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-center">
-                            Book AI Opportunity Assessment
-                        </button>
-                    </div>
-                )}
-            </header>
+            <Header />
 
             {/* ═══════════════════════════════════════════════════════════
                 MODULE A: HERO
@@ -860,31 +798,102 @@ export default function LandingPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
+                TESTIMONIALS (Social Proof)
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="bg-white py-24 px-6 border-t border-slate-100 pb-32">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Don't Take Our Word For It</h2>
+                        <p className="text-slate-500 font-medium max-w-2xl mx-auto">We measure our success entirely by the financial returns our deployments generate for our clients.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Testimonial 1 */}
+                        <div className="bg-slate-50 border border-slate-100 p-10 rounded-3xl relative">
+                            <div className="absolute top-8 right-8 text-red-500/20">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
+                            </div>
+                            <div className="flex items-center gap-2 mb-6">
+                                {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
+                            </div>
+                            <p className="text-slate-700 font-medium text-lg mb-8 leading-relaxed">
+                                "BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it's almost frightening how flawless their system works. Paid for itself in week 3."
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-black text-slate-500">VP</div>
+                                <div>
+                                    <div className="font-bold text-slate-900">VP Operations</div>
+                                    <div className="text-xs text-slate-500 uppercase tracking-widest font-black">Leading Mauritius Manufacturer</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Testimonial 2 */}
+                        <div className="bg-slate-900 text-white border-2 border-red-600/30 p-10 rounded-3xl relative shadow-2xl">
+                            <div className="absolute top-8 right-8 text-red-500/20">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
+                            </div>
+                            <div className="flex items-center gap-2 mb-6">
+                                {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
+                            </div>
+                            <p className="text-slate-300 font-medium text-lg mb-8 leading-relaxed">
+                                "Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center font-black text-white">HG</div>
+                                <div>
+                                    <div className="font-bold text-white">Head of Growth</div>
+                                    <div className="text-xs text-red-400 uppercase tracking-widest font-black">Pan-African Fintech</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
                 FOOTER
             ═══════════════════════════════════════════════════════════ */}
             <footer className="bg-slate-900 text-white py-20 px-6 border-t border-white/5">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-16">
-                    <div className="col-span-1 md:col-span-2">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-16">
+                    <div className="col-span-1 border-b border-white/10 pb-10 md:border-0 md:pb-0">
                         <div className="text-3xl font-black tracking-tight mb-4">
                             Bazz<span className="text-red-500">AI</span>
                         </div>
-                        <p className="text-slate-400 max-w-sm mb-8 leading-relaxed text-sm">
-                            Bazztech Networks helps businesses replace manual, repetitive work with intelligent AI workflows — so your team can focus on growth. Based in Nairobi. Serving the world.
+                        <p className="text-slate-400 mb-8 leading-relaxed text-sm">
+                            Bazztech Networks helps businesses replace manual, repetitive work with intelligent AI workflows. Based in Nairobi. Serving the world.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <button className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all text-sm text-center" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                                Book a Free Audit
-                            </button>
-                            <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                                className="px-6 py-3 border border-green-600 text-green-400 font-bold rounded-xl hover:bg-green-600 hover:text-white transition-all text-sm text-center">
-                                💬 Chat with an Expert
-                            </Link>
-                        </div>
+                        <form className="flex flex-col gap-2 relative">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2 block">Enterprise AI Newsletter</label>
+                            <input type="email" placeholder="CTO@company.com" className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:border-red-500 focus:outline-none text-sm mb-3" />
+                            <button className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-sm transition-colors">Subscribe</button>
+                        </form>
                     </div>
 
                     <div>
-                        <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Contact</h5>
+                        <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Solutions</h5>
                         <ul className="space-y-4 text-slate-400 text-sm">
+                            <li><Link href="/solutions/for-coos" className="hover:text-white transition-colors">For COOs</Link></li>
+                            <li><Link href="/solutions/for-ctos" className="hover:text-white transition-colors">For CTOs</Link></li>
+                            <li><Link href="/solutions/for-cfos" className="hover:text-white transition-colors">For CFOs</Link></li>
+                            <li><Link href="/#products" className="hover:text-white transition-colors">Bazz-Connect &amp; CRM</Link></li>
+                            <li><Link href="/#products" className="hover:text-white transition-colors">Bazz-Flow Integrations</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Company</h5>
+                        <ul className="space-y-4 text-slate-400 text-sm">
+                            <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                            <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+                            <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                            <li><Link href="/enterprise" className="hover:text-white transition-colors">Enterprise Playbook</Link></li>
+                            <li><Link href="/security" className="hover:text-white transition-colors">Security & Compliance</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Contact & Socials</h5>
+                        <ul className="space-y-4 text-slate-400 text-sm mb-8">
                             <li className="flex items-center gap-3">
                                 <Phone size={15} className="text-red-500" />
                                 <a href={`tel:+${WHATSAPP_NUMBER}`} className="hover:text-white transition-colors">+254 781 751 937</a>
@@ -896,24 +905,11 @@ export default function LandingPage() {
                                 <MapPin size={15} className="text-red-500" /> Nairobi, Kenya
                             </li>
                         </ul>
-                    </div>
-
-                    <div>
-                        <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Company</h5>
-                        <ul className="space-y-4 text-slate-400 text-sm">
-                            <li><Link href="#products" className="hover:text-white transition-colors">Solutions</Link></li>
-                            <li><Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
-                            <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-                            <li><Link href="/enterprise" className="hover:text-white transition-colors">Enterprise Playbook</Link></li>
-                            <li><Link href="/security" className="hover:text-white transition-colors">Security & Compliance</Link></li>
-                            <li><Link href="/blog" className="hover:text-white transition-colors">AI News &amp; Blog</Link></li>
-                            <li>
-                                <a href="https://github.com/Ocholar/manufacturing-rag-system" target="_blank" rel="noopener noreferrer"
-                                    className="hover:text-white transition-colors flex items-center gap-1.5">
-                                    Manufacturing RAG Case Study <ExternalLink size={11} />
-                                </a>
-                            </li>
-                        </ul>
+                        <div className="flex items-center gap-4">
+                            <a href="https://www.linkedin.com/company/bazztech-networks/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Linkedin size={18} /></a>
+                            <a href="https://www.facebook.com/bazztechnetworks" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Facebook size={18} /></a>
+                            <a href="https://www.instagram.com/bazztechnetworks/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Instagram size={18} /></a>
+                        </div>
                     </div>
                 </div>
 

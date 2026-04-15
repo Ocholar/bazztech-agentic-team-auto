@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import Header from '@/components/Header';
 
 const posts = [
     {
@@ -65,6 +66,7 @@ const tagColors: Record<string, string> = {
 export default function BlogIndex() {
     return (
         <main className="flex min-h-screen flex-col items-center bg-slate-50 text-slate-900 pb-24">
+            <Header />
 
             {/* Hero */}
             <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">

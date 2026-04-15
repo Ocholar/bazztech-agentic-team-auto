@@ -1,6 +1,7 @@
 "use client";
 import { ArrowRight, ExternalLink, Factory, DollarSign, Eye, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 const studies = [
     {
@@ -64,6 +65,7 @@ const studies = [
 export default function CaseStudiesIndex() {
     return (
         <main className="flex min-h-screen flex-col items-center bg-slate-50 text-slate-900 pb-24">
+            <Header />
 
             {/* Hero */}
             <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">

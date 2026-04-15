@@ -1,9 +1,11 @@
 import { Check, ArrowRight, Zap, Target, BarChart3, Database } from 'lucide-react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 export default function WhyBazzAI() {
     return (
         <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+            <Header />
             {/* Hero Section */}
             <div className="w-full bg-slate-900 text-white pt-24 pb-20 px-8 text-center relative overflow-hidden">
                 <div className="max-w-4xl mx-auto relative z-10">

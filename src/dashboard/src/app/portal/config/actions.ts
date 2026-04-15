@@ -63,11 +63,29 @@ export async function saveProductConfig(formData: FormData) {
                 }
             });
         } else {
-            const sub = await db.subscription.findFirst({
+            let sub = await db.subscription.findFirst({
                 where: { userId, status: 'ACTIVE' }
             });
 
-            if (!sub) throw new Error("No active subscription found to configure.");
+            if (!sub) {
+                const userObj = await db.user.findUnique({ where: { id: userId } });
+                const isAdmin = (session.user as any)?.role === 'ADMIN' || userObj?.role === 'ADMIN' || session.user.email === 'reaochola@gmail.com';
+
+                if (isAdmin) {
+                    sub = await db.subscription.create({
+                        data: {
+                            userId,
+                            productType: 'BAZZ_CONNECT',
+                            status: 'ACTIVE',
+                            businessSizeTier: 'MICRO',
+                            oneTimeFee: 0,
+                            paymentReference: `ADMIN-GRANT-${Date.now()}`
+                        }
+                    });
+                } else {
+                    throw new Error("No active subscription found to configure.");
+                }
+            }
 
             await db.productConfig.create({
                 data: {

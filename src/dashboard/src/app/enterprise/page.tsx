@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import Header from '@/components/Header';
 import {
     Bot, FileText, Shield, HelpCircle, ArrowRight, Check, RefreshCw,
     Settings, AlertCircle, Users, ChevronDown, ChevronRight,
@@ -84,19 +85,7 @@ export default function EnterprisePage() {
                 @media (max-width: 767px) { .sticky-mobile-cta { display: block; } }
             `}</style>
 
-            <header className="fixed top-0 w-full z-50 bg-white/96 backdrop-blur-sm border-b border-slate-100 shadow-sm">
-                <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform"><Bot size={18} /></div>
-                        <span className="text-xl font-black">Bazz<span className="text-red-600">AI</span></span>
-                    </Link>
-                    <div className="flex items-center gap-6">
-                        <Link href="/solutions/for-cfos" className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">CFO View</Link>
-                        <Link href="/security" className="hidden sm:block text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">Security</Link>
-                        <button className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-all" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>Contact Sales</button>
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             <main className="pt-16 pb-20 md:pb-0">
                 {/* HERO */}

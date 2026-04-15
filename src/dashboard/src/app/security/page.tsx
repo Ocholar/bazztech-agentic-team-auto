@@ -1,6 +1,7 @@
 "use client";
 import { Shield, Lock, Award, AlertOctagon, Server, Eye } from 'lucide-react';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 const controls = [
     {
@@ -69,6 +70,7 @@ const faqs = [
 export default function SecurityPage() {
     return (
         <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+            <Header />
 
             {/* Hero */}
             <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">

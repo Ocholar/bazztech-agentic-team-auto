@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Check, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import ROICalculator from '@/components/ROICalculator';
+import Header from '@/components/Header';
 
 const products = [
     { name: "Bazz-Connect", desc: "WhatsApp Sales AI", price: "$499/mo", useCase: "Automated Lead Nurturing & Sales" },
@@ -16,6 +17,7 @@ const products = [
 function PricingContent() {
     return (
         <main className="flex min-h-screen flex-col items-center py-20 px-8 bg-slate-50">
+            <Header />
             {/* Hero Section */}
             <div className="max-w-4xl w-full text-center mb-16">
                 <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 mb-6">

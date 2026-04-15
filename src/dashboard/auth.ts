@@ -1,13 +1,43 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     ...authConfig,
     session: { strategy: 'jwt' },
+    callbacks: {
+        ...authConfig.callbacks,
+        async signIn({ user, account }) {
+            if (account?.provider === 'google' && user.email) {
+                const existingUser = await db.user.findUnique({
+                    where: { email: user.email },
+                });
+                if (!existingUser) {
+                    const newUser = await db.user.create({
+                        data: {
+                            email: user.email,
+                            name: user.name || '',
+                            role: 'CLIENT',
+                        },
+                    });
+                    user.id = newUser.id;
+                    (user as any).role = newUser.role;
+                } else {
+                    user.id = existingUser.id;
+                    (user as any).role = existingUser.role;
+                }
+            }
+            return true;
+        }
+    },
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID || '',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+        }),
         CredentialsProvider({
             name: 'Credentials',
             credentials: {

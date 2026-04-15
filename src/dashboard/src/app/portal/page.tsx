@@ -180,13 +180,38 @@ export default async function PortalDashboard({ searchParams }: { searchParams: 
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center text-slate-500">
-                                <AlertCircle size={40} className="mx-auto text-slate-300 mb-4" />
-                                <p className="font-bold">No active subscriptions found.</p>
-                                <p className="text-xs max-w-xs mx-auto mt-2">Browse the BazzAI product suite to hire your first AI digital employee.</p>
-                                <Link href="/#products" className="inline-block mt-6 px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-100">
-                                    Browse Solutions
-                                </Link>
+                            <div className="p-8 md:p-10">
+                                <h3 className="text-xl font-black text-slate-900 mb-6 text-center">Quick Start Guide</h3>
+                                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+                                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-red-100 text-red-600 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm font-bold z-10">
+                                            1
+                                        </div>
+                                        <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl border border-slate-200 bg-white shadow-sm hover:border-red-200 transition-colors">
+                                            <h4 className="font-bold text-slate-900">Select an AI Bundle</h4>
+                                            <p className="text-xs text-slate-500 mt-1">Browse our solutions below and use your Universal Setup Slots to activate an agent.</p>
+                                            <Link href="/#products" className="mt-3 inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors">Browse Solutions</Link>
+                                        </div>
+                                    </div>
+                                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-100 text-slate-400 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm font-bold z-10">
+                                            2
+                                        </div>
+                                        <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl border border-slate-100 bg-slate-50 shadow-sm opacity-60">
+                                            <h4 className="font-bold text-slate-700">Configure Integrations</h4>
+                                            <p className="text-xs text-slate-500 mt-1">Provide API keys securely so the agent can interact with your existing tools.</p>
+                                        </div>
+                                    </div>
+                                    <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                                        <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-100 text-slate-400 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm font-bold z-10">
+                                            3
+                                        </div>
+                                        <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-5 rounded-2xl border border-slate-100 bg-slate-50 shadow-sm opacity-60">
+                                            <h4 className="font-bold text-slate-700">Launch Swarm</h4>
+                                            <p className="text-xs text-slate-500 mt-1">Enable sync and watch the live activity feed as your digital employee processes tasks.</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </CardContent>
