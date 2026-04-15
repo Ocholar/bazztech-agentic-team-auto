@@ -1,6 +1,7 @@
 import { Check, ArrowRight, Zap, Target, BarChart3, Database } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function WhyBazzAI() {
     return (
@@ -189,6 +190,7 @@ export default function WhyBazzAI() {
                     </div>
                 </div>
             </section>
+            <Footer />
         </main>
     )
 }

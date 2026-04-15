@@ -398,20 +398,60 @@ export default function LandingPage() {
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
+                MODULE A.5: ENTERPRISE STANDARD PROCUREMENT
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 px-6 border-b border-slate-100 bg-white">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="inline-block px-4 py-1 rounded-full bg-slate-900 border border-slate-800 text-white text-xs font-bold mb-5">
+                            Enterprise Playbook
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">
+                            Infrastructure for the Autonomous Enterprise
+                        </h2>
+                        <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+                            Standardized SOWs, verified architecture, and a 14-day path to ROI.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8 mb-12">
+                        {[
+                            { tier: 'Starter', range: '$5k – $20k', items: ['Single AI pipeline', 'Fixed scope SOW', '3-month support', 'Standard SLA'] },
+                            { tier: 'Growth', range: '$25k – $60k', items: ['2–4 pipelines', 'Integration SOW', '6-month SLA', 'Monthly reviews'], fx: true },
+                            { tier: 'Enterprise', range: '$75k – $200k+', items: ['Custom scope SOW', 'Private LLM option', '12-month retainer', 'Dedicated CSM'] },
+                        ].map((t, i) => (
+                            <div key={i} className={`rounded-[32px] p-8 border-2 transition-all hover:shadow-lg ${t.fx ? 'border-red-200 bg-red-50/20 shadow-sm' : 'border-slate-100 bg-slate-50'}`}>
+                                {t.fx && <p className="text-[10px] font-black uppercase tracking-widest text-red-600 mb-2">Most Popular</p>}
+                                <p className="font-black text-xl mb-1">{t.tier}</p>
+                                <p className="text-3xl font-black text-slate-800 mb-6">{t.range}</p>
+                                <ul className="space-y-4">
+                                    {t.items.map((it, j) => (
+                                        <li key={j} className="flex items-start gap-3 text-sm text-slate-600 font-medium">
+                                            <Check size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" /> {it}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
                 MODULE B: PRODUCTS (Re-engineered Bundles)
             ═══════════════════════════════════════════════════════════ */}
             <section id="products" className="py-28 px-6 bg-slate-50 border-y border-slate-100">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
-                        <div className="inline-block px-4 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold mb-5">
-                            Our AI Solutions
+                        <div className="inline-block px-4 py-1 rounded-full bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold mb-5">
+                            Standard SaaS Modules
                         </div>
                         <h2 className="text-3xl md:text-5xl font-black mb-4">
                             Automation Built for the{' '}
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-pink-500">Job to be Done</span>
                         </h2>
                         <p className="text-slate-500 text-lg max-w-2xl mx-auto mb-8">
-                            Four ready-to-deploy AI systems, each designed to eliminate a specific category of manual work — and deliver measurable results from day one.
+                            For smaller businesses, we offer four ready-to-deploy AI systems designed to eliminate specific manual workloads.
                         </p>
                         <div className="flex flex-col items-center gap-6">
                             <CurrencyToggle />
@@ -590,37 +630,7 @@ export default function LandingPage() {
 
 
 
-            {/* ═══════════════════════════════════════════════════════════
-                CLIENT SUCCESS STORIES (Placeholder)
-            ═══════════════════════════════════════════════════════════ */}
-            <section className="py-24 px-6 bg-white">
-                <div className="max-w-7xl mx-auto text-center">
-                    <div className="inline-block px-4 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-bold mb-5">
-                        Client Results
-                    </div>
-                    <h2 className="text-3xl md:text-5xl font-black mb-4">Stories That Speak for Themselves</h2>
-                    <p className="text-slate-500 text-lg mb-16 max-w-xl mx-auto">Real businesses. Real outcomes. More case studies coming soon.</p>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { industry: 'Real Estate Agency', result: '23 hours/week saved on lead follow-up', quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing." ', stars: 5 },
-                            { industry: 'Healthcare Clinic', result: '90% reduction in missed appointments', quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up."', stars: 5 },
-                            { industry: 'Import/Export Company', result: '$3,000+ recovered in billing errors', quote: '"The reconciliation engine found mismatches we had been missing for months. ROI in the first week."', stars: 5 },
-                        ].map((t, i) => (
-                            <div key={i} className="bg-slate-50 rounded-[24px] p-8 border border-slate-100 text-left hover:shadow-lg transition-all">
-                                <div className="flex gap-0.5 mb-4">
-                                    {[...Array(t.stars)].map((_, j) => <Star key={j} size={14} className="text-yellow-400" fill="#facc15" />)}
-                                </div>
-                                <p className="text-slate-600 text-sm leading-relaxed mb-6 italic">{t.quote}</p>
-                                <div className="border-t border-slate-200 pt-4">
-                                    <p className="font-black text-sm">{t.industry}</p>
-                                    <p className="text-xs text-green-600 font-bold mt-1">✓ {t.result}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* ═══════════════════════════════════════════════════════════
                 FINAL CTA BAND
@@ -651,51 +661,74 @@ export default function LandingPage() {
                 TESTIMONIALS (Social Proof)
             ═══════════════════════════════════════════════════════════ */}
             <section className="bg-white py-24 px-6 border-t border-slate-100 pb-32">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
+                        <div className="inline-block px-4 py-1 rounded-full bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-bold mb-5">
+                            Client Results
+                        </div>
                         <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Don't Take Our Word For It</h2>
-                        <p className="text-slate-500 font-medium max-w-2xl mx-auto">We measure our success entirely by the financial returns our deployments generate for our clients.</p>
+                        <p className="text-slate-500 font-medium max-w-2xl mx-auto">We measure our success entirely by the financial returns our deployments generate for our clients. Stories that speak for themselves.</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Testimonial 1 */}
-                        <div className="bg-slate-50 border border-slate-100 p-10 rounded-3xl relative">
-                            <div className="absolute top-8 right-8 text-red-500/20">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
-                            </div>
-                            <div className="flex items-center gap-2 mb-6">
-                                {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
-                            </div>
-                            <p className="text-slate-700 font-medium text-lg mb-8 leading-relaxed">
-                                "BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it's almost frightening how flawless their system works. Paid for itself in week 3."
-                            </p>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-black text-slate-500">VP</div>
-                                <div>
-                                    <div className="font-bold text-slate-900">VP Operations</div>
-                                    <div className="text-xs text-slate-500 uppercase tracking-widest font-black">Leading Mauritius Manufacturer</div>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* Testimonial 2 */}
-                        <div className="bg-slate-900 text-white border-2 border-red-600/30 p-10 rounded-3xl relative shadow-2xl">
-                            <div className="absolute top-8 right-8 text-red-500/20">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
-                            </div>
-                            <div className="flex items-center gap-2 mb-6">
-                                {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
-                            </div>
-                            <p className="text-slate-300 font-medium text-lg mb-8 leading-relaxed">
-                                "Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."
-                            </p>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center font-black text-white">HG</div>
-                                <div>
-                                    <div className="font-bold text-white">Head of Growth</div>
-                                    <div className="text-xs text-red-400 uppercase tracking-widest font-black">Pan-African Fintech</div>
+                    <div className="columns-1 md:columns-2 lg:columns-2 xl:columns-3 gap-8 space-y-8">
+                        {[
+                            {
+                                initials: 'VP',
+                                role: 'VP Operations',
+                                company: 'Leading Mauritius Manufacturer',
+                                quote: '"BazzAI automated our logistics ledger matching overnight. We used to have three people reconciling Waybills manually. Between the OCR accuracy and the instant deployment, it\'s almost frightening how flawless their system works. Paid for itself in week 3."',
+                                dark: false
+                            },
+                            {
+                                initials: 'HG',
+                                role: 'Head of Growth',
+                                company: 'Pan-African Fintech',
+                                quote: '"Zero retention, SOC 2 compliance, and instant deployment. Being a regulated fintech, we thought AI integration would take 12 months. Bazztech delivered on their wild 90-day ROI promise with Bazz-Flow. Our customer support is now 80% automated."',
+                                dark: true
+                            },
+                            {
+                                initials: 'RE',
+                                role: 'Principal Agent',
+                                company: 'Real Estate Agency',
+                                quote: '"We no longer miss a single inquiry. The WhatsApp AI handles everything — our team now focuses purely on closing. 23 hours/week saved on lead follow-up alone."',
+                                dark: false
+                            },
+                            {
+                                initials: 'HC',
+                                role: 'Operations Manager',
+                                company: 'Healthcare Clinic',
+                                quote: '"Appointment reminders went fully automated in one week. No-shows dropped dramatically and patient satisfaction went up. A 90% reduction in missed appointments."',
+                                dark: false
+                            },
+                            {
+                                initials: 'IE',
+                                role: 'Finance Director',
+                                company: 'Import/Export Company',
+                                quote: '"The reconciliation engine found mismatches we had been missing for months. We recovered over $3,000 in billing errors. Total ROI achieved in the very first week."',
+                                dark: true
+                            }
+                        ].map((t, i) => (
+                            <div key={i} className={`break-inside-avoid p-8 md:p-10 rounded-3xl relative transition-all duration-300 ${t.dark ? 'bg-slate-900 text-white border-2 border-red-600/30 shadow-2xl' : 'bg-slate-50 border border-slate-100 hover:shadow-lg'}`}>
+                                <div className={`absolute top-8 right-8 ${t.dark ? 'text-red-500/20' : 'text-slate-200'}`}>
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
+                                </div>
+                                <div className="flex items-center gap-2 mb-6">
+                                    {[...Array(5)].map((_, j) => <Star key={j} fill="currentColor" className="w-5 h-5 text-amber-400" />)}
+                                </div>
+                                <p className={`font-medium text-lg lg:text-xl leading-relaxed mb-8 ${t.dark ? 'text-slate-300' : 'text-slate-700'}`}>
+                                    {t.quote}
+                                </p>
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black ${t.dark ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                                        {t.initials}
+                                    </div>
+                                    <div>
+                                        <div className={`font-bold ${t.dark ? 'text-white' : 'text-slate-900'}`}>{t.role}</div>
+                                        <div className={`text-[10px] uppercase tracking-widest font-black ${t.dark ? 'text-red-400' : 'text-slate-500'}`}>{t.company}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
