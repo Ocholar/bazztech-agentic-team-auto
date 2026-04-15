@@ -249,7 +249,7 @@ export default function LandingPage() {
                     <div className="flex flex-col items-start fade-up">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold mb-7">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                            Powering enterprise manufacturing automation for Dakri Cartons (Mauritius)
+                            Powering enterprise automation
                         </div>
 
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.07] mb-7">
