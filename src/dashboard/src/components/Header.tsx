@@ -53,7 +53,7 @@ export default function Header() {
                         <Link href="/why-bazzai" className="hover:text-red-600 transition-colors">Why BazzAI</Link>
                         <Link href="/about" className="hover:text-red-600 transition-colors">About</Link>
                         <Link href="/security" className="hover:text-red-600 transition-colors">Security</Link>
-                        <Link href="/#case-study" className="hover:text-red-600 transition-colors">Resources</Link>
+                        <Link href="/resources" className="hover:text-red-600 transition-colors">Resources</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
                             Chat with an Expert
@@ -81,7 +81,7 @@ export default function Header() {
                             { label: 'Why BazzAI', href: '/why-bazzai' },
                             { label: 'About', href: '/about' },
                             { label: 'Security', href: '/security' },
-                            { label: 'Resources', href: '/#case-study' }
+                            { label: 'Resources', href: '/resources' }
                         ].map((item, i) => (
                             <Link key={i} href={item.href} onClick={() => setIsMenuOpen(false)}
                                 className="font-semibold text-slate-700 capitalize">{item.label}</Link>

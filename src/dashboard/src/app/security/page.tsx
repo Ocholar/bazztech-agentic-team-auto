@@ -2,6 +2,7 @@
 import { Shield, Lock, Award, AlertOctagon, Server, Eye } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const controls = [
     {
@@ -159,6 +160,7 @@ export default function SecurityPage() {
                     </button>
                 </div>
             </section>
+            <Footer />
         </main>
     );
 }

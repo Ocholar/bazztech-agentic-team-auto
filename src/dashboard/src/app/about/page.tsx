@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Shield, Target, Users, Zap, CheckCircle2 } from 'lucide-react';
 
 export default function AboutPage() {
@@ -120,6 +121,7 @@ export default function AboutPage() {
                     </button>
                 </div>
             </section>
+            <Footer />
         </main>
     );
 }

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Target, Server, Activity, Rocket, ArrowRight, CheckCircle2, ChevronDown } from 'lucide-react';
 
 const timeline = [
@@ -197,6 +198,7 @@ export default function HowItWorksPage() {
                     </button>
                 </div>
             </section>
+            <Footer />
         </main>
     );
 }
