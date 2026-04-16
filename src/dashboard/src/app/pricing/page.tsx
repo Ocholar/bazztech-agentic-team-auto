@@ -20,10 +20,10 @@ import { logAnalyticsEvent } from '@/lib/analytics';
 const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
 
 const smbProducts = [
-    { name: "Bazz-Connect", desc: "WhatsApp Sales AI", price: "$499 One-off", useCase: "Automated Lead Nurturing & Sales" },
-    { name: "Bazz-Flow", desc: "Finance Automation", price: "$499 One-off", useCase: "Ledger Reconciliation & Invoicing" },
-    { name: "Bazz-Doc", desc: "Document Processing", price: "$499 One-off", useCase: "OCR & Automated Data Extraction" },
-    { name: "Bazz-Lead", desc: "Lead Nurturing", price: "$499 One-off", useCase: "CRM Intelligence & Routing" }
+    { name: "Bazz-Connect", desc: "WhatsApp Sales AI", price: "$499 · Yours Forever", useCase: "Automated Lead Nurturing & Sales" },
+    { name: "Bazz-Flow", desc: "Finance Automation", price: "$499 · Yours Forever", useCase: "Ledger Reconciliation & Invoicing" },
+    { name: "Bazz-Doc", desc: "Document Processing", price: "$499 · Yours Forever", useCase: "OCR & Automated Data Extraction" },
+    { name: "Bazz-Lead", desc: "Lead Nurturing", price: "$499 · Yours Forever", useCase: "CRM Intelligence & Routing" }
 ];
 
 const faqs = [
@@ -317,7 +317,7 @@ function PricingEnterpriseContent() {
                             {/* Bundle Savings Mini-Banner */}
                             <div className="mt-4 bg-blue-50 border border-blue-100 rounded-2xl p-5 text-center">
                                 <p className="text-blue-900 font-medium text-sm">
-                                    Unlock a <strong className="text-blue-700">15% Multi-Product Discount</strong> when you bundle 2+ modules. Own your automation with a single payment.
+                                    Bundle 2+ modules and unlock a <strong className="text-blue-700">15% discount</strong>. Deploy once, own it forever — no recurring fees.
                                 </p>
                             </div>
                         </div>
