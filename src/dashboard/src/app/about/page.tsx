@@ -1,126 +1,294 @@
 "use client";
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Shield, Target, Users, Zap, CheckCircle2 } from 'lucide-react';
+import {
+    ArrowRight, Github, Linkedin, MapPin, Cpu, Database, Layers,
+    BarChart2, ShieldCheck, Bot, Code2, Network, Zap, ExternalLink
+} from 'lucide-react';
+
+const domains = [
+    {
+        icon: <Bot size={22} />,
+        color: 'bg-red-500/10 text-red-500 border-red-500/20',
+        title: 'Agentic AI Systems',
+        desc: 'LLM-powered agents that execute complex, multi-step decisions autonomously — from customer triage to financial reconciliation — with no human touchpoints required.',
+    },
+    {
+        icon: <Layers size={22} />,
+        color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+        title: 'Manufacturing Intelligence & RAG',
+        desc: 'Hybrid Retrieval Augmented Generation systems that digitize tribal factory knowledge. SOPs, manuals, and live machine telemetry transformed into a queryable AI brain.',
+    },
+    {
+        icon: <Cpu size={22} />,
+        color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+        title: 'Computer Vision & QC',
+        desc: 'PyTorch/OpenCV inspection pipelines that detect sub-millisecond packaging defects. Proven to reduce manual QC labor by 80% on live production lines.',
+    },
+    {
+        icon: <Network size={22} />,
+        color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        title: 'Workflow Orchestration (n8n)',
+        desc: 'Enterprise-grade multi-step automation layers connecting ERPs, CRMs, payment APIs, and LLMs — replacing brittle Python scripts with resilient, observable pipelines.',
+    },
+    {
+        icon: <BarChart2 size={22} />,
+        color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+        title: 'Geospatial & Predictive Analytics',
+        desc: 'Data science pipelines that turn raw agricultural and operational data into actionable intelligence — rainfall forecasting, yield analysis, and supply chain prediction.',
+    },
+    {
+        icon: <Database size={22} />,
+        color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+        title: 'Data Engineering & Pipelines',
+        desc: 'SQL, Python, and Power BI data stacks that unify fragmented enterprise data sources into clean, live dashboards with full audit trails and MEL compliance.',
+    },
+];
+
+const featured = [
+    {
+        tag: 'Manufacturing · RAG',
+        name: 'ForgeIntelligence',
+        desc: 'An internal factory AI that processes SOPs, manuals, and live machine telemetry. Reduces unplanned downtime and optimizes inventory via a natural language interface.',
+        tech: ['LangChain', 'Pinecone', 'n8n', 'FastAPI'],
+    },
+    {
+        tag: 'Computer Vision · QC',
+        name: 'Defect Detection Pipeline',
+        desc: 'A PyTorch/OpenCV system detecting sub-millisecond defects in packaging lines on a live production floor. Reduced manual QC labor by 80%.',
+        tech: ['PyTorch', 'OpenCV', 'Python', 'REST API'],
+    },
+    {
+        tag: 'Agriculture · Analytics',
+        name: 'AgroDashboard',
+        desc: 'Spatial rainfall and yield analysis for the smallholder agricultural sector. Built with geospatial Python libraries for predictive resource planning.',
+        tech: ['Python', 'GeoPandas', 'Power BI', 'SQL'],
+    },
+];
+
+const stats = [
+    { val: '100+', label: 'Workflows Deployed' },
+    { val: '3M+', label: 'API Calls Processed' },
+    { val: '1,295%', label: 'Verified Year-1 ROI' },
+    { val: 'SOC 2', label: 'Ready Architecture' },
+];
+
+const principles = [
+    { icon: <Zap size={18} />, title: 'No Fluff. Only ROI.', body: 'If an AI workflow does not demonstrably reduce costs or eliminate bottlenecks within 90 days, we do not build it. Every engagement starts with a financial model.' },
+    { icon: <ShieldCheck size={18} />, title: 'Security by Default.', body: 'SOC 2 Type II architecture, AES-256 at rest, TLS 1.3 in transit, and zero-retention LLM policies on every deployment — not as an add-on, but as the baseline.' },
+    { icon: <Code2 size={18} />, title: 'Zero Lock-In.', body: 'Built on open-source foundations — Python, FastAPI, n8n, Postgres. If a client wants to take the system fully in-house, the handover is frictionless.' },
+];
 
 export default function AboutPage() {
     return (
-        <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+        <main className="flex min-h-screen flex-col items-center bg-[#0a0a0f] text-white pb-0 overflow-x-hidden">
             <Header />
 
-            {/* Hero Section */}
-            <section className="w-full bg-slate-900 text-white pt-32 pb-24 px-8 relative overflow-hidden">
-                <div className="absolute top-0 right-1/4 w-96 h-64 bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
-                <div className="max-w-4xl mx-auto relative z-10 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-[10px] font-black uppercase tracking-widest mb-6 fade-up" style={{ animationDelay: '0.1s' }}>
-                        Our Story
+            {/* ── HERO ── */}
+            <section className="w-full relative pt-36 pb-28 px-8 overflow-hidden">
+                {/* ambient glows */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-red-600/8 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-blue-600/6 rounded-full blur-[100px] pointer-events-none" />
+
+                <div className="max-w-5xl mx-auto relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest mb-8">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                        The Architect Behind BazzAI
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 fade-up" style={{ animationDelay: '0.2s' }}>
-                        The Engineers Behind the Automation.
-                    </h1>
-                    <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto fade-up" style={{ animationDelay: '0.3s' }}>
-                        Built by operators who understand enterprise scale. We don't sell hype—we deploy measurable operational efficiency frameworks.
-                    </p>
+
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        <div>
+                            <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
+                                Reagan<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-pink-500 to-orange-400">
+                                    Ochola.
+                                </span>
+                            </h1>
+                            <p className="text-slate-400 text-lg leading-relaxed font-medium mb-8 max-w-lg">
+                                AI Automation Engineer dedicated to building intelligent systems that transform manual industrial processes into <strong className="text-white">self-operating machines</strong>. Based in Nairobi. Deployed to enterprises across Africa and beyond.
+                            </p>
+                            <div className="flex flex-wrap gap-3 mb-10">
+                                {['AI Agents', 'LangChain · RAG', 'n8n Orchestration', 'Computer Vision', 'Data Pipelines', 'LLM Integration'].map((t) => (
+                                    <span key={t} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-bold">{t}</span>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <a href="https://www.linkedin.com/in/reagan-ochola-aba10927/" target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition-all text-sm font-bold">
+                                    <Linkedin size={16} /> LinkedIn
+                                </a>
+                                <a href="https://github.com/Ocholar" target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition-all text-sm font-bold">
+                                    <Github size={16} /> GitHub
+                                </a>
+                                <a href="https://ocholar.github.io/portfolio/" target="_blank" rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition-all text-sm font-bold">
+                                    <ExternalLink size={16} /> Portfolio
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Photo card */}
+                        <div className="flex justify-center md:justify-end">
+                            <div className="relative">
+                                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-red-500/30 to-blue-600/20 blur-2xl scale-110" />
+                                <div className="relative w-72 h-80 md:w-80 md:h-[420px] rounded-[40px] overflow-hidden border border-white/10 shadow-2xl">
+                                    <img src="/reagan.jpg" alt="Reagan Ochola" className="w-full h-full object-cover object-top" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+                                    <div className="absolute bottom-5 left-5 right-5">
+                                        <p className="font-black text-lg text-white leading-tight">Reagan Ochola</p>
+                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-0.5">Founder & Lead AI Architect</p>
+                                        <div className="flex items-center gap-1.5 mt-2">
+                                            <MapPin size={11} className="text-red-400" />
+                                            <span className="text-slate-400 text-xs font-medium">Nairobi, Kenya</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Floating badge */}
+                                <div className="absolute -top-4 -right-4 bg-slate-900 border border-white/10 rounded-2xl px-4 py-2.5 shadow-xl">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Experience</p>
+                                    <p className="text-white font-black text-lg leading-none mt-0.5">5+ Years</p>
+                                </div>
+                                <div className="absolute -bottom-4 -left-4 bg-red-600 border border-red-500/50 rounded-2xl px-4 py-2.5 shadow-xl">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-red-200">Connections</p>
+                                    <p className="text-white font-black text-lg leading-none mt-0.5">2,691+</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* Social Proof Strip */}
-            <section className="w-full bg-slate-50 border-y border-slate-200 py-8 px-8">
-                <div className="max-w-6xl mx-auto flex flex-wrap justify-center gap-12 text-center">
-                    <div>
-                        <div className="text-3xl font-black text-slate-900">100+</div>
-                        <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mt-1">Workflows Deployed</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-slate-900">3M+</div>
-                        <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mt-1">API Calls Processed</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-slate-900">1</div>
-                        <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mt-1">Flagship Mft Client</div>
-                    </div>
-                    <div>
-                        <div className="text-3xl font-black text-slate-900">SOC 2</div>
-                        <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mt-1">Ready Architecture</div>
-                    </div>
+            {/* ── STAT BAR ── */}
+            <section className="w-full border-y border-white/5 bg-white/[0.02] py-10 px-8">
+                <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    {stats.map((s) => (
+                        <div key={s.label}>
+                            <div className="text-3xl md:text-4xl font-black text-white">{s.val}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-1">{s.label}</div>
+                        </div>
+                    ))}
                 </div>
             </section>
 
-            {/* Engineering Philosophy */}
+            {/* ── ORIGIN STORY ── */}
             <section className="w-full max-w-5xl px-8 py-24">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4 text-slate-900">Our Engineering Philosophy</h2>
-                    <p className="text-slate-500 max-w-2xl mx-auto">We build systems that are secure by design, functionally transparent, and ruthlessly focused on real business ROI.</p>
-                </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                    <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mb-6">
-                            <Target size={24} />
+                <div className="grid md:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                            Origin
                         </div>
-                        <h3 className="text-xl font-black mb-3">No Fluff, Just ROI</h3>
-                        <p className="text-slate-600 leading-relaxed text-sm">
-                            We ignore vanity metrics. If an AI workflow doesn't demonstrably reduce operational costs, increase conversions, or eliminate manual bottlenecks within 90 days, we don't build it.
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-6 leading-tight">
+                            Bridging Industrial Automation<br /> and AI Intelligence.
+                        </h2>
+                        <p className="text-slate-400 leading-relaxed mb-5 font-medium">
+                            Reagan's career began deep in the field — building MEL (Monitoring, Evaluation, and Learning) data systems at <strong className="text-white">One Acre Fund</strong>, one of Africa's largest agricultural NGOs, where he designed analytics pipelines that shaped decisions affecting millions of smallholder farmers.
+                        </p>
+                        <p className="text-slate-400 leading-relaxed mb-5 font-medium">
+                            That experience revealed a universal truth: most organizations are drowning in data but starving for intelligence. Legacy systems collect everything and automate nothing.
+                        </p>
+                        <p className="text-slate-400 leading-relaxed font-medium">
+                            BazzAI was founded to close that gap — delivering enterprise-grade Agentic Swarms that turn operational data into autonomous, measurable business outcomes.
                         </p>
                     </div>
-                    <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                            <Zap size={24} />
-                        </div>
-                        <h3 className="text-xl font-black mb-3">Radical Transparency</h3>
-                        <p className="text-slate-600 leading-relaxed text-sm">
-                            Vendor lock-in is the enemy of innovation. Our automation layers are built on open architectures and clearly documented orchestration frameworks like n8n and Postgres.
-                        </p>
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                            <Shield size={24} />
-                        </div>
-                        <h3 className="text-xl font-black mb-3">Bank-Grade Security</h3>
-                        <p className="text-slate-600 leading-relaxed text-sm">
-                            As a baseline, every pipeline is SOC 2 compliant in design. We enforce strict multi-tenant isolation, TLS in transit, AES-256 at rest, and zero-retention policies with LLM providers.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            {/* Leadership/Team Section */}
-            <section className="w-full max-w-5xl px-8 pb-24">
-                <div className="bg-slate-900 rounded-[32px] p-10 md:p-16 flex flex-col md:flex-row gap-12 shadow-xl items-center text-white">
-                    <div className="md:w-1/2">
-                        <h2 className="text-3xl md:text-4xl font-black mb-6">Meet The Solopreneur</h2>
-                        <h3 className="text-xl font-bold text-red-500 mb-2">Reagan Ochola</h3>
-                        <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-6">Founder & Lead ML Architect</p>
-                        <p className="text-slate-300 leading-relaxed mb-6 font-medium text-sm">
-                            With an extensive background in Machine Learning, Data Analytics, and Data Science honed at One Acre Fund, Reagan single-handedly engineers high-availability AI pipelines. He founded BazzAI to bridge the gap between bleeding-edge ML models and legacy business operations.
-                        </p>
-                        <ul className="space-y-3 mb-8">
-                            <li className="flex items-center gap-3 text-slate-300 text-sm"><CheckCircle2 size={16} className="text-red-500" /> Specialist in RAG Architecture & Vector DBs</li>
-                            <li className="flex items-center gap-3 text-slate-300 text-sm"><CheckCircle2 size={16} className="text-red-500" /> Cloud Infra & Automation Engineering Ops</li>
-                            <li className="flex items-center gap-3 text-slate-300 text-sm"><CheckCircle2 size={16} className="text-red-500" /> B2B FinTech & Manufacturing Workflows</li>
-                        </ul>
-                    </div>
-                    <div className="md:w-1/2 flex justify-center">
-                        <div className="w-64 h-64 md:w-80 md:h-80 bg-slate-800 rounded-full border-4 border-slate-700/50 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl">
-                            <img src="/reagan.jpg" alt="Reagan Ochola" className="w-full h-full object-cover" />
-                        </div>
+                    <div className="space-y-4">
+                        {principles.map((p) => (
+                            <div key={p.title} className="flex gap-5 bg-white/[0.03] border border-white/8 rounded-3xl p-6 hover:bg-white/[0.05] transition-colors">
+                                <div className="w-10 h-10 rounded-2xl bg-red-600/10 text-red-500 flex items-center justify-center flex-shrink-0">
+                                    {p.icon}
+                                </div>
+                                <div>
+                                    <p className="font-black text-white text-sm mb-1.5">{p.title}</p>
+                                    <p className="text-slate-400 text-[13px] leading-relaxed">{p.body}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* CTA */}
-            <section className="w-full max-w-4xl px-8">
-                <div className="bg-red-600 rounded-[32px] p-12 text-center shadow-lg text-white mb-20">
-                    <h2 className="text-3xl font-black mb-4">Partner with the Experts</h2>
-                    <p className="text-red-100 mb-8 max-w-lg mx-auto font-medium">
-                        Stop buying AI software. Start buying automated business outcomes.
-                    </p>
-                    <button className="px-8 py-4 bg-white hover:bg-slate-50 text-red-600 font-black rounded-xl transition-all shadow-md" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                        Let's Discuss Architecture
-                    </button>
+            {/* ── DOMAIN EXPERTISE ── */}
+            <section className="w-full border-t border-white/5 bg-white/[0.015] py-24 px-8">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                            Specialized Domains
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Engineer-Level Depth. Business-Level Output.</h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto font-medium">Six specializations built through years of real-world deployments across finance, agriculture, and manufacturing.</p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {domains.map((d) => (
+                            <div key={d.title} className={`bg-white/[0.03] border rounded-[28px] p-7 hover:bg-white/[0.05] transition-all hover:-translate-y-0.5 border-white/8`}>
+                                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 border ${d.color}`}>
+                                    {d.icon}
+                                </div>
+                                <h3 className="font-black text-white text-sm mb-2.5">{d.title}</h3>
+                                <p className="text-slate-400 text-[12px] leading-relaxed">{d.desc}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
+
+            {/* ── FEATURED BUILDS ── */}
+            <section className="w-full py-24 px-8">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                            Featured Work
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">Built. Deployed. Proven.</h2>
+                        <p className="text-slate-500 font-medium">Selected projects that demonstrate engineering depth and real-world results.</p>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {featured.map((f) => (
+                            <div key={f.name} className="bg-white/[0.03] border border-white/8 rounded-[28px] p-7 flex flex-col hover:border-white/15 transition-all">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-3">{f.tag}</p>
+                                <h3 className="text-white font-black text-base mb-3">{f.name}</h3>
+                                <p className="text-slate-400 text-[12px] leading-relaxed flex-1 mb-5">{f.desc}</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {f.tech.map((t) => (
+                                        <span key={t} className="px-2 py-1 rounded-lg bg-white/5 border border-white/8 text-slate-400 text-[10px] font-bold">{t}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="text-center mt-10">
+                        <a href="https://github.com/Ocholar" target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition-all text-sm font-bold">
+                            <Github size={16} /> View All Projects on GitHub
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── CTA ── */}
+            <section className="w-full py-24 px-8 border-t border-white/5">
+                <div className="max-w-4xl mx-auto">
+                    <div className="relative bg-gradient-to-br from-red-950/60 via-slate-900/80 to-slate-950 rounded-[40px] p-12 md:p-16 text-center overflow-hidden border border-red-500/10 shadow-2xl">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.12),transparent)] pointer-events-none" />
+                        <div className="relative z-10">
+                            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-6 leading-tight">
+                                Ready to Automate<br /> What Others Can't?
+                            </h2>
+                            <p className="text-slate-400 mb-10 max-w-lg mx-auto font-medium text-lg">
+                                Stop buying AI software. Commission an AI architecture. Book a free technical audit and walk away with a custom ROI roadmap.
+                            </p>
+                            <button
+                                className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-red-600 text-white font-black hover:bg-red-700 transition-all hover:scale-105 shadow-2xl shadow-red-900/40 text-base"
+                                onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                                Book a Free Architecture Audit <ArrowRight size={20} />
+                            </button>
+                            <p className="text-slate-600 text-xs font-bold uppercase tracking-widest mt-6">No commitment. No pitch deck. Just a technical conversation.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <Footer />
         </main>
     );
