@@ -20,10 +20,42 @@ import { logAnalyticsEvent } from '@/lib/analytics';
 const AUDIT_URL = 'https://calendly.com/reagan-bazztech/30min';
 
 const smbProducts = [
-    { name: "Bazz-Connect", desc: "WhatsApp Sales AI", price: "$499 · Yours Forever", useCase: "Automated Lead Nurturing & Sales" },
-    { name: "Bazz-Flow", desc: "Finance Automation", price: "$499 · Yours Forever", useCase: "Ledger Reconciliation & Invoicing" },
-    { name: "Bazz-Doc", desc: "Document Processing", price: "$499 · Yours Forever", useCase: "OCR & Automated Data Extraction" },
-    { name: "Bazz-Lead", desc: "Lead Nurturing", price: "$499 · Yours Forever", useCase: "CRM Intelligence & Routing" }
+    {
+        name: "Bazz-Connect", desc: "WhatsApp & Omnichannel AI",
+        features: [
+            "24/7 automated WhatsApp & SMS frontdesk",
+            "Lead qualification & instant response",
+            "FAQ automation & order status updates",
+            "Booking, escalation & CRM routing",
+        ]
+    },
+    {
+        name: "Bazz-Flow", desc: "Operational Workflow Engine",
+        features: [
+            "n8n-orchestrated multi-step automations",
+            "M-Pesa, PayPal & ERP integrations",
+            "Inventory alerts & supply chain signals",
+            "Replaces 3–5 manual operational roles",
+        ]
+    },
+    {
+        name: "Bazz-Doc", desc: "AI Document Intelligence",
+        features: [
+            "OCR extraction from invoices, PDFs & receipts",
+            "Handles handwriting & multi-language docs",
+            "Structured JSON output to any database",
+            "KYC, payroll & contract data capture",
+        ]
+    },
+    {
+        name: "Bazz-Lead", desc: "Autonomous Sales CRM Agent",
+        features: [
+            "Scores & qualifies inbound leads 24/7",
+            "Routes hot leads to reps instantly",
+            "LinkedIn, WhatsApp & form lead tracking",
+            "Integrates with HubSpot, Salesforce & Zoho",
+        ]
+    },
 ];
 
 const faqs = [
@@ -292,21 +324,29 @@ function PricingEnterpriseContent() {
                             <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
                                 Not an enterprise yet? Deploy our individual zero-setup SaaS products to automate your core functions today.
                             </p>
+                            <div className="mt-6 inline-flex items-baseline gap-2">
+                                <span className="text-4xl font-black text-slate-900">$499</span>
+                                <span className="text-slate-500 font-semibold text-base">per module · deploy once, own it forever</span>
+                            </div>
                         </div>
 
                         <div className="flex bg-white border border-slate-200 rounded-[32px] p-8 md:p-12 shadow-sm flex-col">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                                 {smbProducts.map((p, idx) => (
-                                    <Card key={idx} className="border-slate-200 border shadow-sm bg-slate-50 relative hover:-translate-y-1 transition-transform duration-300">
+                                    <Card key={idx} className="border-slate-200 border shadow-sm bg-slate-50 relative hover:-translate-y-1 transition-transform duration-300 flex flex-col">
                                         <CardHeader className="text-center pt-6 pb-4 border-b border-slate-200/60 bg-white rounded-t-[14px]">
                                             <CardTitle className="text-lg font-black text-slate-900">{p.name}</CardTitle>
                                             <CardDescription className="text-slate-500 font-bold text-xs">{p.desc}</CardDescription>
                                         </CardHeader>
-                                        <CardContent className="p-6 flex flex-col items-center">
-                                            <span className="text-2xl font-black text-slate-900 mb-1">{p.price}</span>
-                                            <p className="text-[11px] font-medium text-slate-500 text-center mb-6 h-8 flex items-center justify-center">
-                                                {p.useCase}
-                                            </p>
+                                        <CardContent className="p-6 flex flex-col flex-1">
+                                            <ul className="space-y-2.5 mb-6 flex-1">
+                                                {p.features.map((f, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-[12px] text-slate-600 font-medium">
+                                                        <Check size={13} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+                                                        {f}
+                                                    </li>
+                                                ))}
+                                            </ul>
                                             <Link href={`/register?product=${p.name}`} className="w-full text-center py-3 bg-slate-900 text-white hover:bg-slate-800 font-bold text-sm rounded-xl transition-colors">
                                                 Get Started
                                             </Link>
