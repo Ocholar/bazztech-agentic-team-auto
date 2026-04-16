@@ -113,6 +113,21 @@ export default async function BazzConnectConfig() {
                             <CardContent className="space-y-4">
                                 <form action={saveApiKeys} className="space-y-4">
                                     <input type="hidden" name="configId" value={config?.id || ""} />
+                                    
+                                    <div className="space-y-2 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                                        <label className="text-sm font-bold text-blue-900 flex items-center gap-2">
+                                            <Webhook size={16} /> n8n Webhook Path (ID)
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="webhookId" 
+                                            defaultValue={config?.webhookId || "bazz-connect-master"} 
+                                            className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 font-mono" 
+                                            placeholder="e.g. bazz-connect-master" 
+                                        />
+                                        <p className="text-[10px] text-blue-600 font-medium italic">Crucial: Must match your n8n webhook node path exactly.</p>
+                                    </div>
+
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">Meta Phone Number ID</label>
                                         <input type="text" name="whatsappPhoneId" defaultValue={config?.whatsappPhoneId || ""} className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="e.g. 1029384756..." />
@@ -124,7 +139,7 @@ export default async function BazzConnectConfig() {
                                         <p className="text-[11px] text-gray-500">Generate a permanent token via <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">Meta Business Settings &rarr; System Users</a>.</p>
                                     </div>
                                     <div className="flex justify-end pt-4 border-t">
-                                        <button className="bg-slate-900 text-white px-8 py-2 rounded-md font-bold hover:bg-slate-800 transition">Save API Keys</button>
+                                        <button className="bg-slate-900 text-white px-8 py-2 rounded-md font-bold hover:bg-slate-800 transition">Save API Keys & Webhook</button>
                                     </div>
                                 </form>
                             </CardContent>

@@ -14,6 +14,7 @@ const saveConfigSchema = z.object({
 
 const saveApiKeysSchema = z.object({
     configId: z.string().min(1, "Configuration required"),
+    webhookId: z.string().optional(),
     whatsappPhoneId: z.string().optional(),
     whatsappToken: z.string().optional(),
     whatsappUrl: z.string().optional(),
@@ -135,7 +136,7 @@ export async function saveApiKeys(formData: FormData) {
         const updateData: Record<string, any> = { ...(isNowConfigured ? { isConfigured: true } : {}) };
 
         // Only append explicitly provided values
-        const fields = ['whatsappPhoneId', 'whatsappToken', 'whatsappUrl', 'darajaConsumerKey', 'darajaConsumerSecret', 'darajaShortcode', 'darajaPasskey', 'darajaCallbackUrl', 'erpWebhookUrl', 'openaiApiKey', 'docOutputWebhook', 'metaPageAccessToken', 'metaPageId', 'crmWebhookUrl'] as const;
+        const fields = ['webhookId', 'whatsappPhoneId', 'whatsappToken', 'whatsappUrl', 'darajaConsumerKey', 'darajaConsumerSecret', 'darajaShortcode', 'darajaPasskey', 'darajaCallbackUrl', 'erpWebhookUrl', 'openaiApiKey', 'docOutputWebhook', 'metaPageAccessToken', 'metaPageId', 'crmWebhookUrl'] as const;
 
         for (const field of fields) {
             if (validated[field]) updateData[field] = validated[field];
@@ -170,7 +171,7 @@ export async function triggerTestWorkflow() {
     // NOTE: For the "Fetch Client AI Config" node to work, we need to send data in the BODY.
     // This requires n8n to be set to POST mode.
     const baseUrl = process.env.N8N_WEBHOOK_URL || 'https://tentacled-goldfish.pikapod.net/webhook';
-    const isTestMode = true;
+    const isTestMode = false;
     const n8nUrl = isTestMode ? baseUrl.replace('/webhook', '/webhook-test') : baseUrl;
 
     const webhookPath = config.webhookId || 'bazz-connect-master';
