@@ -1,10 +1,13 @@
 "use client";
 import { ArrowRight, BarChart3, Clock, TrendingUp, Download, Factory } from 'lucide-react';
 import Link from 'next/link';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function DakriCartonsCaseStudy() {
     return (
         <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+            <Header />
 
             {/* Hero Section */}
             <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 text-center relative overflow-hidden">
@@ -149,6 +152,7 @@ export default function DakriCartonsCaseStudy() {
                     </button>
                 </div>
             </section>
+            <Footer />
         </main>
     )
 }
