@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 import {
     ArrowRight, Github, Linkedin, MapPin, Cpu, Database, Layers,
     BarChart2, ShieldCheck, Bot, Code2, Network, Zap, ExternalLink
@@ -133,7 +134,14 @@ export default function AboutPage() {
                             <div className="relative">
                                 <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-red-500/30 to-blue-600/20 blur-2xl scale-110" />
                                 <div className="relative w-72 h-80 md:w-80 md:h-[420px] rounded-[40px] overflow-hidden border border-white/10 shadow-2xl">
-                                    <img src="/reagan.jpg" alt="Reagan Ochola" className="w-full h-full object-cover object-top" />
+                                    <Image
+                                        src="/reagan.jpg"
+                                        alt="Reagan Ochola"
+                                        width={400}
+                                        height={525}
+                                        className="w-full h-full object-cover object-top"
+                                        priority
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
                                     <div className="absolute bottom-5 left-5 right-5">
                                         <p className="font-black text-lg text-white leading-tight">Reagan Ochola</p>

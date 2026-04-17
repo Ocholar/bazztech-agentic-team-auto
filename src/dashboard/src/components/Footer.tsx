@@ -38,6 +38,8 @@ export default function Footer() {
                     <ul className="space-y-4 text-slate-400 text-sm">
                         <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                         <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+                        <li><Link href="/implementation" className="hover:text-white transition-colors">Implementation Roadmap</Link></li>
+                        <li><Link href="/faq" className="hover:text-white transition-colors">Objection-Handling FAQ</Link></li>
                         <li><Link href="/resources" className="hover:text-white transition-colors">Resources</Link></li>
                         <li><Link href="/pricing" className="hover:text-white transition-colors">SaaS Pricing & Modules</Link></li>
                         <li><Link href="/pricing" className="hover:text-white transition-colors">Enterprise Solutions</Link></li>
@@ -60,9 +62,9 @@ export default function Footer() {
                         </li>
                     </ul>
                     <div className="flex items-center gap-4">
-                        <a href="https://www.linkedin.com/company/bazztech-networks/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Linkedin size={18} /></a>
-                        <a href="https://www.facebook.com/bazztechnetworks" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Facebook size={18} /></a>
-                        <a href="https://www.instagram.com/bazztechnetworks/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Instagram size={18} /></a>
+                        <a href="https://www.linkedin.com/company/bazztech-networks/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Linkedin size={18} /></a>
+                        <a href="https://www.facebook.com/bazztechnetworks" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Facebook size={18} /></a>
+                        <a href="https://www.instagram.com/bazztechnetworks/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Instagram size={18} /></a>
                     </div>
                 </div>
             </div>

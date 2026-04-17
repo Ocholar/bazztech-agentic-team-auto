@@ -50,6 +50,7 @@ export default function Header() {
                         </div>
                         <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
                         <Link href="/how-it-works" className="hover:text-red-600 transition-colors">How It Works</Link>
+                        <Link href="/implementation" className="hover:text-red-600 transition-colors text-red-600">Implementation</Link>
                         <Link href="/why-bazzai" className="hover:text-red-600 transition-colors">Why BazzAI</Link>
                         <Link href="/about" className="hover:text-red-600 transition-colors">About</Link>
                         <Link href="/security" className="hover:text-red-600 transition-colors">Security</Link>
@@ -78,6 +79,8 @@ export default function Header() {
                         {[
                             { label: 'Pricing', href: '/pricing' },
                             { label: 'How It Works', href: '/how-it-works' },
+                            { label: 'Implementation', href: '/implementation' },
+                            { label: 'FAQ', href: '/faq' },
                             { label: 'Why BazzAI', href: '/why-bazzai' },
                             { label: 'About', href: '/about' },
                             { label: 'Security', href: '/security' },
