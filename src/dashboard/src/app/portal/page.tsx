@@ -291,7 +291,7 @@ export default async function PortalDashboard({ searchParams }: { searchParams: 
                                 Our engineers are available to help you calibrate your AI personas or troubleshoot WhatsApp connections.
                             </p>
                             <a
-                                href="https://wa.me/254781751937"
+                                href="https://wa.me/15558219787"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500 text-white text-xs font-black shadow-lg shadow-green-100 hover:bg-green-600 transition-all active:scale-95"

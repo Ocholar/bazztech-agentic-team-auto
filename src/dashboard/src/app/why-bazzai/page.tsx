@@ -184,7 +184,7 @@ export default function WhyBazzAI() {
                         <Link href="/portal?book=true" className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-black rounded-xl transition-all">
                             Book a Free ROI Assessment
                         </Link>
-                        <Link href="https://wa.me/254712345678" className="px-8 py-4 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-800 font-bold rounded-xl transition-all">
+                        <Link href="https://wa.me/15558219787" className="px-8 py-4 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-800 font-bold rounded-xl transition-all">
                             Chat with Our CTO
                         </Link>
                     </div>
