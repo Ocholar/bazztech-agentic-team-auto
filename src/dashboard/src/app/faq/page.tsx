@@ -11,213 +11,287 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 const faqCategories = [
-    { id: 'security', name: 'Security & Data', icon: <Shield size={18} /> },
-    { id: 'implementation', name: 'Implementation & Tech', icon: <Settings size={18} /> },
-    { id: 'pricing', name: 'Price & ROI', icon: <DollarSign size={18} /> },
-    { id: 'general', name: 'General & Operations', icon: <HelpCircle size={18} /> }
+    { id: 'security', name: 'Security & Compliance', icon: <Shield size={18} /> },
+    { id: 'integration', name: 'Integration & Compatibility', icon: <Globe size={18} /> },
+    { id: 'implementation', name: 'Implementation & Deployment', icon: <Settings size={18} /> },
+    { id: 'pricing', name: 'Pricing & Contracts', icon: <DollarSign size={18} /> },
+    { id: 'roi', name: 'ROI & Value', icon: <Activity size={18} /> },
+    { id: 'lockin', name: 'Lock-In & Portability', icon: <Lock size={18} /> },
+    { id: 'competitive', name: 'Competitive Positioning', icon: <Zap size={18} /> },
+    { id: 'support', name: 'Customer Success & Support', icon: <Users size={18} /> },
+    { id: 'industry', name: 'Industry-Specific', icon: <FileText size={18} /> },
+    { id: 'getstarted', name: 'Getting Started', icon: <HelpCircle size={18} /> }
 ];
 
 const faqs = [
-    {
-        cat: 'security',
-        q: "Where is our data stored?",
-        a: "All data is stored in ISO 27001 compliant data centers. We use regional data residency where possible, typically utilizing Supabase (PostgreSQL) hosted on AWS or Azure with VPC isolation."
-    },
-    {
-        cat: 'security',
-        q: "Does the AI train on our sensitive company data?",
-        a: "No. BazzAI utilizes enterprise-grade APIs (e.g., OpenAI Enterprise, Azure AI) where training on customer data is strictly disabled by default. Your data stays your data."
-    },
-    {
-        cat: 'security',
-        q: "How do you handle Multi-Tenancy?",
-        a: "We use strict Row Level Security (RLS) and schema isolation. Every client operates in a logically siloed environment, ensuring zero cross-leakage of data or LLM context."
-    },
-    {
-        cat: 'security',
+    // SECURITY & COMPLIANCE
+    { cat: 'security', q: "Where is our data stored?", a: "All data is stored in ISO 27001 compliant data centers. We use regional data residency where possible, typically utilizing Supabase (PostgreSQL) hosted on AWS or Azure with VPC isolation. Clients can request a specific region during onboarding." },
+    { cat: 'security', q: "Does the AI train on our sensitive company data?", a: "No. BazzAI utilizes enterprise-grade APIs (e.g., OpenAI Enterprise, Azure AI) where training on customer data is strictly disabled by default. Your data stays your data — we operate a zero-retention policy with all major LLM providers." },
+    { cat: 'security', q: "How do you handle Multi-Tenancy?", a: "We use strict Row Level Security (RLS) and schema isolation at the database level. Every client operates in a logically siloed environment, ensuring zero cross-leakage of data or LLM context between tenants." },
+    { cat: 'security', q: "Are you SOC 2 compliant?", a: "Our infrastructure providers (AWS, Supabase, Vercel) are SOC 2 Type II compliant. BazzAI is currently in the audit process for our native orchestration layer, following SOC 2 Type I standards." },
+    { cat: 'security', q: "What happens if an API provider (like OpenAI) goes down?", a: "We implement an 'Agentic Fallback' architecture. If a primary model fails, our orchestration layer routes automatically to a secondary provider (e.g., Anthropic or local Llama deployments) to ensure 99.9% uptime." },
+    { cat: 'security', q: "Who has access to the logs?", a: "Access is strictly limited to authorized BazzAI architects via hardware-based MFA. Logs are encrypted at rest and in transit (TLS 1.3), with automated PII masking in place before any log is written." },
+    { cat: 'security', q: "Do you offer on-premise deployments?", a: "Yes. For high-security environments, we offer 'Bazz-Private,' a containerized version of our orchestration engine that can run on your private cloud or fully air-gapped infrastructure." },
+    { cat: 'security', q: "Is the communication encrypted?", a: "Yes. All API calls, dashboard interactions, and database connections use TLS 1.3 encryption. We also support end-to-end encryption for specific high-sensitivity workflows upon request." },
+    { cat: 'security', q: "Can we delete our data at any time?", a: "Absolutely. We provide a 'Right to be Forgotten' tool that allows you to wipe all company-specific LLM context, logs, and database records instantly — no waiting period, no questions asked." },
+    { cat: 'security', q: "How do you handle PII in prompts?", a: "BazzAI has a built-in scrubbing layer that detects and anonymizes PII (names, emails, phone numbers, SSNs) before sending data to external LLM providers, ensuring compliance with GDPR and Kenya's Data Protection Act." },
+
+    // INTEGRATION & COMPATIBILITY
+    { cat: 'integration', q: "What systems can you integrate with?", a: "We support 400+ native integrations via n8n and custom API connectors, including Salesforce, HubSpot, SAP, NetSuite, Slack, WhatsApp Business, Google Workspace, Zoho, QuickBooks, and custom legacy ERPs." },
+    { cat: 'integration', q: "What if our system doesn't have an API?", a: "We deploy RPA (Robotic Process Automation) for systems without public APIs. This allows BazzAI to interact with legacy software at the UI level — reading screens, clicking, and extracting data just like a human would." },
+    { cat: 'integration', q: "Can BazzAI handle unstructured data like PDFs or voice?", a: "Yes. Our Bazz-Doc engine uses advanced OCR and RAG techniques to extract high-accuracy structured data from PDFs, scanned images, and handwritten notes with accuracy rates above 98%." },
+    { cat: 'integration', q: "Do you integrate with WhatsApp Business?", a: "Yes, WhatsApp Business API integration is a core feature of Bazz-Connect. We handle message routing, template management, and two-way conversation flows in 90+ languages." },
+    { cat: 'integration', q: "Can we connect our existing CRM?", a: "Yes. We have pre-built integrations for Salesforce, HubSpot, Zoho CRM, and Pipedrive. For all others, our API connector can bridge any CRM that exposes a REST API within 3-5 business days." },
+    { cat: 'integration', q: "Does BazzAI support multi-language workflows?", a: "Yes. BazzAI is natively multilingual, supporting 90+ languages including Swahili, Arabic, French, Chinese, and Portuguese — for both input processing and output generation." },
+    { cat: 'integration', q: "How do changes in third-party APIs affect us?", a: "We monitor all integrated APIs and proactively update connectors when providers announce changes. Your success manager will notify you 30 days in advance of any breaking changes, and we handle the migration at no extra charge." },
+
+    // IMPLEMENTATION & DEPLOYMENT
+    { cat: 'implementation', q: "How long does a standard implementation take?", a: "Most enterprise deployments take 8 weeks from discovery call to full production scale. We follow a 4-phase framework: Discovery (Weeks 1-2), Design (Weeks 3-4), Pilot (Weeks 5-6), and Production Launch (Weeks 7-8)." },
+    { cat: 'implementation', q: "Do we need a dedicated technical team for maintenance?", a: "No. BazzAI is a fully managed platform. We handle the orchestration, scaling, and model tuning. Your team simply orchestrates the business logic via our dashboard — no engineers required." },
+    { cat: 'implementation', q: "What is your uptime SLA?", a: "We guarantee 99.9% uptime for our core orchestration engine. Our Enterprise tier includes a 99.99% 'High Availability' SLA with dedicated compute resources and a financial penalty clause for downtime." },
+    { cat: 'implementation', q: "How do we verify the AI's accuracy?", a: "We use 'Human-in-the-Loop' thresholds. Any output with a confidence score below 95% is automatically routed to your staff for verification before action is taken. This ensures 100% production-safe results." },
+    { cat: 'implementation', q: "Can we use our own API keys (BYOK)?", a: "Yes. 'Bring Your Own Key' (BYOK) is supported for Enterprise clients who want to leverage their existing committed spend with OpenAI, Anthropic, or Google Cloud." },
+    { cat: 'implementation', q: "How do you handle workflow version control?", a: "Every workflow has a full version history. You can roll back to any previous state in seconds, and we support staging environments for testing before pushing to production." },
+    { cat: 'implementation', q: "What coding languages are supported for custom scripts?", a: "Custom automation nodes support JavaScript/Node.js and Python. Our architects handle the heavy lifting, but your team can modify logic if desired with full access to the underlying workflow config." },
+    { cat: 'implementation', q: "What happens if the implementation is delayed?", a: "Our agile framework includes a formal change management process. If delays arise from scope changes, we update the roadmap with full transparency. We absorb internal delays — client-side delays may shift the timeline jointly agreed in Week 1." },
+
+    // PRICING & CONTRACTS
+    { cat: 'pricing', q: "Is there an upfront implementation fee?", a: "Yes. We charge a one-time 'Discovery & Setup' fee covering the 8-week implementation process, custom integration development, staff training, and documentation. This is a fixed price, agreed before work begins." },
+    { cat: 'pricing', q: "How is the recurring cost calculated?", a: "Pricing is based on Platform Seat (users) and Task Volume (number of AI-orchestrated actions). This ensures you only pay for the value you receive — as automation scales, per-task cost decreases." },
+    { cat: 'pricing', q: "Are there any hidden costs?", a: "No. Unless you are using BYOK, all LLM token costs and API hosting fees are bundled into your per-task pricing. The price you see in Month 1 is the price in Month 12, barring volume tier changes." },
+    { cat: 'pricing', q: "Do you offer a free trial?", a: "We don't offer a generic trial because every enterprise setup is unique. Instead, we offer a 30-day Pilot Phase with a money-back guarantee if we don't hit the agreed-upon KPIs from Week 1." },
+    { cat: 'pricing', q: "Can we upgrade or downgrade plans?", a: "Yes. You can move between tiers at any time with 30 days' notice. Volume discounts are automatically applied as your task volume scales up." },
+    { cat: 'pricing', q: "What payment methods do you accept?", a: "We accept all major credit cards, Stripe, M-Pesa Business, and bank transfers (SWIFT/Wire) for Enterprise annual contracts." },
+    { cat: 'pricing', q: "What happens if we exceed our task limit?", a: "We don't cut off your service. Excess tasks are billed at a flat overage rate, and our team will proactively reach out to help you move to a more cost-effective higher tier before overage becomes recurring." },
+
+    // ROI & VALUE
+    { cat: 'roi', q: "What is the typical payback period?", a: "Most clients achieve full payback (where savings exceed investment) within 3 to 6 months of going live. Our average Year 1 ROI across all verticals is 350%." },
+    { cat: 'roi', q: "How do you measure and report ROI?", a: "You receive a real-time ROI Tracking Dashboard from Day 1. It tracks hours saved, error rate reduction, and task cost-per-automation against your baseline. Monthly reports quantify dollar value delivered." },
+    { cat: 'roi', q: "What is the minimum ROI we can expect?", a: "We target a minimum 200% Year 1 ROI in our proposal. If our feasibility assessment doesn't project at least that threshold, we'll tell you upfront — and may recommend starting with a smaller pilot scope." },
+    { cat: 'roi', q: "How do you compare to hiring more staff?", a: "A full-time operations hire costs $35,000–$75,000/year in salary alone before benefits, training, and management overhead. BazzAI typically delivers 3-5x the throughput at 20–40% of the cost, while operating 24/7." },
+    { cat: 'roi', q: "Do you offer ROI guarantees?", a: "Yes. For Enterprise clients, we include a KPI Performance Clause in the SOW: if we don't hit agreed accuracy and efficiency targets within 60 days, you receive a 30-day fee waiver." },
+    { cat: 'roi', q: "What ROI metrics should we set as a baseline?", a: "We typically measure: hours/week on manual tasks, error rate per process, response time per customer interaction, and cost per completed transaction. We help you establish every baseline in Phase 1 Discovery." },
+
+    // LOCK-IN & PORTABILITY
+    { cat: 'lockin', q: "Are we locked into BazzAI forever?", a: "No. All custom workflow JSON files and automation logic built during your implementation are owned by your company. You can export and migrate your configurations at any time." },
+    { cat: 'lockin', q: "What happens to our data if we cancel?", a: "Upon cancellation, we provide a full data export (all records, logs, and workflow configs) within 5 business days. After 30 days, all data is permanently deleted from our servers per our data retention policy." },
+    { cat: 'lockin', q: "Can we move to another provider if we're unhappy?", a: "Yes. Because we build on open standards (n8n, REST APIs, PostgreSQL), your workflows are portable. We even have a migration framework to help you transition to another orchestration platform if needed." },
+    { cat: 'lockin', q: "What is the minimum contract length?", a: "Our minimum contract is month-to-month for SMBs and 12 months for Enterprise. Annual commitments come with a 15–25% platform discount." },
+    { cat: 'lockin', q: "What is the cancellation notice period?", a: "We require 30 days' written notice for monthly plans and 90 days for annual Enterprise contracts. There are no early-termination fees for standard plan changes." },
+
+    // COMPETITIVE POSITIONING
+    { cat: 'competitive', q: "How is BazzAI different from Zapier or Make?", a: "Zapier and Make are workflow automation tools — they connect apps with pre-defined triggers and actions. BazzAI adds an intelligence layer: our AI agents can make decisions, handle exceptions, process unstructured data, and learn from outcomes. It's the difference between a conveyor belt and a smart employee." },
+    { cat: 'competitive', q: "How is BazzAI different from hiring an AI consulting firm?", a: "Traditional AI consultants build you a model and leave. BazzAI is a managed service: we build, operate, monitor, and continuously optimize your AI infrastructure. You get ongoing value, not a one-time deliverable." },
+    { cat: 'competitive', q: "How do you compare to Microsoft Copilot or Google Workspace AI?", a: "Copilot and Google AI are productivity overlays — they assist individual users. BazzAI automates entire operational pipelines across your organization's systems, working without constant human input." },
+    { cat: 'competitive', q: "Why not build our AI in-house?", a: "In-house AI projects typically take 12–18 months, cost $500k+, and require hiring data scientists, ML engineers, and DevOps specialists. BazzAI delivers production-ready results in 8 weeks at a fraction of the cost, with zero internal hiring needed." },
+    { cat: 'competitive', q: "What is your unique advantage in East Africa?", a: "We are the only AI automation provider with native M-Pesa integration, Swahili language support, WhatsApp-first architecture, and on-the-ground support in Nairobi. We understand the operational context of businesses across Kenya, Uganda, and beyond." },
+
+    // CUSTOMER SUCCESS & SUPPORT
+    { cat: 'support', q: "What does post-launch support look like?", a: "All clients receive a dedicated Customer Success Manager (CSM), monthly check-in calls, and access to our priority support channel. Enterprise clients get a 4-hour SLA response time and a named technical architect." },
+    { cat: 'support', q: "How do we report a critical issue?", a: "Critical issues (production down, data anomaly) are escalated via our WhatsApp priority support line (+15558219787), which is monitored 24/7. Non-critical issues go through our standard helpdesk portal." },
+    { cat: 'support', q: "Is training included?", a: "Yes. All implementations include 2 live training sessions (recorded for future reference), written runbooks for each workflow, and a custom admin guide for your Operations Lead." },
+    { cat: 'support', q: "Do you offer ongoing optimization?", a: "Yes. Phase 4 of our framework is ongoing optimization — monthly performance reviews, quarterly business reviews, and proactive recommendations for new automations to add based on your evolving operations." },
+
+    // INDUSTRY-SPECIFIC
+    { cat: 'industry', q: "Do you support legal document automation?", a: "Yes. Our Bazz-Doc engine is specifically tuned for legal document types including contracts, intake forms, NDAs, and invoices. It extracts structured data with 98.6%+ accuracy and can route matters by type and jurisdiction automatically." },
+    { cat: 'industry', q: "Can BazzAI work in healthcare with patient data?", a: "Yes. Our healthcare deployments include HIPAA-aligned data handling, encrypted messaging, PII scrubbing before LLM submission, and WhatsApp-based patient communication flows that comply with local health authority guidelines." },
+    { cat: 'industry', q: "Does BazzAI support real estate lead qualification?", a: "Yes. Bazz-Connect is already deployed in commercial and residential real estate contexts for qualification (budget, location, timeline), viewing booking, and automated follow-ups via WhatsApp." },
+    { cat: 'industry', q: "Can you serve financial services firms?", a: "Yes. For fintech and banking clients, we offer M-Pesa reconciliation, automated KYC document processing, and compliance-aware data flows. All AI models used are configured to meet CBK and relevant regional regulations." },
+    { cat: 'industry', q: "Do you serve manufacturing companies?", a: "Yes. Our manufacturing deployments typically focus on RAG over telemetry/SCADA data, predictive inventory management (Holt-Winters forecasting), and shift report automation. See our Dakri Cartons case study for a reference deployment." },
+
+    // GETTING STARTED
+    { cat: 'getstarted', q: "How do I get started?", a: "The first step is a 30-minute 'Opportunity Assessment' call. We review your current workflows, identify the top 3 automation targets, and provide a feasibility report with a projected ROI within 48 hours — at no charge." },
+    { cat: 'getstarted', q: "What do we need to prepare before our first meeting?", a: "Minimal preparation needed. It helps to have a rough idea of: (1) your top 2-3 manual bottlenecks, (2) the systems your team uses daily, and (3) a sense of team size and volume. We'll guide the rest in the session." },
+    { cat: 'getstarted', q: "How quickly can we see results?", a: "Most clients see measurable improvement within the first 2 weeks of the Pilot Phase (Weeks 5-6). Full production ROI typically becomes visible in Month 2-3 after go-live." },
+];
+
+
+
+{
+    cat: 'security',
         q: "Are you SOC 2 compliant?",
-        a: "Our infrastructure providers (AWS, Supabase, Vercel) are SOC 2 Type II compliant. BazzAI is currently in the audit process for our native orchestration layer, following SOC 2 Type I standards."
-    },
-    {
-        cat: 'security',
+            a: "Our infrastructure providers (AWS, Supabase, Vercel) are SOC 2 Type II compliant. BazzAI is currently in the audit process for our native orchestration layer, following SOC 2 Type I standards."
+},
+{
+    cat: 'security',
         q: "What happens if an API provider (like OpenAI) goes down?",
-        a: "We implement an 'Agentic Fallback' architecture. If a primary model fails, our orchestration layer automatically routes to a secondary provider (e.g., Anthropic or local Llama deployments) to ensure zero downtime."
-    },
-    {
-        cat: 'security',
+            a: "We implement an 'Agentic Fallback' architecture. If a primary model fails, our orchestration layer automatically routes to a secondary provider (e.g., Anthropic or local Llama deployments) to ensure zero downtime."
+},
+{
+    cat: 'security',
         q: "Who has access to the logs?",
-        a: "Access is strictly limited to authorized BazzAI architects via hardware-based MFA. Logs are encrypted at rest and in transit, with automated PII masking in place."
-    },
-    {
-        cat: 'security',
+            a: "Access is strictly limited to authorized BazzAI architects via hardware-based MFA. Logs are encrypted at rest and in transit, with automated PII masking in place."
+},
+{
+    cat: 'security',
         q: "Do you offer on-premise deployments?",
-        a: "Yes. For high-security environments, we offer 'Bazz-Private,' a containerized version of our orchestration engine that can run on your private cloud or air-gapped infrastructure."
-    },
-    {
-        cat: 'security',
+            a: "Yes. For high-security environments, we offer 'Bazz-Private,' a containerized version of our orchestration engine that can run on your private cloud or air-gapped infrastructure."
+},
+{
+    cat: 'security',
         q: "Is the communication encrypted?",
-        a: "Yes. All API calls, dashboard interactions, and database connections use TLS 1.3 encryption. We also support end-to-end encryption for specific high-sensitivity workflows."
-    },
-    {
-        cat: 'security',
+            a: "Yes. All API calls, dashboard interactions, and database connections use TLS 1.3 encryption. We also support end-to-end encryption for specific high-sensitivity workflows."
+},
+{
+    cat: 'security',
         q: "Can we delete our data at any time?",
-        a: "Absolutely. We provide a 'Right to be Forgotten' tool that allows you to wipe all company-specific LLM context, logs, and database records instantly."
-    },
-    {
-        cat: 'security',
+            a: "Absolutely. We provide a 'Right to be Forgotten' tool that allows you to wipe all company-specific LLM context, logs, and database records instantly."
+},
+{
+    cat: 'security',
         q: "How do you handle PII in prompts?",
-        a: "BazzAI has a built-in scrubbing layer that detects and anonymizes PII (names, emails, SSNs) before sending data to external LLM providers."
-    },
-    {
-        cat: 'implementation',
+            a: "BazzAI has a built-in scrubbing layer that detects and anonymizes PII (names, emails, SSNs) before sending data to external LLM providers."
+},
+{
+    cat: 'implementation',
         q: "How long does a standard implementation take?",
-        a: "Most enterprise deployments take 8 weeks from the discovery call to full production scale. We follow a 4-phase framework: Discovery, Design, Pilot, and Optimization."
-    },
-    {
-        cat: 'implementation',
+            a: "Most enterprise deployments take 8 weeks from the discovery call to full production scale. We follow a 4-phase framework: Discovery, Design, Pilot, and Optimization."
+},
+{
+    cat: 'implementation',
         q: "What systems can you integrate with?",
-        a: "We support 400+ native integrations via n8n and custom API connectors, including Salesforce, HubSpot, SAP, Slack, WhatsApp Business, and custom legacy ERPs."
-    },
-    {
-        cat: 'implementation',
+            a: "We support 400+ native integrations via n8n and custom API connectors, including Salesforce, HubSpot, SAP, Slack, WhatsApp Business, and custom legacy ERPs."
+},
+{
+    cat: 'implementation',
         q: "Do we need a dedicated technical team for maintenance?",
-        a: "No. BazzAI is a fully managed platform. We handle the orchestration, scaling, and model tuning. Your team simply 'orchestrates' the business logic via our dashboard."
-    },
-    {
-        cat: 'implementation',
+            a: "No. BazzAI is a fully managed platform. We handle the orchestration, scaling, and model tuning. Your team simply 'orchestrates' the business logic via our dashboard."
+},
+{
+    cat: 'implementation',
         q: "What is your uptime SLA?",
-        a: "We guarantee 99.9% uptime for our core orchestration engine. Our Enterprise tier includes a 99.99% 'High Availability' SLA with dedicated compute resources."
-    },
-    {
-        cat: 'implementation',
+            a: "We guarantee 99.9% uptime for our core orchestration engine. Our Enterprise tier includes a 99.99% 'High Availability' SLA with dedicated compute resources."
+},
+{
+    cat: 'implementation',
         q: "Can BazzAI handle unstructured data like PDFs or voice?",
-        a: "Yes. Our Bazz-Doc engine uses advanced OCR and RAG techniques to extract high-accuracy data from messy PDFs, images, and এমনকি non-standard handwritten notes."
-    },
-    {
-        cat: 'implementation',
+            a: "Yes. Our Bazz-Doc engine uses advanced OCR and RAG techniques to extract high-accuracy data from messy PDFs, images, and এমনকি non-standard handwritten notes."
+},
+{
+    cat: 'implementation',
         q: "How do we verify the AI's accuracy?",
-        a: "We use 'Human-in-the-Loop' thresholds. Any output with a confidence score below 95% is automatically routed to your staff for verification. This ensures 100% production-ready results."
-    },
-    {
-        cat: 'implementation',
+            a: "We use 'Human-in-the-Loop' thresholds. Any output with a confidence score below 95% is automatically routed to your staff for verification. This ensures 100% production-ready results."
+},
+{
+    cat: 'implementation',
         q: "Does BazzAI support multi-language workflows?",
-        a: "Yes. BazzAI is natively multilingual, supporting 90+ languages including Swahili, Arabic, French, and Chinese, both for input processing and output generation."
-    },
-    {
-        cat: 'implementation',
+            a: "Yes. BazzAI is natively multilingual, supporting 90+ languages including Swahili, Arabic, French, and Chinese, both for input processing and output generation."
+},
+{
+    cat: 'implementation',
         q: "Can we use our own API keys?",
-        a: "Yes. 'Bring Your Own Key' (BYOK) is supported for Enterprise clients who want to leverage their existing committed spend with OpenAI, Anthropic, or Google Cloud."
-    },
-    {
-        cat: 'implementation',
+            a: "Yes. 'Bring Your Own Key' (BYOK) is supported for Enterprise clients who want to leverage their existing committed spend with OpenAI, Anthropic, or Google Cloud."
+},
+{
+    cat: 'implementation',
         q: "What coding languages are supported for custom scripts?",
-        a: "Custom automation nodes in BazzAI support JavaScript/Node.js and Python. Our architects handle the heavy lifting, but your team can modify logic if desired."
-    },
-    {
-        cat: 'implementation',
+            a: "Custom automation nodes in BazzAI support JavaScript/Node.js and Python. Our architects handle the heavy lifting, but your team can modify logic if desired."
+},
+{
+    cat: 'implementation',
         q: "How do you handle version control for workflows?",
-        a: "Every workflow has a full version history. You can roll back to any previous state in seconds, and we support staging environments for testing before pushing to production."
-    },
-    {
-        cat: 'pricing',
+            a: "Every workflow has a full version history. You can roll back to any previous state in seconds, and we support staging environments for testing before pushing to production."
+},
+{
+    cat: 'pricing',
         q: "Is there an upfront implementation fee?",
-        a: "Yes. We charge a one-time 'Discovery & Setup' fee that covers the 8-week implementation process, custom integration development, and staff training."
-    },
-    {
-        cat: 'pricing',
+            a: "Yes. We charge a one-time 'Discovery & Setup' fee that covers the 8-week implementation process, custom integration development, and staff training."
+},
+{
+    cat: 'pricing',
         q: "How is the recurring cost calculated?",
-        a: "Pricing is based on two factors: Platform Seat (Users) and Task Volume (number of AI-orchestrated actions). This ensures you only pay for the value you receive."
-    },
-    {
-        cat: 'pricing',
+            a: "Pricing is based on two factors: Platform Seat (Users) and Task Volume (number of AI-orchestrated actions). This ensures you only pay for the value you receive."
+},
+{
+    cat: 'pricing',
         q: "What defines a 'Task'?",
-        a: "A task is a single end-to-end automation cycle—for example, processing one invoice or qualifying one inbound lead via WhatsApp."
-    },
-    {
-        cat: 'pricing',
+            a: "A task is a single end-to-end automation cycle—for example, processing one invoice or qualifying one inbound lead via WhatsApp."
+},
+{
+    cat: 'pricing',
         q: "Do you offer discounts for non-profits or startups?",
-        a: "Yes. We have dedicated programs for early-stage startups and NGOs that offer up to 40% off the standard platform fee for the first 12 months."
-    },
-    {
-        cat: 'pricing',
+            a: "Yes. We have dedicated programs for early-stage startups and NGOs that offer up to 40% off the standard platform fee for the first 12 months."
+},
+{
+    cat: 'pricing',
         q: "What is the typical Payback Period?",
-        a: "Most clients achieve full payback (where savings > investment) within 3 to 6 months of going live. Our average Year 1 ROI is 350%."
-    },
-    {
-        cat: 'pricing',
+            a: "Most clients achieve full payback (where savings > investment) within 3 to 6 months of going live. Our average Year 1 ROI is 350%."
+},
+{
+    cat: 'pricing',
         q: "Are there any hidden costs (like token fees)?",
-        a: "Unless you are using BYOK, all LLM token costs and API hosting fees are bundled into your per-task pricing. No surprise monthly bills."
-    },
-    {
-        cat: 'pricing',
+            a: "Unless you are using BYOK, all LLM token costs and API hosting fees are bundled into your per-task pricing. No surprise monthly bills."
+},
+{
+    cat: 'pricing',
         q: "Can we upgrade or downgrade our plan?",
-        a: "Yes. You can move between tiers at any time. Volume discounts are automatically applied as your task volume scales."
-    },
-    {
-        cat: 'pricing',
+            a: "Yes. You can move between tiers at any time. Volume discounts are automatically applied as your task volume scales."
+},
+{
+    cat: 'pricing',
         q: "Is there a free trial?",
-        a: "We don't offer a generic trial because every enterprise setup is unique. Instead, we offer a 'Pilot Phase' with a 30-day money-back guarantee if we don't hit agreed-upon KPIs."
-    },
-    {
-        cat: 'pricing',
+            a: "We don't offer a generic trial because every enterprise setup is unique. Instead, we offer a 'Pilot Phase' with a 30-day money-back guarantee if we don't hit agreed-upon KPIs."
+},
+{
+    cat: 'pricing',
         q: "How do we pay?",
-        a: "We accept all major credit cards, Stripe, M-Pesa Business, and bank transfers (SWIFT/Wire) for Enterprise annual contracts."
-    },
-    {
-        cat: 'pricing',
+            a: "We accept all major credit cards, Stripe, M-Pesa Business, and bank transfers (SWIFT/Wire) for Enterprise annual contracts."
+},
+{
+    cat: 'pricing',
         q: "What happens if we exceed our task limit?",
-        a: "We don't cut off your service. Excess tasks are billed at a flat 'overage' rate, and our team will reach out to help you move to a more cost-effective higher tier."
-    },
-    {
-        cat: 'general',
+            a: "We don't cut off your service. Excess tasks are billed at a flat 'overage' rate, and our team will reach out to help you move to a more cost-effective higher tier."
+},
+{
+    cat: 'general',
         q: "Is BazzAI an AI agent or a chatbot?",
-        a: "It's both and more. While BazzAI can act as a chatbot, its real power is as an 'Operational Swarm'—it coordinates complex backend tasks across multiple software systems."
-    },
-    {
-        cat: 'general',
+            a: "It's both and more. While BazzAI can act as a chatbot, its real power is as an 'Operational Swarm'—it coordinates complex backend tasks across multiple software systems."
+},
+{
+    cat: 'general',
         q: "Do you have local support in Nairobi?",
-        a: "Yes. Bazztech Networks is headquartered in Nairobi. We offer local on-site support for our East African clients and virtual 24/7 support for global customers."
-    },
-    {
-        cat: 'general',
+            a: "Yes. Bazztech Networks is headquartered in Nairobi. We offer local on-site support for our East African clients and virtual 24/7 support for global customers."
+},
+{
+    cat: 'general',
         q: "Can BazzAI replace our human employees?",
-        a: "We focus on 'Augmentation,' not 'Replacement.' BazzAI handles the $15/hour repetitive tasks so your team can focus on $150/hour strategic decision-making."
-    },
-    {
-        cat: 'general',
+            a: "We focus on 'Augmentation,' not 'Replacement.' BazzAI handles the $15/hour repetitive tasks so your team can focus on $150/hour strategic decision-making."
+},
+{
+    cat: 'general',
         q: "Can we white-label the BazzAI dashboard?",
-        a: "Yes. Our Enterprise tier includes full white-labeling capabilities, allowing you to use your own branding, domain, and colors for internal or client-facing portals."
-    },
-    {
-        cat: 'general',
+            a: "Yes. Our Enterprise tier includes full white-labeling capabilities, allowing you to use your own branding, domain, and colors for internal or client-facing portals."
+},
+{
+    cat: 'general',
         q: "How do I get started?",
-        a: "The first step is a 30-minute 'Opportunity Assessment.' We review your current workflows and provide a feasibility report with projected ROI within 48 hours."
-    },
-    {
-        cat: 'general',
+            a: "The first step is a 30-minute 'Opportunity Assessment.' We review your current workflows and provide a feasibility report with projected ROI within 48 hours."
+},
+{
+    cat: 'general',
         q: "What industries do you specialize in?",
-        a: "Our core expertise is in Real Estate, Legal Services, Manufacturing, and FinTech. However, our orchestration logic is industry-agnostic and highly adaptable."
-    },
-    {
-        cat: 'general',
+            a: "Our core expertise is in Real Estate, Legal Services, Manufacturing, and FinTech. However, our orchestration logic is industry-agnostic and highly adaptable."
+},
+{
+    cat: 'general',
         q: "Can BazzAI work with our custom-built legacy software?",
-        a: "Yes. If your software has an API or a database we can reach, BazzAI can integrate with it. We also offer RPA (Robotic Process Automation) for systems without APIs."
-    },
-    {
-        cat: 'general',
+            a: "Yes. If your software has an API or a database we can reach, BazzAI can integrate with it. We also offer RPA (Robotic Process Automation) for systems without APIs."
+},
+{
+    cat: 'general',
         q: "Who owns the custom workflows created for our business?",
-        a: "You do. All custom business logic and n8n workflow JSON files created during your implementation are owned by your company."
-    },
-    {
-        cat: 'general',
+            a: "You do. All custom business logic and n8n workflow JSON files created during your implementation are owned by your company."
+},
+{
+    cat: 'general',
         q: "How do you handle team training?",
-        a: "We provide live Zoom/In-person training, recorded video walkthroughs, and custom-written runbooks for your operators and admins."
-    },
-    {
-        cat: 'general',
+            a: "We provide live Zoom/In-person training, recorded video walkthroughs, and custom-written runbooks for your operators and admins."
+},
+{
+    cat: 'general',
         q: "What is BazzAI's long-term vision?",
-        a: "To provide every enterprise with an 'Autonomous Ops Department' that handles 100% of clerical and administrative load, enabling human teams to focus on pure creativity and growth."
-    }
+            a: "To provide every enterprise with an 'Autonomous Ops Department' that handles 100% of clerical and administrative load, enabling human teams to focus on pure creativity and growth."
+}
 ];
 
 export default function FAQPage() {

@@ -202,9 +202,9 @@ export default function LegalCaseStudy() {
                             </div>
                         </div>
                         <div className="mt-12">
-                            <button className="w-full py-4 rounded-xl bg-white text-slate-900 font-black text-sm hover:bg-slate-100 transition-all">
-                                Request Security Whitepaper
-                            </button>
+                            <a href="/api/downloads/case-study-legal" download className="block w-full py-4 rounded-xl bg-white text-slate-900 font-black text-sm hover:bg-slate-100 transition-all text-center">
+                                Download Security Whitepaper
+                            </a>
                         </div>
                     </div>
                 </div>

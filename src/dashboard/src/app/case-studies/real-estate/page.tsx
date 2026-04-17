@@ -245,9 +245,9 @@ export default function RealEstateCaseStudy() {
                             </div>
                         </div>
                         <div className="mt-12 text-center">
-                            <button className="w-full py-4 rounded-xl border-2 border-slate-900 font-black text-sm hover:bg-slate-900 hover:text-white transition-all">
-                                Request Full Technical PDF
-                            </button>
+                            <a href="/api/downloads/case-study-real-estate" download className="block w-full py-4 rounded-xl border-2 border-slate-900 font-black text-sm hover:bg-slate-900 hover:text-white transition-all text-center">
+                                Download Full Technical PDF
+                            </a>
                         </div>
                     </div>
                 </div>

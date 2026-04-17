@@ -220,10 +220,13 @@ export default function HealthcareCaseStudy() {
                             </div>
                         </div>
                         <div className="mt-12">
-                            <button className="w-full py-4 rounded-xl bg-slate-900 text-white font-black text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20"
+                            <button className="w-full py-4 rounded-xl bg-slate-900 text-white font-black text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20 mb-3"
                                 onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
                                 Book Your ROI Audit <ArrowRight size={16} />
                             </button>
+                            <a href="/api/downloads/case-study-healthcare" download className="block w-full py-4 rounded-xl border-2 border-slate-900 text-slate-900 font-black text-sm hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2">
+                                Download Technical PDF <Download size={16} />
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -147,9 +147,14 @@ export default function DakriCartonsCaseStudy() {
                     <p className="text-slate-800 mb-8 font-bold max-w-xl mx-auto">
                         Your enterprise data already holds the answers. Let BazzAI build the autonomous pipeline to extract them.
                     </p>
-                    <button className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl transition-all shadow-lg" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                        Explore the Manufacturing RAG
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl transition-all shadow-lg" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                            Explore the Manufacturing RAG
+                        </button>
+                        <a href="/api/downloads/case-study-dakri-cartons" download className="px-8 py-4 bg-white/10 hover:bg-white/20 text-slate-900 border-2 border-slate-900 font-black rounded-xl transition-all flex items-center justify-center gap-2">
+                            Download Case Study PDF <Download size={18} />
+                        </a>
+                    </div>
                 </div>
             </section>
             <Footer />
