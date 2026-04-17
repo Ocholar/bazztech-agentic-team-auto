@@ -2,6 +2,7 @@
 import { ArrowRight, ExternalLink, Factory, DollarSign, Eye, GraduationCap, Building2, Scale, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const studies = [
     {
@@ -166,6 +167,7 @@ export default function CaseStudiesIndex() {
                     </button>
                 </div>
             </section>
+            <Footer />
         </main>
     );
 }
