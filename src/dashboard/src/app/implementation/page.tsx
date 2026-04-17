@@ -319,9 +319,9 @@ export default function ImplementationPage() {
                                 </div>
                                 <div className="text-center">
                                     <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-4">You get full access to this dashboard on Day 1</p>
-                                    <button className="w-full py-4 rounded-xl bg-white text-slate-900 font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2">
+                                    <Link href="/login" className="w-full py-4 rounded-xl bg-white text-slate-900 font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2">
                                         View Live Dashboard Demo <ArrowRight size={16} />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -368,12 +368,12 @@ export default function ImplementationPage() {
                                 We provide standardized legal and technical documentation to speed up your internal approval process. No hidden clauses, no vendor lock-in.
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <button className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-sm font-bold hover:bg-white/20 transition-all">
+                                <a href="/api/downloads/sow-template" download className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-sm font-bold hover:bg-white/20 transition-all cursor-pointer">
                                     <Download size={18} className="text-red-500" /> SOW Template (PDF)
-                                </button>
-                                <button className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-sm font-bold hover:bg-white/20 transition-all">
+                                </a>
+                                <a href="/api/downloads/implementation-checklist" download className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-sm font-bold hover:bg-white/20 transition-all cursor-pointer">
                                     <Download size={18} className="text-red-500" /> Implementation Checklist
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div className="bg-gradient-to-br from-red-600 to-pink-700 p-1 rounded-[40px] shadow-2xl shadow-red-900/40">

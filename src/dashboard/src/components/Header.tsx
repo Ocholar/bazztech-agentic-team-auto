@@ -50,11 +50,11 @@ export default function Header() {
                         </div>
                         <Link href="/pricing" className="hover:text-red-600 transition-colors">Pricing</Link>
                         <Link href="/how-it-works" className="hover:text-red-600 transition-colors">How It Works</Link>
-                        <Link href="/implementation" className="hover:text-red-600 transition-colors text-red-600">Implementation</Link>
+                        <Link href="/implementation" className="hover:text-red-600 transition-colors">Implementation</Link>
                         <Link href="/why-bazzai" className="hover:text-red-600 transition-colors">Why BazzAI</Link>
                         <Link href="/about" className="hover:text-red-600 transition-colors">About</Link>
                         <Link href="/security" className="hover:text-red-600 transition-colors">Security</Link>
-                        <Link href="/resources" className="hover:text-red-600 transition-colors">Resources</Link>
+                        <Link href="/case-studies" className="hover:text-red-600 transition-colors">Case Studies</Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-5 py-2.5 rounded-full border-2 border-green-500 text-green-700 font-bold hover:bg-green-500 hover:text-white transition-all text-sm">
                             Chat with an Expert
@@ -80,11 +80,11 @@ export default function Header() {
                             { label: 'Pricing', href: '/pricing' },
                             { label: 'How It Works', href: '/how-it-works' },
                             { label: 'Implementation', href: '/implementation' },
+                            { label: 'Case Studies', href: '/case-studies' },
                             { label: 'FAQ', href: '/faq' },
                             { label: 'Why BazzAI', href: '/why-bazzai' },
                             { label: 'About', href: '/about' },
-                            { label: 'Security', href: '/security' },
-                            { label: 'Resources', href: '/resources' }
+                            { label: 'Security', href: '/security' }
                         ].map((item, i) => (
                             <Link key={i} href={item.href} onClick={() => setIsMenuOpen(false)}
                                 className="font-semibold text-slate-700 capitalize">{item.label}</Link>
