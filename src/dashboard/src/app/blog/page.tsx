@@ -52,6 +52,18 @@ export default function BlogIndex() {
                 </div>
             </div>
 
+            {/* Subscribe CTA */}
+            <section className="w-full max-w-4xl mx-auto px-8 pb-32">
+                <div className="bg-[#0f172a] rounded-[32px] p-12 md:p-16 text-center text-white relative shadow-xl">
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">Get the Automation Edge</h2>
+                    <p className="text-slate-400 max-w-lg mx-auto mb-8 font-medium text-sm md:text-base">Monthly deep-dives on enterprise AI, RAG architecture, and operational ROI frameworks — directly to your inbox.</p>
+                    <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+                        <input type="email" placeholder="your@company.com" required className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-red-500 transition-colors text-white font-medium placeholder:text-white/30" />
+                        <button className="bg-red-600 hover:bg-red-500 text-white font-black px-8 py-3 rounded-xl transition-colors">Subscribe</button>
+                    </form>
+                </div>
+            </section>
+
             <Footer />
         </main>
     );

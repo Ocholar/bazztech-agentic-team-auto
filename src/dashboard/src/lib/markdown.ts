@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-// Assuming local environment structure
-const BLOGS_DIR = 'C:/bazzai-landing-page/phase-3-content/thought_leadership/blogs';
+// Point to the local content folder inside the Next.js project
+const BLOGS_DIR = path.join(process.cwd(), 'src/content/blogs');
 
 export interface PostMeta {
     title?: string;
