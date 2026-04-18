@@ -41,6 +41,7 @@ export default function Footer() {
                         <li><Link href="/implementation" className="hover:text-white transition-colors">Implementation Roadmap</Link></li>
                         <li><Link href="/faq" className="hover:text-white transition-colors">Objection-Handling FAQ</Link></li>
                         <li><Link href="/case-studies" className="hover:text-white transition-colors">Case Studies</Link></li>
+                        <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
                         <li><Link href="/pricing" className="hover:text-white transition-colors">SaaS Pricing & Modules</Link></li>
                         <li><Link href="/pricing" className="hover:text-white transition-colors">Enterprise Solutions</Link></li>
                         <li><Link href="/security" className="hover:text-white transition-colors">Security & Compliance</Link></li>
