@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { Analytics } from "@vercel/analytics/react";
@@ -21,6 +22,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" style={{ colorScheme: 'light' }}>
+      <head>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-FKRMXBX4Z3" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive" dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-FKRMXBX4Z3');
+          `
+        }} />
+      </head>
       <body className={inter.className}>
         {children}
         <WhatsAppButton />

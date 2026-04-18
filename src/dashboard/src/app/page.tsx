@@ -289,6 +289,15 @@ export default function LandingPage() {
 
                         <div className="fade-up" style={{ animationDelay: '0.4s' }}>
                             <TrustBadges />
+                            <div className="mt-4 inline-flex items-center gap-3 px-4 py-2 bg-white rounded-xl border border-slate-100 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                                <div className="font-black text-xl text-[#FF492C]">G2</div>
+                                <div className="flex flex-col">
+                                    <div className="flex items-center gap-1 text-amber-400">
+                                        {[...Array(5)].map((_, j) => <Star key={j} size={12} fill="currentColor" />)}
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">High Performer 2026</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
