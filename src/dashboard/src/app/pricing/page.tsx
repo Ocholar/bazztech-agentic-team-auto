@@ -7,7 +7,7 @@ import {
     Bot, FileText, Shield, HelpCircle, ArrowRight, Check, RefreshCw,
     Settings, AlertCircle, Users, ChevronDown, ChevronRight,
     Zap, Cpu, Database, Lock, Clock, Network, Layers, CheckCircle,
-    ClipboardCheck, Activity, TrendingUp, X
+    ClipboardCheck, Activity, TrendingUp, X, Star
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
 
