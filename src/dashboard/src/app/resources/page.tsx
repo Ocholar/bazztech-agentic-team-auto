@@ -1,82 +1,66 @@
+"use client";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Link from 'next/link';
-import { ExternalLink, Layers, Brain, Lock, Building, GraduationCap } from 'lucide-react';
+import { ExternalLink, Layers, Factory, Lock, GraduationCap } from 'lucide-react';
 
-export const metadata = {
-    title: 'Developer Resources | BazzAI',
-    description: 'Open-source templates and reference architectures powering BazzAI enterprise deployments.',
-}
+const repos = [
+    {
+        title: "Manufacturing RAG System",
+        description: "Real-time RAG Pipeline transforming factory telemetry into production forecasting and order prediction.",
+        url: "https://github.com/Ocholar/manufacturing-rag-system",
+        icon: <Layers className="w-8 h-8 mb-4" style={{ color: 'var(--color-action)' }} />,
+    },
+    {
+        title: "Redwood Finance Automation",
+        description: "Automate ledger reconciliation and dynamic pricing models connected to M-Pesa and local mobile money.",
+        url: "https://github.com/Ocholar/redwood-finance-automation",
+        icon: <Factory className="w-8 h-8 mb-4" style={{ color: 'var(--color-action)' }} />,
+    },
+    {
+        title: "Defect Detection Pipeline",
+        description: "Computer Vision & Edge AI pipeline for automated QC on manufacturing sub-assemblies.",
+        url: "https://github.com/Ocholar/defect-detection-pipeline",
+        icon: <Lock className="w-8 h-8 mb-4" style={{ color: 'var(--color-action)' }} />,
+    },
+    {
+        title: "NaiCity",
+        description: "Smart city governance platform and utility tracking automation for municipal operations.",
+        url: "https://github.com/Ocholar/NaiCity",
+        icon: <GraduationCap className="w-8 h-8 mb-4" style={{ color: 'var(--color-action)' }} />,
+    },
+];
 
 export default function ResourcesPage() {
-    const repos = [
-        {
-            title: "Redwood Finance Automation",
-            description: "Automate ledger reconciliation and dynamic pricing models connected to M-Pesa/Stripe.",
-            url: "https://github.com/Ocholar/redwood-finance-automation",
-            icon: <Building className="text-red-500 w-8 h-8 mb-4" />
-        },
-        {
-            title: "Manufacturing RAG System",
-            description: "Real-time RAG Pipeline transforming factory telemetry into production forecasting.",
-            url: "https://github.com/Ocholar/manufacturing-rag-system",
-            icon: <Layers className="text-red-500 w-8 h-8 mb-4" />
-        },
-        {
-            title: "NaiCity",
-            description: "Smart city governance platform and utility tracking automation.",
-            url: "https://github.com/Ocholar/NaiCity",
-            icon: <Brain className="text-red-500 w-8 h-8 mb-4" />
-        },
-        {
-            title: "Defect Detection Pipeline",
-            description: "Computer Vision & Edge AI pipeline for automated QC on manufacturing sub-assemblies.",
-            url: "https://github.com/Ocholar/defect-detection-pipeline",
-            icon: <Lock className="text-red-500 w-8 h-8 mb-4" />
-        },
-        {
-            title: "EduFlow",
-            description: "Student lifecycle CRM with WhatsApp-based auto-enrollment logic.",
-            url: "https://github.com/Ocholar/EduFlow",
-            icon: <GraduationCap className="text-red-500 w-8 h-8 mb-4" />
-        }
-    ];
-
     return (
-        <div className="bg-slate-50 min-h-screen text-slate-900 font-sans selection:bg-red-500/30">
+        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
             <Header />
 
-            <main className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-6 text-slate-900">
-                        Developer <span className="text-red-600">Resources</span>
+            <section className="pt-32 pb-16 px-6 text-center" style={{ background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}>
+                <div className="max-w-4xl mx-auto text-white relative z-10">
+                    <h1 className="text-4xl md:text-5xl font-black mb-6" style={{ fontFamily: 'var(--font-headline)' }}>
+                        Developer <span style={{ color: '#ff6b35' }}>Resources</span>
                     </h1>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                        Explore our open-source templates, reference architectures, and production-ready examples that power BazzAI enterprise deployments.
+                    <p className="text-lg max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                        Open-source templates and reference architectures powering BazzAI manufacturing deployments.
                     </p>
                 </div>
+            </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <section className="py-24 px-6" style={{ background: 'var(--color-bg-light)' }}>
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                     {repos.map((repo, i) => (
-                        <a
-                            key={i}
-                            href={repo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-white border border-slate-200 p-8 rounded-2xl shadow-sm hover:shadow-xl hover:border-red-200 transition-all group"
-                        >
+                        <a key={i} href={repo.url} target="_blank" rel="noopener noreferrer"
+                            className="bg-white border p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all group" style={{ borderColor: '#e8eef4' }}>
                             {repo.icon}
-                            <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <h3 className="text-xl font-black mb-2 flex items-center gap-2" style={{ color: 'var(--color-primary)' }}>
                                 {repo.title}
-                                <ExternalLink size={16} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+                                <ExternalLink size={16} className="text-slate-400 group-hover:text-orange-500 transition-colors" />
                             </h3>
-                            <p className="text-slate-600 text-sm leading-relaxed">
-                                {repo.description}
-                            </p>
+                            <p className="text-slate-500 text-sm leading-relaxed">{repo.description}</p>
                         </a>
                     ))}
                 </div>
-            </main>
+            </section>
 
             <Footer />
         </div>

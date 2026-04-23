@@ -31,16 +31,12 @@ function LoginForm() {
             setLoading(false);
             setError('Invalid email or password. Please try again.');
         } else {
-            // Fetch session to determine role-based redirect
             const response = await fetch('/api/auth/session');
             const session = await response.json();
-
             setLoading(false);
-
             if (session?.user) {
                 const role = (session.user as any).role;
                 const target = role === 'ADMIN' ? '/admin' : '/portal';
-                // If there's a callbackUrl that isn't just '/', prioritize it
                 const finalTarget = (callbackUrl && callbackUrl !== '/') ? callbackUrl : target;
                 router.push(finalTarget);
                 router.refresh();
@@ -52,13 +48,14 @@ function LoginForm() {
     }
 
     return (
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="rounded-2xl p-8 shadow-2xl"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
             <h2 className="text-xl font-bold text-white mb-6">Welcome back</h2>
 
+            {/* Google SSO */}
             <button
-                onClick={() => signIn('google', { callbackUrl: callbackUrl })}
-                className="w-full flex items-center justify-center gap-3 rounded-lg bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-4 py-2.5 text-sm font-semibold transition-colors shadow-sm mb-6"
-            >
+                onClick={() => signIn('google', { callbackUrl })}
+                className="w-full flex items-center justify-center gap-3 rounded-lg bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-4 py-2.5 text-sm font-semibold transition-colors shadow-sm mb-6">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -70,60 +67,62 @@ function LoginForm() {
 
             <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/10"></div>
+                    <div className="w-full border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                    <span className="bg-slate-900 px-2 text-slate-500 uppercase tracking-widest font-bold">Or continue with email</span>
+                    <span className="px-2 uppercase tracking-widest font-bold" style={{ background: '#0f2439', color: 'rgba(255,255,255,0.35)' }}>
+                        Or continue with email
+                    </span>
                 </div>
             </div>
 
             {error && (
-                <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400">
+                <div className="mb-4 rounded-lg px-4 py-3 text-sm"
+                    style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.3)', color: '#ff6b35' }}>
                     {error}
                 </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Email address</label>
+                    <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Email address</label>
                     <input
-                        type="email"
-                        required
-                        value={email}
+                        type="email" required value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@business.com"
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                        placeholder="you@factory.com"
+                        className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm transition-all"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--color-action)')}
+                        onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
                     />
                 </div>
-
                 <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-300">Password</label>
+                    <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Password</label>
                     <input
-                        type="password"
-                        required
-                        value={password}
+                        type="password" required value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                        className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm transition-all"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--color-action)')}
+                        onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
                     />
                 </div>
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors shadow-lg shadow-red-900/30"
-                >
-                    {loading ? (
-                        <><Loader2 className="animate-spin h-4 w-4" /> Signing in...</>
-                    ) : (
-                        <><LogIn className="h-4 w-4" /> Sign In</>
-                    )}
+                <button type="submit" disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-all shadow-lg disabled:opacity-60"
+                    style={{ background: 'var(--color-action)' }}
+                    onMouseEnter={e => !loading && (e.currentTarget.style.background = 'var(--color-action-dark)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-action)')}>
+                    {loading
+                        ? <><Loader2 className="animate-spin h-4 w-4" /> Signing in...</>
+                        : <><LogIn className="h-4 w-4" /> Sign In</>}
                 </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-500">
+            <p className="mt-6 text-center text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
                 Don&apos;t have an account?{' '}
-                <Link href="/register" className="text-red-400 hover:text-red-300 font-medium">
+                <Link href="/register" className="font-medium hover:opacity-80 transition-opacity"
+                    style={{ color: 'var(--color-action)' }}>
                     Register here
                 </Link>
             </p>
@@ -133,22 +132,28 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-red-950 px-4">
+        <div className="min-h-screen flex items-center justify-center px-4"
+            style={{ background: 'linear-gradient(135deg, #0f2439 0%, #1a3a52 60%, #0f2439 100%)' }}>
             <div className="w-full max-w-md">
-                {/* Logo / Brand */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-extrabold text-white tracking-tight">
-                        Bazz<span className="text-red-500">AI</span>
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight"
+                        style={{ fontFamily: 'var(--font-headline)' }}>
+                        Bazz<span style={{ color: 'var(--color-action)' }}>AI</span>
                     </h1>
-                    <p className="text-slate-400 mt-2 text-sm">Sign in to your Client Portal</p>
+                    <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                        Sign in to your Manufacturing Portal
+                    </p>
                 </div>
 
-                {/* Card */}
-                <Suspense fallback={<div className="text-white text-center"><Loader2 className="animate-spin h-6 w-6 mx-auto mb-2" />Loading...</div>}>
+                <Suspense fallback={
+                    <div className="text-white text-center">
+                        <Loader2 className="animate-spin h-6 w-6 mx-auto mb-2" />Loading...
+                    </div>
+                }>
                     <LoginForm />
                 </Suspense>
 
-                <p className="text-center text-xs text-slate-600 mt-6">
+                <p className="text-center text-xs mt-6" style={{ color: 'rgba(255,255,255,0.2)' }}>
                     &copy; {new Date().getFullYear()} Bazztech Networks. All rights reserved.
                 </p>
             </div>

@@ -1,106 +1,98 @@
 "use client";
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const phases = [
     {
-        week: 'Weeks 1–2',
-        color: 'bg-blue-500',
-        title: 'Discovery & Architecture',
-        desc: 'We deeply map your current workflows, identify the highest-impact automation targets, and architect the technical pipeline.',
+        week: 'Day 1',
+        color: 'var(--color-action)',
+        title: 'Factory Workflow Audit',
+        desc: 'We deeply map your current order → production → dispatch → payment flow via a 30-minute WhatsApp call.',
         steps: [
-            'Stakeholder kickoff — ops, finance, and engineering leads',
-            'Workflow mapping & pain point scoring matrix',
-            'Tech stack audit (current tools, data sources, APIs)',
-            'Vector DB strategy — document volume, query patterns',
-            'Architecture signoff and SOW agreed',
+            'Operations manager discovery interview',
+            'Order flow and supplier dependency mapping',
+            'Top 3 bottleneck scoring and quantification',
+            'Custom BazzAI configuration blueprint delivered',
         ],
     },
     {
-        week: 'Weeks 3–4',
-        color: 'bg-purple-500',
-        title: 'Design & Integration',
-        desc: 'We build and connect the automation pipeline to your existing infrastructure — zero downtime, no data migration required.',
+        week: 'Days 2–5',
+        color: 'var(--color-secondary)',
+        title: 'WhatsApp & System Setup',
+        desc: 'We connect your infrastructure and configure your dashboard — no IT team required.',
         steps: [
-            'n8n workflow scaffolding mapped to your SLAs',
-            'Data ingestion pipelines to Vector DB (Pinecone or Chroma)',
-            'LLM integration and prompt engineering for your domain',
-            'Staging deployment on your cloud environment (AWS, GCP, or Azure)',
-            'Internal QA testing with your team',
+            'WhatsApp Business API connection (under 2 hours)',
+            'Order capture, supplier portal, and payment tracking configured',
+            'Customer and supplier contacts imported',
+            'Dashboard walkthrough with your team (15 min)',
         ],
     },
     {
-        week: 'Weeks 5–8',
-        color: 'bg-red-500',
-        title: 'Deployment & Pilot',
-        desc: 'Live rollout with full monitoring. We track every KPI from day one and tune the system in real-time.',
+        week: 'Days 6–20',
+        color: '#2ecc71',
+        title: 'Live Production Pilot',
+        desc: 'BazzAI runs alongside your existing operations — real orders, real payments, real suppliers.',
         steps: [
-            'Production go-live with feature flags for safe rollout',
-            'Real-time OEE/KPI dashboards connected to your BI tools',
-            'Alert routing configured (WhatsApp, Slack, or email)',
-            'Team training sessions and runbook handoff',
-            'Weekly performance reviews against agreed benchmarks',
+            'Production go-live on your WhatsApp number',
+            'M-Pesa auto-reconciliation active',
+            'KRA invoices generated on dispatch',
+            'Customer WhatsApp status notifications enabled',
+            'Weekly sync with your operations team',
         ],
     },
     {
-        week: 'Month 2+',
-        color: 'bg-emerald-500',
-        title: 'Continuous Optimisation',
-        desc: 'Covered under your monthly retainer. We own the ongoing performance of the pipeline — you focus on your business.',
+        week: 'Day 21+',
+        color: 'var(--color-primary)',
+        title: 'ROI Review & Subscription',
+        desc: 'We review the pilot data, calculate your ROI, and you decide whether to continue.',
         steps: [
-            'Data drift monitoring and re-embedding pipelines',
-            'LLM model upgrades as newer versions release',
-            'API changes and third-party integration maintenance',
-            'Monthly ROI reporting and performance summary',
-            'Quarterly pipeline expansion reviews',
+            'Joint ROI review — hours saved, payments recovered, orders captured',
+            'Subscribe to SME (KES 15,000/mo) or Growth (KES 35,000/mo)',
+            'Or cancel — zero invoice, zero obligation',
+            'Ongoing account reviews and feature rollouts',
         ],
     },
 ];
 
 export default function RoadmapPage() {
     return (
-        <main className="flex min-h-screen flex-col items-center bg-white text-slate-900 pb-24">
+        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
+            <Header />
 
-            {/* Hero */}
-            <div className="w-full bg-slate-900 text-white pt-32 pb-20 px-8 relative overflow-hidden">
-                <div className="absolute bottom-0 right-0 w-96 h-64 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
-                <div className="max-w-4xl mx-auto relative z-10 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-slate-300 text-[10px] font-black uppercase tracking-widest mb-6">
+            <section className="pt-32 pb-20 px-6 text-center" style={{ background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}>
+                <div className="max-w-4xl mx-auto text-white relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest mb-6"
+                        style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)' }}>
                         Implementation Roadmap
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6">From Audit to Autonomous in 8 Weeks.</h1>
-                    <p className="text-lg text-slate-400 font-medium max-w-2xl mx-auto">
-                        No vague consulting timelines. Here is exactly what happens after you book an assessment, week by week.
+                    <h1 className="text-4xl md:text-6xl font-black mb-6" style={{ fontFamily: 'var(--font-headline)' }}>
+                        From Audit to Production<br /><span style={{ color: '#ff6b35' }}>in 20 Days.</span>
+                    </h1>
+                    <p className="text-lg max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                        No vague consulting timelines. Here is exactly what happens after you book an audit, day by day.
                     </p>
                 </div>
-            </div>
+            </section>
 
-            {/* Timeline Steps */}
-            <section className="w-full max-w-4xl px-8 py-20">
-                <div className="relative">
-                    {/* Vertical line */}
-                    <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200 hidden md:block" />
-
+            <section className="py-24 px-6" style={{ background: 'var(--color-bg-light)' }}>
+                <div className="max-w-4xl mx-auto relative">
+                    <div className="hidden md:block absolute left-5 top-0 bottom-0 w-0.5" style={{ background: 'linear-gradient(to bottom, var(--color-action), var(--color-primary))' }} />
                     <div className="space-y-12">
                         {phases.map((phase, i) => (
                             <div key={i} className="relative flex flex-col md:flex-row gap-8">
-                                {/* Step dot */}
-                                <div className="relative shrink-0">
-                                    <div className={`w-10 h-10 rounded-full ${phase.color} flex items-center justify-center text-white font-black text-sm shadow-lg z-10 relative`}>
-                                        {i + 1}
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 bg-slate-50 rounded-3xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-sm shadow-lg z-10 shrink-0"
+                                    style={{ background: phase.color }}>{i + 1}</div>
+                                <div className="flex-1 bg-white rounded-2xl border p-8 shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: '#e8eef4' }}>
                                     <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
-                                        <h3 className="text-2xl font-black">{phase.title}</h3>
-                                        <span className={`px-4 py-1.5 rounded-full text-white text-xs font-black ${phase.color} shadow-sm`}>{phase.week}</span>
+                                        <h3 className="text-xl font-black" style={{ color: 'var(--color-primary)' }}>{phase.title}</h3>
+                                        <span className="px-4 py-1.5 rounded-full text-white text-xs font-black shadow-sm" style={{ background: phase.color }}>{phase.week}</span>
                                     </div>
-                                    <p className="text-slate-500 mb-6 font-medium leading-relaxed">{phase.desc}</p>
+                                    <p className="text-slate-500 mb-6 font-medium leading-relaxed text-sm">{phase.desc}</p>
                                     <ul className="space-y-2.5">
                                         {phase.steps.map((step, j) => (
                                             <li key={j} className="flex items-start gap-2.5 text-sm text-slate-600">
-                                                <CheckCircle size={16} className="text-emerald-500 mt-0.5 shrink-0" />
-                                                {step}
+                                                <CheckCircle size={16} className="text-emerald-500 mt-0.5 shrink-0" /> {step}
                                             </li>
                                         ))}
                                     </ul>
@@ -111,30 +103,16 @@ export default function RoadmapPage() {
                 </div>
             </section>
 
-            {/* Pricing Summary */}
-            <section className="w-full max-w-4xl px-8 pb-20">
-                <div className="bg-slate-900 text-white rounded-[32px] p-10 md:p-14 shadow-2xl">
-                    <h2 className="text-3xl font-black mb-10 text-center">What It Costs</h2>
-                    <div className="grid md:grid-cols-2 gap-6 mb-10">
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Weeks 1–8 Implementation</p>
-                            <p className="text-3xl font-black text-white">Starts at $15,000</p>
-                            <p className="text-sm text-slate-400 mt-2">Discovery → Architecture → Deployment</p>
-                        </div>
-                        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-2">Month 2+ Managed Retainer</p>
-                            <p className="text-3xl font-black text-emerald-400">Starts at $2,500/mo</p>
-                            <p className="text-sm text-slate-400 mt-2">Infrastructure + LLM Costs + Optimisation</p>
-                        </div>
-                    </div>
-                    <div className="text-center">
-                        <button className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl transition-all shadow-lg" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
-                            Start Step 1 — Free Audit <ArrowRight size={18} />
-                        </button>
-                        <p className="text-slate-500 text-xs mt-4">No commitment. Clarity within 15 minutes.</p>
-                    </div>
-                </div>
+            <section className="py-16 px-6 bg-white text-center border-t" style={{ borderColor: '#e8eef4' }}>
+                <button className="inline-flex items-center gap-2 px-10 py-4 rounded-xl font-black text-white hover:scale-105 transition-all"
+                    style={{ background: 'var(--color-action)' }}
+                    onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                    Start Step 1 — Free Audit <ArrowRight size={18} />
+                </button>
+                <p className="text-slate-400 text-xs mt-4">No commitment. Clarity within 30 minutes.</p>
             </section>
-        </main>
+
+            <Footer />
+        </div>
     );
 }

@@ -67,20 +67,20 @@ function RegisterForm() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-red-950">
+        <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0f2439 0%, #1a3a52 60%, #0f2439 100%)' }}>
             <div className="w-full max-w-md">
                 {/* Brand */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-extrabold text-white tracking-tight">
-                        Bazz<span className="text-red-500">AI</span>
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight" style={{ fontFamily: 'var(--font-headline)' }}>
+                        Bazz<span style={{ color: 'var(--color-action)' }}>AI</span>
                     </h1>
-                    <p className="text-slate-400 mt-2 text-sm">Create your Client Portal account</p>
+                    <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Create your Manufacturing Portal account</p>
                 </div>
 
                 {/* Card */}
                 <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-2xl">
-                    <div className="flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-widest text-slate-400">
-                        <span className="text-red-500">Step 1:</span> Account Configuration
+                    <div className="flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        <span style={{ color: 'var(--color-action)' }}>Step 1:</span> Account Configuration
                     </div>
 
                     <button
@@ -98,15 +98,15 @@ function RegisterForm() {
 
                     <div className="relative mb-6">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10"></div>
+                            <div className="w-full border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}></div>
                         </div>
                         <div className="relative flex justify-center text-xs">
-                            <span className="bg-slate-900 px-2 text-slate-500 uppercase tracking-widest font-bold">Or register via email</span>
+                            <span className="px-2 uppercase tracking-widest font-bold" style={{ background: '#0f2439', color: 'rgba(255,255,255,0.35)' }}>Or register via email</span>
                         </div>
                     </div>
 
                     {error && (
-                        <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400">
+                        <div className="mb-4 rounded-lg px-4 py-3 text-sm" style={{ background: 'rgba(255,107,53,0.1)', border: '1px solid rgba(255,107,53,0.3)', color: '#ff6b35' }}>
                             {error}
                         </div>
                     )}
@@ -114,7 +114,7 @@ function RegisterForm() {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-slate-300">Your Name</label>
+                                <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Your Name</label>
                                 <input
                                     name="name"
                                     type="text"
@@ -122,51 +122,55 @@ function RegisterForm() {
                                     value={form.name}
                                     onChange={handleChange}
                                     placeholder="Reagan"
-                                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                    className="w-full rounded-lg px-3 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-slate-300">Business Name</label>
+                                <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Factory / Business Name</label>
                                 <input
                                     name="companyName"
                                     type="text"
                                     required
                                     value={form.companyName}
                                     onChange={handleChange}
-                                    placeholder="Acme Ltd"
-                                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                    placeholder="Acme Foods Ltd"
+                                    className="w-full rounded-lg px-3 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-300">WhatsApp Phone Number</label>
+                            <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>WhatsApp Phone Number</label>
                             <input
                                 name="phone"
                                 type="tel"
                                 value={form.phone}
                                 onChange={handleChange}
                                 placeholder="+254712345678"
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                             />
-                            <p className="text-[11px] text-slate-500">Used for automated renewal reminders via WhatsApp.</p>
+                            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>Used for automated renewal reminders via WhatsApp.</p>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-300">Email address</label>
+                            <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Email address</label>
                             <input
                                 name="email"
                                 type="email"
                                 required
                                 value={form.email}
                                 onChange={handleChange}
-                                placeholder="you@business.com"
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                placeholder="you@factory.com"
+                                className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                             />
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-300">Password</label>
+                            <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Password</label>
                             <input
                                 name="password"
                                 type="password"
@@ -174,12 +178,13 @@ function RegisterForm() {
                                 value={form.password}
                                 onChange={handleChange}
                                 placeholder="Min. 8 characters"
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                             />
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-300">Confirm Password</label>
+                            <label className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>Confirm Password</label>
                             <input
                                 name="confirmPassword"
                                 type="password"
@@ -187,14 +192,16 @@ function RegisterForm() {
                                 value={form.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                                className="w-full rounded-lg px-4 py-2.5 text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
                             />
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors shadow-lg shadow-red-900/30 mt-2"
+                            className="w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-all shadow-lg mt-2 hover:opacity-90 disabled:opacity-60"
+                            style={{ background: 'var(--color-action)' }}
                         >
                             {loading ? (
                                 <><Loader2 className="animate-spin h-4 w-4" /> Creating account...</>
@@ -204,9 +211,9 @@ function RegisterForm() {
                         </button>
                     </form>
 
-                    <p className="mt-6 text-center text-sm text-slate-500">
+                    <p className="mt-6 text-center text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
                         Already have an account?{' '}
-                        <Link href="/login" className="text-red-400 hover:text-red-300 font-medium">
+                        <Link href="/login" className="font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--color-action)' }}>
                             Sign in
                         </Link>
                     </p>
@@ -218,7 +225,7 @@ function RegisterForm() {
 
 export default function RegisterPage() {
     return (
-        <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-900"><Loader2 className="animate-spin h-8 w-8 text-red-500" /></div>}>
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center" style={{ background: '#0f2439' }}><Loader2 className="animate-spin h-8 w-8" style={{ color: 'var(--color-action)' }} /></div>}>
             <RegisterForm />
         </Suspense>
     );

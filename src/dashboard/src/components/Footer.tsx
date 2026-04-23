@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Linkedin, Facebook, Instagram } from 'lucide-react';
 
@@ -6,71 +7,104 @@ const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export default function Footer() {
     return (
-        <footer className="bg-slate-900 text-white py-20 px-6 border-t border-white/5 w-full">
+        <footer className="text-white py-20 px-6 border-t w-full"
+            style={{ background: 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.06)' }}>
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-16">
-                <div className="col-span-1 border-b border-white/10 pb-10 md:border-0 md:pb-0">
-                    <div className="text-3xl font-black tracking-tight mb-4">
-                        Bazz<span className="text-red-500">AI</span>
+
+                {/* Brand */}
+                <div className="col-span-1 border-b pb-10 md:border-0 md:pb-0" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+                    <div className="text-3xl font-black tracking-tight mb-4" style={{ fontFamily: 'var(--font-headline)' }}>
+                        Bazz<span style={{ color: 'var(--color-action)' }}>AI</span>
                     </div>
-                    <p className="text-slate-400 mb-8 leading-relaxed text-sm">
-                        Bazztech Networks helps businesses replace manual, repetitive work with intelligent AI workflows. Based in Nairobi. Serving the world.
+                    <p className="text-sm mb-6 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                        Connected Operations Platform for African Manufacturers. Real-time visibility from
+                        supplier delivery to customer payment — all via WhatsApp.
                     </p>
-                    <form className="flex flex-col gap-2 relative">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2 block">Enterprise AI Newsletter</label>
-                        <input type="email" placeholder="CTO@company.com" className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:border-red-500 focus:outline-none text-sm mb-3" />
-                        <button className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-sm transition-colors">Subscribe</button>
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--color-action)' }}>
+                        Manufacturing Ops Newsletter
+                    </p>
+                    <form className="flex flex-col gap-2">
+                        <input type="email" placeholder="ops@yourfactory.com"
+                            className="w-full px-4 py-3 rounded-lg text-white placeholder:text-slate-500 focus:outline-none text-sm"
+                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--color-action)')}
+                            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')} />
+                        <button className="w-full px-4 py-3 font-bold rounded-lg text-sm text-white transition-colors"
+                            style={{ background: 'var(--color-action)' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-action-dark)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-action)')}>
+                            Subscribe
+                        </button>
                     </form>
                 </div>
 
+                {/* Platform */}
                 <div>
-                    <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Solutions</h5>
-                    <ul className="space-y-4 text-slate-400 text-sm">
-                        <li><Link href="/solutions/for-coos" className="hover:text-white transition-colors">For COOs</Link></li>
-                        <li><Link href="/solutions/for-ctos" className="hover:text-white transition-colors">For CTOs</Link></li>
-                        <li><Link href="/solutions/for-cfos" className="hover:text-white transition-colors">For CFOs</Link></li>
-                        <li><Link href="/#products" className="hover:text-white transition-colors">Bazz-Connect &amp; CRM</Link></li>
-                        <li><Link href="/#products" className="hover:text-white transition-colors">Bazz-Flow Integrations</Link></li>
+                    <h5 className="font-black text-xs uppercase tracking-widest mb-6"
+                        style={{ color: 'var(--color-action)' }}>Platform</h5>
+                    <ul className="space-y-4 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                        <li><Link href="/#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+                        <li><Link href="/solutions/food-beverage" className="hover:text-white transition-colors">Food &amp; Beverage</Link></li>
+                        <li><Link href="/solutions/fmcg" className="hover:text-white transition-colors">FMCG &amp; Packaging</Link></li>
+                        <li><Link href="/solutions/agro-processing" className="hover:text-white transition-colors">Agro-Processing</Link></li>
+                        <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
+                        <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
                     </ul>
                 </div>
 
+                {/* Company */}
                 <div>
-                    <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Company</h5>
-                    <ul className="space-y-4 text-slate-400 text-sm">
+                    <h5 className="font-black text-xs uppercase tracking-widest mb-6"
+                        style={{ color: 'var(--color-action)' }}>Company</h5>
+                    <ul className="space-y-4 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
                         <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-                        <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
-                        <li><Link href="/implementation" className="hover:text-white transition-colors">Implementation Roadmap</Link></li>
-                        <li><Link href="/faq" className="hover:text-white transition-colors">Objection-Handling FAQ</Link></li>
                         <li><Link href="/case-studies" className="hover:text-white transition-colors">Case Studies</Link></li>
                         <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                        <li><Link href="/pricing" className="hover:text-white transition-colors">SaaS Pricing & Modules</Link></li>
-                        <li><Link href="/pricing" className="hover:text-white transition-colors">Enterprise Solutions</Link></li>
-                        <li><Link href="/security" className="hover:text-white transition-colors">Security & Compliance</Link></li>
+                        <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+                        <li><Link href="/security" className="hover:text-white transition-colors">Security &amp; Compliance</Link></li>
+                        <li><Link href="/why-bazzai" className="hover:text-white transition-colors">Why BazzAI</Link></li>
                     </ul>
                 </div>
 
+                {/* Contact */}
                 <div>
-                    <h5 className="text-red-500 font-black text-xs uppercase tracking-widest mb-6">Contact & Socials</h5>
-                    <ul className="space-y-4 text-slate-400 text-sm mb-8">
+                    <h5 className="font-black text-xs uppercase tracking-widest mb-6"
+                        style={{ color: 'var(--color-action)' }}>Contact &amp; Socials</h5>
+                    <ul className="space-y-4 text-sm mb-8" style={{ color: 'rgba(255,255,255,0.55)' }}>
                         <li className="flex items-center gap-3">
-                            <Phone size={15} className="text-red-500" />
-                            <a href={`tel:+${WHATSAPP_NUMBER}`} className="hover:text-white transition-colors">+254 781 751 937</a>
+                            <Phone size={15} style={{ color: 'var(--color-action)' }} />
+                            <a href="tel:+254781751937" className="hover:text-white transition-colors">+254 781 751 937</a>
                         </li>
                         <li className="flex items-center gap-3">
-                            <Mail size={15} className="text-red-500" /> info@bazztech.co.ke
+                            <Mail size={15} style={{ color: 'var(--color-action)' }} />
+                            <a href="mailto:info@bazztech.co.ke" className="hover:text-white transition-colors">info@bazztech.co.ke</a>
                         </li>
-                        <li className="flex items-center gap-3">
-                            <MapPin size={15} className="text-red-500" /> Nairobi, Kenya
+                        <li className="flex items-start gap-3">
+                            <MapPin size={15} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--color-action)' }} />
+                            <span>Nairobi, Kenya · Serving East &amp; West Africa</span>
                         </li>
                     </ul>
-                    <div className="flex items-center gap-4">
-                        <a href="https://www.linkedin.com/company/bazztech-networks/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Linkedin size={18} /></a>
-                        <a href="https://www.facebook.com/bazztechnetworks" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Facebook size={18} /></a>
-                        <a href="https://www.instagram.com/bazztechnetworks/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-all"><Instagram size={18} /></a>
+                    <div className="flex items-center gap-3">
+                        {[
+                            { href: 'https://www.linkedin.com/company/bazztech-networks/', icon: <Linkedin size={16} />, label: 'LinkedIn' },
+                            { href: 'https://www.facebook.com/bazztechnetworks', icon: <Facebook size={16} />, label: 'Facebook' },
+                            { href: 'https://www.instagram.com/bazztechnetworks/', icon: <Instagram size={16} />, label: 'Instagram' },
+                        ].map((s) => (
+                            <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                                aria-label={s.label}
+                                className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
+                                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,107,53,0.2)'; (e.currentTarget as HTMLElement).style.color = '#ff6b35'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'; }}>
+                                {s.icon}
+                            </a>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-xs">
+            <div className="max-w-7xl mx-auto border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs"
+                style={{ borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>
                 <p>© 2026 Bazztech Networks. All rights reserved.</p>
                 <div className="flex gap-6">
                     <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
