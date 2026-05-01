@@ -39,6 +39,17 @@ export const metadata: Metadata = {
     siteName: "BazzAI",
     locale: "en_KE",
     type: "website",
+    images: [
+      {
+        url: "https://bazztech.co.ke/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "BazzAI - Your Factory's AI Brain",
+      },
+    ],
+  },
+  verification: {
+    google: "dvpum6ELvqv5d3JPk4CdWWAlJuJntzSyrzCXlFc5fNU",
   },
   twitter: {
     card: "summary_large_image",

@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /portal/
 
-Sitemap: https://www.bazztech.co.ke/sitemap.xml
+Sitemap: https://bazztech.co.ke/sitemap.xml
