@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import GlobalBookingModal from "@/components/GlobalBookingModal";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-headline",
-  display: "swap",
-});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,25 +14,27 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BazzAI | Connected Operations Platform for African Manufacturers",
+  title: "BazzAI | AI Manufacturing Intelligence for African Factories",
   description:
-    "BazzAI gives African food manufacturers real-time visibility from supplier delivery to customer payment — via WhatsApp. Stop losing orders to chaos. Start your 14-day pilot.",
+    "Your Factory's AI Brain. Machine performance analytics, fault investigation, and production forecasting — powered by AI, built for African manufacturing. Start your 14-day free pilot.",
   keywords: [
-    "Manufacturing Operations Platform",
-    "African Manufacturers",
-    "WhatsApp Order Management",
-    "Food Manufacturing Kenya",
-    "Supply Chain Visibility",
-    "KRA Compliance",
-    "M-Pesa Payments",
-    "Order to Cash Africa",
-    "Nairobi Manufacturing Software",
-    "MSME Manufacturing SaaS",
+    "AI Manufacturing Intelligence",
+    "Factory AI Africa",
+    "Predictive Maintenance Kenya",
+    "Manufacturing Analytics Nigeria",
+    "OEE Optimization Africa",
+    "RAG Manufacturing AI",
+    "Machine Performance Analytics",
+    "Production Forecasting Africa",
+    "KRA Compliance AI",
+    "M-Pesa Manufacturing ERP",
+    "African Factory Software",
+    "BazzAI",
   ],
   openGraph: {
-    title: "BazzAI | Connected Operations Platform for African Manufacturers",
+    title: "BazzAI | Your Factory's AI Brain",
     description:
-      "Real-time visibility from supplier delivery to customer payment. Built for African food manufacturers. 14-day pilot, no commitment.",
+      "Ask your machines anything. Predict failures before they happen. Turn production data into competitive advantage. AI Manufacturing Intelligence for African factories.",
     url: "https://bazztech.co.ke",
     siteName: "BazzAI",
     locale: "en_KE",
@@ -47,9 +42,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "BazzAI — Manufacturing Operations for Africa",
+    title: "BazzAI — Your Factory's AI Brain",
     description:
-      "Stop losing orders to WhatsApp chaos. BazzAI brings real-time visibility to African manufacturers.",
+      "Machine performance analytics, fault investigation & production forecasting — powered by AI, built for African manufacturing.",
   },
 };
 
@@ -59,8 +54,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{ colorScheme: "light" }}>
+    <html lang="en" style={{ colorScheme: "dark" }}>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-FKRMXBX4Z3" strategy="afterInteractive" />
         <Script
           id="google-analytics"
@@ -75,7 +76,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${plusJakartaSans.variable} ${inter.variable}`}>
+      <body className={`${inter.variable}`}>
         {children}
         <WhatsAppButton />
         <Analytics />

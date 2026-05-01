@@ -7,49 +7,49 @@ import Link from 'next/link';
 
 const faqs = [
     {
-        category: "Onboarding & Setup",
+        category: "Deployment & Setup",
         questions: [
             {
-                q: "How long does it take to deploy BazzAI in my factory?",
-                a: "If you subscribe to the SME or Growth tiers, we can have your WhatsApp number connected, your supplier portal active, and your dashboard running within 24–48 hours. The entire 14-day free pilot is designed to get you from zero to full visibility immediately."
+                q: "How long does it take to deploy BazzAI to my factory?",
+                a: "If you subscribe to our standard tiers, we can have your vector database connected, data lakes syncing, and dashboards running within 24–48 hours. Our 14-day free pilot aims to get you from zero to full visibility immediately."
             },
             {
-                q: "Do my workers need to install new software?",
-                a: "No. Your sales team and floor managers keep using WhatsApp just as they do now. BazzAI works in the background by structuring WhatsApp messages to update order boards and trigger invoices automatically."
+                q: "Do my workers need to install new applications?",
+                a: "No. BazzAI ingests existing machine data and connects to your current systems. Your shift managers and engineers interact via simple web interfaces without needing specialized IT training."
             },
             {
-                q: "What do we need to start the 14-day free pilot?",
-                a: "We just need 30 minutes with your Operations Manager to map your current workflow, and access to a WhatsApp Business Number (which we can help you set up)."
+                q: "Is any specialized hardware required?",
+                a: "No new hardware is necessary. We utilize your existing SCADA, PLC, and ERP data logs using lightweight API bridges."
             }
         ]
     },
     {
-        category: "Integrations & Tech",
+        category: "Architecture & Integrations",
         questions: [
             {
-                q: "Does it connect to M-Pesa?",
-                a: "Yes. For Kenyan clients, BazzAI integrates directly with Safaricom's Daraja API (M-Pesa B2B/B2C). Incoming payments automatically mark corresponding invoices as paid in real time."
+                q: "How do you handle unstructured data like PDF manuals?",
+                a: "Through Hybrid RAG architecture, we embed your unstructured machine manuals into high-dimensional Pinecone vector databases, enabling instant natural language querying."
             },
             {
-                q: "Can BazzAI generate KRA-compliant invoices?",
-                a: "Yes. Our Growth plan includes automated KRA iTax invoice generation. You simply upload your product details and PIN, and BazzAI structures your invoices correctly for immediate filing."
+                q: "Can BazzAI integrate with our existing ERP?",
+                a: "Yes. We deploy custom integration pipelines for legacy ERPs such as SAP, Oracle, and Sage, automatically pushing AI demand forecasts to your production queues."
             },
             {
-                q: "We use QuickBooks. Can you integrate with it?",
-                a: "Yes. We support standard CSV exports for offline accounting software, and we have direct API integrations for QuickBooks Online and Xero to keep your general ledger updated automatically."
+                q: "How does the n8n orchestration work?",
+                a: "We configure n8n to listen for predictive AI failure models. When an anomaly is detected, it triggers automated alerts to Slack, SMS, or email, dispatching maintenance crews before downtime occurs."
             }
         ]
     },
     {
-        category: "Pricing & Contracts",
+        category: "Security & Pricing",
         questions: [
+            {
+                q: "Where is our proprietary data hosted?",
+                a: "BazzAI allocates a fully isolated database instance per client. We offer hosting on AWS Africa (Cape Town) for continental proximity, ensuring your data never touches public LLM training sets."
+            },
             {
                 q: "What happens after the 14-day free pilot?",
-                a: "We present a joint ROI review. If BazzAI has demonstrably saved you time and reduced order errors, you subscribe to our SME (KES 15,000/mo) or Growth (KES 35,000/mo) plan. If you are not satisfied, you simply walk away. No lock-in."
-            },
-            {
-                q: "Do you offer pricing in USD for clients outside Kenya?",
-                a: "Yes. We operate across Africa (Nigeria, Uganda, Ghana). The SME plan is $110/mo, and the Growth plan is $250/mo. We process payments via standard cards or bank transfers for international clients."
+                a: "We present a joint ROI review. If our AI models have measurably improved your OEE or prevented failures, you subscribe to our Enterprise tier. If not, you walk away with zero lock-in."
             }
         ]
     }
@@ -63,38 +63,35 @@ export default function FAQPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="min-h-screen flex flex-col" style={{ background: '#0F1419', color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
             <Header />
 
-            <section className="pt-32 pb-16 px-6 text-center bg-slate-50 border-b" style={{ borderColor: '#e8eef4' }}>
-                <h1 className="text-4xl md:text-5xl font-black mb-6" style={{ fontFamily: 'var(--font-headline)', color: 'var(--color-primary)' }}>
+            <section className="pt-32 pb-16 px-6 text-center border-b border-slate-800" style={{ background: '#141A23' }}>
+                <h1 className="text-4xl md:text-5xl font-black mb-6 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     Frequently Asked Questions
                 </h1>
-                <p className="text-slate-500 max-w-2xl mx-auto">Everything you need to know about setting up BazzAI on your factory floor.</p>
+                <p className="text-slate-400 max-w-2xl mx-auto">Everything you need to know about setting up BazzAI on your factory floor.</p>
             </section>
 
-            <section className="py-16 px-6 bg-white">
-                <div className="max-w-3xl mx-auto space-y-12">
+            <section className="py-16 px-6 relative overflow-hidden">
+                <div className="max-w-3xl mx-auto space-y-12 relative z-10">
                     {faqs.map((cat, catIdx) => (
                         <div key={catIdx}>
-                            <h2 className="text-xl font-black mb-6" style={{ color: 'var(--color-action)' }}>{cat.category}</h2>
+                            <h2 className="text-xl font-black mb-6 text-[#E07A5F]">{cat.category}</h2>
                             <div className="space-y-4">
                                 {cat.questions.map((faq, qIdx) => {
                                     const id = `${catIdx}-${qIdx}`;
                                     return (
-                                        <div key={qIdx} className="border rounded-2xl overflow-hidden" style={{ borderColor: '#e8eef4' }}>
+                                        <div key={qIdx} className="border rounded-2xl overflow-hidden transition-all" style={{ background: '#1A202C', borderColor: '#2D3748' }}>
                                             <button
-                                                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+                                                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-800 transition-colors"
                                                 onClick={() => toggleOpen(id)}>
-                                                <span className="font-bold" style={{ color: 'var(--color-primary)' }}>{faq.q}</span>
-                                                <ChevronDown size={18} className="flex-shrink-0 transition-transform duration-300"
-                                                    style={{
-                                                        color: 'var(--color-action)',
-                                                        transform: openIndex === id ? 'rotate(180deg)' : 'none'
-                                                    }} />
+                                                <span className="font-bold text-[#F4F1DE]">{faq.q}</span>
+                                                <ChevronDown size={18} className="flex-shrink-0 transition-transform duration-300 text-[#E07A5F]"
+                                                    style={{ transform: openIndex === id ? 'rotate(180deg)' : 'none' }} />
                                             </button>
                                             <div className={`px-6 overflow-hidden transition-all duration-300 ${openIndex === id ? 'max-h-96 pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                                <p className="text-sm leading-relaxed border-t pt-5" style={{ color: '#7f8c8d', borderColor: '#e8eef4' }}>
+                                                <p className="text-sm leading-relaxed border-t pt-5 border-slate-700 text-slate-400">
                                                     {faq.a}
                                                 </p>
                                             </div>
@@ -107,13 +104,14 @@ export default function FAQPage() {
                 </div>
             </section>
 
-            <section className="py-16 px-6 bg-slate-50 border-t text-center" style={{ borderColor: '#e8eef4' }}>
-                <h2 className="text-2xl font-black mb-4" style={{ color: 'var(--color-primary)' }}>Still have questions?</h2>
-                <Link href={"https://wa.me/15558219787"} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 items-center gap-2"
-                    style={{ background: '#25D366' }}>
-                    <MessageSquare size={18} /> Ask on WhatsApp
-                </Link>
+            <section className="py-16 px-6 border-t text-center border-slate-800" style={{ background: '#141A23' }}>
+                <h2 className="text-2xl font-black mb-4 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Ready for intelligent operations?</h2>
+                <button
+                    className="inline-flex px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 items-center gap-2 shadow-lg mt-2"
+                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
+                    onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                    Start Free Pilot <MessageSquare size={18} />
+                </button>
             </section>
 
             <Footer />

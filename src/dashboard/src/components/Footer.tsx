@@ -13,12 +13,14 @@ export default function Footer() {
 
                 {/* Brand */}
                 <div className="col-span-1 border-b pb-10 md:border-0 md:pb-0" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-                    <div className="text-3xl font-black tracking-tight mb-4" style={{ fontFamily: 'var(--font-headline)' }}>
-                        Bazz<span style={{ color: 'var(--color-action)' }}>AI</span>
+                    <div className="text-3xl font-black tracking-tight mb-4 flex items-center gap-2" style={{ fontFamily: 'var(--font-headline)' }}>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
+                            <span className="text-base">M</span>
+                        </div>
+                        Bazz<span style={{ color: '#E07A5F' }}>AI</span>
                     </div>
-                    <p className="text-sm mb-6 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                        Connected Operations Platform for African Manufacturers. Real-time visibility from
-                        supplier delivery to customer payment — all via WhatsApp.
+                    <p className="text-sm mb-6 leading-relaxed" style={{ color: '#A0AEC0' }}>
+                        Your Factory's AI Brain. Advanced data intelligence, predictive maintenance, and strategic operations forecasting for modern African manufacturers.
                     </p>
                     <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--color-action)' }}>
                         Manufacturing Ops Newsletter
@@ -43,12 +45,10 @@ export default function Footer() {
                     <h5 className="font-black text-xs uppercase tracking-widest mb-6"
                         style={{ color: 'var(--color-action)' }}>Platform</h5>
                     <ul className="space-y-4 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
-                        <li><Link href="/#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
-                        <li><Link href="/solutions/food-beverage" className="hover:text-white transition-colors">Food &amp; Beverage</Link></li>
-                        <li><Link href="/solutions/fmcg" className="hover:text-white transition-colors">FMCG &amp; Packaging</Link></li>
-                        <li><Link href="/solutions/agro-processing" className="hover:text-white transition-colors">Agro-Processing</Link></li>
-                        <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
+                        <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
                         <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                        <li><Link href="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
+                        <li><Link href="/security" className="hover:text-white transition-colors">Security &amp; Compliance</Link></li>
                     </ul>
                 </div>
 

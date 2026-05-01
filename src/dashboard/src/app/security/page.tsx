@@ -16,8 +16,8 @@ const controls = [
     },
     {
         icon: <Eye size={24} />,
-        title: 'Zero-Retention WhatsApp Policy',
-        body: 'WhatsApp messages processed by BazzAI are structured and logged to your private database only. We do not store raw message content on our servers after processing.',
+        title: 'Zero-Retention Query Policy',
+        body: 'Natural language queries processed by BazzAI are executed directly against your private vector database. We never use your proprietary factory data to train public models.',
     },
     {
         icon: <Server size={24} />,
@@ -38,48 +38,49 @@ const controls = [
 
 export default function SecurityPage() {
     return (
-        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="min-h-screen flex flex-col" style={{ background: '#0F1419', color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
             <Header />
 
-            <section className="pt-32 pb-20 px-6 text-center" style={{ background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}>
-                <div className="max-w-4xl mx-auto text-white relative z-10">
+            <section className="pt-32 pb-20 px-6 text-center border-b border-slate-800 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, #E07A5F, transparent 60%)' }} />
+                <div className="max-w-4xl mx-auto relative z-10 text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest mb-6"
-                        style={{ border: '1px solid rgba(255,107,53,0.3)', background: 'rgba(255,107,53,0.1)', color: '#ff6b35' }}>
+                        style={{ border: '1px solid rgba(224,122,95,0.3)', background: 'rgba(224,122,95,0.1)', color: '#E07A5F' }}>
                         <Shield size={14} /> Security & Compliance
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight" style={{ fontFamily: 'var(--font-headline)' }}>
+                    <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                         Your Factory Data is a<br />
-                        <span style={{ color: '#ff6b35' }}>First-Class Asset.</span>
+                        <span style={{ color: '#E07A5F' }}>First-Class Asset.</span>
                     </h1>
                     <p className="text-lg max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                        BazzAI is built with enterprise-grade security controls at every layer — from WhatsApp message intake to M-Pesa payment reconciliation.
+                        BazzAI is built with enterprise-grade security controls at every layer — from real-time data ingestion to high-performance predictive intelligence.
                     </p>
                 </div>
             </section>
 
-            <section className="py-24 px-6" style={{ background: 'var(--color-bg-light)' }}>
+            <section className="py-24 px-6">
                 <div className="max-w-5xl mx-auto text-center mb-16">
-                    <h2 className="text-3xl font-black mb-4" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-headline)' }}>Security Controls</h2>
+                    <h2 className="text-3xl font-black mb-4 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Security Controls</h2>
                 </div>
                 <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {controls.map((c, i) => (
-                        <div key={i} className="bg-white p-7 rounded-2xl border shadow-sm" style={{ borderColor: '#e8eef4' }}>
-                            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 text-white" style={{ background: 'var(--color-primary)' }}>
+                        <div key={i} className="p-7 rounded-2xl border shadow-sm transition-all hover:-translate-y-1" style={{ background: '#1A202C', borderColor: '#2D3748' }}>
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 text-[#0F1419]" style={{ background: '#81B29A' }}>
                                 {c.icon}
                             </div>
-                            <h3 className="font-black text-sm mb-3" style={{ color: 'var(--color-primary)' }}>{c.title}</h3>
-                            <p className="text-sm text-slate-500 leading-relaxed">{c.body}</p>
+                            <h3 className="font-black text-lg mb-3 text-[#F4F1DE]">{c.title}</h3>
+                            <p className="text-sm text-slate-400 leading-relaxed">{c.body}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            <section className="py-16 px-6 bg-white border-t text-center" style={{ borderColor: '#e8eef4' }}>
-                <h2 className="text-2xl font-black mb-4" style={{ color: 'var(--color-primary)' }}>Questions about data handling?</h2>
-                <p className="text-slate-500 mb-6">We are happy to share our Data Processing Agreement and complete a security questionnaire.</p>
+            <section className="py-16 px-6 border-t text-center border-slate-800" style={{ background: '#141A23' }}>
+                <h2 className="text-2xl font-black mb-4 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Questions about data handling?</h2>
+                <p className="text-slate-400 mb-6">We are happy to share our Data Processing Agreement and complete a security questionnaire.</p>
                 <button
-                    className="px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 inline-flex items-center gap-2"
-                    style={{ background: 'var(--color-action)' }}
+                    className="px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 inline-flex items-center gap-2 shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
                     onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
                     Request Security Review
                 </button>

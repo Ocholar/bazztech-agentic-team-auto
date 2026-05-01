@@ -1,143 +1,115 @@
 "use client";
+
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import {
-    ArrowRight, MessageSquare, Truck, FileText, CreditCard,
-    BarChart3, Check, ChevronDown, Clock, Factory, Shield,
-    Zap, Phone, Layers
+    ArrowRight, Cpu, Network, LineChart, Target,
+    ChevronDown, ShieldCheck, Database, Zap, Clock, Check
 } from 'lucide-react';
 import Link from 'next/link';
 
-const WHATSAPP_URL = 'https://wa.me/15558219787';
-
-/* ─── 4-phase onboarding ─── */
-const phases = [
+/* ─── 4-Step Process ─── */
+const steps = [
     {
-        phase: 'Phase 1',
-        title: 'Factory Workflow Audit',
-        duration: 'Week 1 — Free',
-        icon: <Layers size={22} />,
-        color: '#ff6b35',
+        phase: '01',
+        title: 'Connect Existing Data',
+        duration: 'Zero New Hardware',
+        icon: <Database size={22} />,
+        color: '#81B29A',
         points: [
-            'We map your current order-to-cash flow via WhatsApp interview (30 min).',
-            'Identify your top 3 operational bottlenecks — orders, suppliers, invoicing.',
-            'Quantify time + money lost per month on each bottleneck.',
-            'Deliver a custom BazzAI configuration blueprint for your factory.',
+            'We link securely to your existing factory systems—whether it’s an ERP, spreadsheets, or machine sensors.',
+            'Data streams continuously into a secure, encrypted silo dedicated only to your factory.',
+            'No complex implementations or factory floor disruption. We plug into what you already use.',
         ],
     },
     {
-        phase: 'Phase 2',
-        title: 'WhatsApp & System Setup',
-        duration: 'Days 2–5',
-        icon: <MessageSquare size={22} />,
-        color: '#2c5aa0',
+        phase: '02',
+        title: 'The AI Learns Your Blueprint',
+        duration: 'Automated Profiling',
+        icon: <Network size={22} />,
+        color: '#F2CC8F',
         points: [
-            'Connect your WhatsApp Business number to BazzAI in under 2 hours.',
-            'Configure order capture workflows, supplier portal, and payment reconciliation.',
-            'Import your existing customer and supplier contacts.',
-            'Train your team on the dashboard — no prior software experience needed.',
+            'BazzAI analyzes historical production patterns, downtime reasons, and inventory cycles.',
+            'It builds an operational baseline, learning the unique rhythms of each production line.',
+            'Normal variations are mapped so the system knows exactly when something is an anomaly.',
         ],
     },
     {
-        phase: 'Phase 3',
-        title: 'Pilot Run — First 14 Days',
-        duration: 'Days 6–20 — Free',
-        icon: <Factory size={22} />,
-        color: '#2ecc71',
+        phase: '03',
+        title: 'Predictive Intelligence',
+        duration: 'Real-Time Insights',
+        icon: <Target size={22} />,
+        color: '#E07A5F',
         points: [
-            'BazzAI runs live alongside your normal operations.',
-            'Real orders, real suppliers, real payments — all tracked automatically.',
-            'Your team gets WhatsApp alerts for every status change — no chasing.',
-            'M-Pesa payments auto-reconciled. KRA invoices auto-generated.',
+            'Get early warnings 48-72 hours before a machine failure or inventory stock-out occurs.',
+            'Instantly query your factory data using natural language ("Why did Line A slow down today?").',
+            'The AI provides clear, actionable answers tailored to your specific operations.',
         ],
     },
     {
-        phase: 'Phase 4',
-        title: 'Full Production + ROI Review',
-        duration: 'Day 21 Onwards',
-        icon: <BarChart3 size={22} />,
-        color: '#1a3a52',
+        phase: '04',
+        title: 'Continuous Improvement',
+        duration: 'Self-Optimizing',
+        icon: <LineChart size={22} />,
+        color: '#4299E1',
         points: [
-            'We run a joint ROI review — hours saved, orders recovered, invoices filed.',
-            'If it\'s working: subscribe at KES 15,000/mo and keep going.',
-            'If it\'s not: cancel, no questions asked, no invoice.',
-            'Most factories see positive ROI within the first 14 days.',
+            'Every week, BazzAI refines its models based on new data and your team’s feedback.',
+            'Predictions become sharper. Maintenance schedules become more efficient.',
+            'You shift from fighting daily operational fires to strategic, data-driven expansion.',
         ],
     },
 ];
 
-/* ─── How each module works ─── */
-const modules = [
+/* ─── Business Outcomes ─── */
+const outcomes = [
     {
-        icon: <MessageSquare size={24} />,
-        title: 'Order Capture via WhatsApp',
-        how: 'Customer sends an order via WhatsApp. BazzAI reads it, extracts product, quantity, and delivery details, logs it in the system, and returns a confirmation to the customer — automatically.',
-        result: 'Zero lost orders. Instant confirmation. No manual data entry.',
-        color: '#ff6b35',
+        icon: <Clock size={24} />,
+        title: 'Eliminate Unplanned Downtime',
+        how: 'By catching micro-anomalies early, BazzAI alerts maintenance teams days before a part totally fails. Move from a reactive break-fix model to predictive care.',
+        color: '#E07A5F',
     },
     {
-        icon: <Truck size={24} />,
-        title: 'Supplier Delivery Tracking',
-        how: 'BazzAI pings your suppliers via WhatsApp every morning for delivery ETAs. Responses are parsed and logged. Late deliveries trigger alerts to your production manager.',
-        result: 'No more call-and-wait. Supplier status at a glance all day.',
-        color: '#2c5aa0',
+        icon: <Target size={24} />,
+        title: 'Precision Inventory Forecasting',
+        how: 'Stop overstocking materials or running out mid-batch. BazzAI anticipates seasonal demand shifts and suggests exact reorder quantities with safety buffers.',
+        color: '#F2CC8F',
     },
     {
-        icon: <FileText size={24} />,
-        title: 'KRA Invoice Generation',
-        how: 'When an order is dispatched, BazzAI auto-generates an ETR-compliant invoice with correct VAT, customer details, and item breakdown — ready to send to the customer and file with KRA.',
-        result: '3× faster invoicing. Zero manual iTax data entry.',
-        color: '#8b5cf6',
+        icon: <Cpu size={24} />,
+        title: 'Instant Operational Answers',
+        how: 'No more waiting days for the analyst to build a spreadsheet. Ask your factory\'s AI Brain any question and get instant, accurate insights derived directly from your raw data.',
+        color: '#81B29A',
     },
     {
-        icon: <CreditCard size={24} />,
-        title: 'M-Pesa Payment Reconciliation',
-        how: 'BazzAI reads incoming M-Pesa notifications and matches them to open invoices in real time. Unmatched payments are flagged. Overdue accounts trigger automated WhatsApp payment reminders.',
-        result: 'Zero lost payments. End-of-day reconciliation in minutes not hours.',
-        color: '#2ecc71',
-    },
-    {
-        icon: <BarChart3 size={24} />,
-        title: 'Production Intelligence Dashboard',
-        how: 'All data — orders, deliveries, invoices, payments — flows into a single dashboard. View today\'s order queue, supplier status, cash collected, and outstanding debt in one screen.',
-        result: 'From 4 WhatsApp groups and a spreadsheet to one real-time screen.',
-        color: '#f39c12',
-    },
-    {
-        icon: <Shield size={24} />,
-        title: 'KEBS Batch & Compliance Records',
-        how: 'For regulated food products, BazzAI maintains batch records linking each production run to its raw material lot, production date, and dispatch destination — audit-ready at any time.',
-        result: 'KEBS compliance without a dedicated QA administrator.',
-        color: '#1a3a52',
+        icon: <ShieldCheck size={24} />,
+        title: 'Audit-Ready Compliance',
+        how: 'Quality assurance and compliance records are automatically organized. When inspectors or auditors arrive, instant reports prove adherence to rigorous manufacturing standards.',
+        color: '#4299E1',
     },
 ];
 
 /* ─── FAQ ─── */
 const faqs = [
     {
-        q: 'Do we need to change how we work or install any software?',
-        a: 'No. Your team keeps using WhatsApp exactly as they do now — BazzAI structures the conversations in the background. No app download, no training on new software, no disruption to existing workflows.',
+        q: 'Do we need data scientists to use BazzAI?',
+        a: 'Absolutely not. BazzAI is designed for factory managers, COOs, and maintenance leads. If you know how to ask a question in plain English, you can use BazzAI.',
     },
     {
-        q: 'How do we connect our WhatsApp number?',
-        a: 'We use the official WhatsApp Business API. The connection takes under 2 hours and requires your existing WhatsApp Business number or we can provision a new one. Your customers see the same number they always contacted.',
+        q: 'Will this disrupt our current manufacturing lines?',
+        a: 'Zero disruption. BazzAI connects to your existing data streams. We do not require you to halt production to install new hardware or sensors.',
     },
     {
-        q: 'Does BazzAI work with our existing suppliers and customers?',
-        a: 'Yes. BazzAI works with whoever contacts you on WhatsApp. Existing suppliers don\'t need to change anything — they just respond to a BazzAI-structured message instead of an informal one.',
+        q: 'How secure is our factory data?',
+        a: 'We use bank-grade encryption. Your data remains in an isolated container that is strictly partitioned. BazzAI never shares your proprietary production data points across other clients.',
     },
     {
-        q: 'What if we already use QuickBooks or another accounting system?',
-        a: 'BazzAI can export invoices and payment data in standard CSV/JSON formats compatible with QuickBooks, Sage, and most other accounting platforms. We can also build a direct API integration on request.',
+        q: 'Can BazzAI integrate with our old ERP?',
+        a: 'Yes. BazzAI is built to ingest data from diverse sources including modern APIs, CSV dumps, databases, and even legacy ERP exports. Our system handles the hard work of making sense of it.',
     },
     {
-        q: 'What happens to our data?',
-        a: 'All your operational data is stored in an isolated, encrypted database dedicated to your account. We do not share data between clients and we sign a Data Processing Agreement at onboarding. For Kenya-based manufacturers, data can be stored on servers in the AWS Africa (Cape Town) region.',
-    },
-    {
-        q: 'We operate in Nigeria/Uganda/Ghana — does BazzAI work there?',
-        a: 'Yes. BazzAI supports multiple currencies and integrates with local payment infrastructure including FIRS (Nigeria) and GRA (Ghana) for VAT compliance. WhatsApp works across all African markets.',
+        q: 'How quickly does the AI start providing value?',
+        a: 'Typically, BazzAI provides baseline insights within the first few days of data ingestion. Predictive value peaks rapidly as it learns your specific factory patterns during the 14-Day Pilot.',
     },
 ];
 
@@ -145,97 +117,74 @@ export default function HowItWorksPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
     return (
-        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="min-h-screen flex flex-col" style={{ background: '#0F1419', color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
             <Header />
 
             {/* ─── HERO ─── */}
-            <section style={{ paddingTop: '5rem', background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}
-                className="relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 pointer-events-none"
-                    style={{ background: 'radial-gradient(circle at 80% 50%, #ff6b35, transparent 60%)' }} />
-                <div className="max-w-5xl mx-auto px-6 py-24 text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-bold mb-7"
-                        style={{ borderColor: 'rgba(255,107,53,0.4)', background: 'rgba(255,107,53,0.12)', color: '#ff6b35' }}>
-                        <Clock size={12} /> Live in 14 Days. Zero Disruption.
+            <section className="relative overflow-hidden pt-36 pb-24 px-6 border-b border-slate-800">
+                <div className="absolute inset-0 opacity-20 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(#E07A5F 1px, transparent 1px)',
+                        backgroundSize: '40px 40px'
+                    }} />
+                <div className="max-w-5xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-xs font-bold mb-7 text-slate-300">
+                        <Zap size={14} className="text-[#E07A5F]" /> Seamless Integration. Immediate Value.
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight"
-                        style={{ fontFamily: 'var(--font-headline)' }}>
-                        How BazzAI Works<br />
-                        <span style={{ color: '#ff6b35' }}>For Your Factory</span>
+                    <h1 className="text-4xl md:text-6xl font-black text-[#F4F1DE] mb-6 leading-tight"
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        From Raw Data to<br />
+                        <span style={{ color: '#E07A5F' }}>Competitive Intelligence</span>
                     </h1>
-                    <p className="text-lg mb-10 max-w-2xl mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                        BazzAI plugs into how your team already works — WhatsApp — and gives you order tracking,
-                        supplier management, KRA invoicing, and M-Pesa reconciliation on autopilot.
+                    <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+                        BazzAI connects silently to your operations, learning your specific factory rhythms to predict issues before they cost you money.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button
-                            className="px-8 py-4 rounded-xl font-bold text-white flex items-center gap-2 justify-center transition-all hover:scale-105"
-                            style={{ background: 'var(--color-action)' }}
-                            onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
-                            Book a Free Factory Demo <ArrowRight size={18} />
-                        </button>
-                        <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-8 py-4 rounded-xl font-bold flex items-center gap-2 justify-center transition-all"
-                            style={{ border: '2px solid rgba(255,255,255,0.25)', color: 'white' }}>
-                            <MessageSquare size={18} /> Chat on WhatsApp
-                        </Link>
-                    </div>
                 </div>
             </section>
 
-            {/* ─── ONBOARDING PHASES ─── */}
-            <section className="py-24 px-6" style={{ background: 'var(--color-bg-light)' }}>
+            {/* ─── THE 4-STEP PROCESS ─── */}
+            <section className="py-24 px-6 border-b border-slate-800 bg-[#141A23]">
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-16">
-                        <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-5"
-                            style={{ background: 'rgba(26,58,82,0.08)', color: 'var(--color-primary)' }}>
-                            Your Onboarding Journey
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black mb-4"
-                            style={{ fontFamily: 'var(--font-headline)', color: 'var(--color-primary)' }}>
-                            From WhatsApp Chaos to<br />
-                            <span style={{ color: 'var(--color-action)' }}>Connected Operations in 20 Days</span>
+                        <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#F4F1DE]"
+                            style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                            How The AI Brain Works
                         </h2>
-                        <p className="text-slate-500 text-lg max-w-xl mx-auto">
-                            No long contracts. No upfront fees. Start with a free audit and pilot.
+                        <p className="text-lg max-w-xl mx-auto text-slate-400">
+                            A clear, proven path to modernizing your factory without the risk of heavy IT projects.
                         </p>
                     </div>
 
-                    {/* Vertical timeline */}
                     <div className="relative">
-                        <div className="hidden md:block absolute left-8 top-10 bottom-10 w-0.5"
-                            style={{ background: 'linear-gradient(to bottom, var(--color-action), var(--color-primary))' }} />
+                        {/* Timeline Line */}
+                        <div className="hidden md:block absolute left-8 top-10 bottom-10 w-px bg-slate-700" />
 
-                        <div className="space-y-10">
-                            {phases.map((p, i) => (
+                        <div className="space-y-12">
+                            {steps.map((p, i) => (
                                 <div key={i} className="flex gap-8 items-start relative z-10">
-                                    {/* Icon bubble */}
-                                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 text-white shadow-lg"
-                                        style={{ background: p.color }}>
+                                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 text-white shadow-lg border border-slate-700"
+                                        style={{ background: '#1A202C' }}>
                                         {p.icon}
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1 bg-white rounded-2xl p-7 border shadow-sm hover:shadow-md transition-all"
-                                        style={{ borderColor: '#e8eef4' }}>
+                                    <div className="flex-1 bg-[#1A202C] rounded-2xl p-7 border border-slate-800 transition-all hover:border-slate-600">
                                         <div className="flex flex-wrap items-center gap-3 mb-4">
                                             <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
                                                 style={{ background: `${p.color}15`, color: p.color }}>
-                                                {p.phase}
+                                                Step {p.phase}
                                             </span>
-                                            <h3 className="text-lg font-black" style={{ color: 'var(--color-primary)' }}>
+                                            <h3 className="text-xl font-black text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                                                 {p.title}
                                             </h3>
-                                            <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-500">
+                                            <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400">
                                                 {p.duration}
                                             </span>
                                         </div>
-                                        <ul className="space-y-2.5">
+                                        <ul className="space-y-3">
                                             {p.points.map((pt, j) => (
-                                                <li key={j} className="flex items-start gap-2.5 text-sm"
-                                                    style={{ color: 'var(--color-text-primary)' }}>
-                                                    <Check size={14} className="flex-shrink-0 mt-0.5" style={{ color: '#2ecc71' }} />
-                                                    {pt}
+                                                <li key={j} className="flex items-start gap-3">
+                                                    <Check size={16} className="flex-shrink-0 mt-0.5" style={{ color: p.color }} />
+                                                    <span className="leading-relaxed">{pt}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -247,91 +196,55 @@ export default function HowItWorksPage() {
                 </div>
             </section>
 
-            {/* ─── MODULE DEEP DIVE ─── */}
-            <section className="py-24 px-6 bg-white">
+            {/* ─── BUSINESS OUTCOMES ─── */}
+            <section className="py-24 px-6 border-b border-slate-800" style={{ background: '#0F1419' }}>
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
-                        <div className="inline-block px-4 py-1.5 rounded-full text-xs font-bold mb-5"
-                            style={{ background: 'rgba(255,107,53,0.1)', color: 'var(--color-action)', border: '1px solid rgba(255,107,53,0.25)' }}>
-                            Under the Hood
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black mb-4"
-                            style={{ fontFamily: 'var(--font-headline)', color: 'var(--color-primary)' }}>
-                            What Each Module Does
+                        <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#F4F1DE]"
+                            style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                            Built For Business Outcomes
                         </h2>
-                        <p className="text-slate-500 text-lg max-w-2xl mx-auto">
-                            Six interconnected workflows that turn your factory from reactive to proactive.
+                        <p className="text-lg max-w-2xl mx-auto text-slate-400">
+                            Technology is just the enabler. BazzAI focuses entirely on driving measurable ROI for your manufacturing operations.
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {modules.map((m, i) => (
-                            <div key={i} className="rounded-2xl p-7 border-2 hover:shadow-lg transition-all group"
-                                style={{ borderColor: '#e8eef4', background: '#fafcff' }}>
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 text-white"
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {outcomes.map((m, i) => (
+                            <div key={i} className="rounded-2xl p-8 border border-slate-800 bg-[#141A23] hover:border-slate-600 transition-colors">
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-[#0F1419]"
                                     style={{ background: m.color }}>
                                     {m.icon}
                                 </div>
-                                <h3 className="text-base font-black mb-3" style={{ color: 'var(--color-primary)' }}>{m.title}</h3>
-                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#7f8c8d' }}>{m.how}</p>
-                                <div className="pt-3 border-t" style={{ borderColor: '#e8eef4' }}>
-                                    <p className="text-xs font-bold" style={{ color: '#2ecc71' }}>✓ {m.result}</p>
-                                </div>
+                                <h3 className="text-xl font-black mb-3 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{m.title}</h3>
+                                <p className="leading-relaxed text-slate-400">{m.how}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ─── INTEGRATION LOGOS ─── */}
-            <section className="py-16 px-6 border-y" style={{ background: 'var(--color-primary)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <p className="text-center text-[10px] font-black uppercase tracking-widest mb-8" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                    Connects to your existing stack
-                </p>
-                <div className="max-w-4xl mx-auto flex flex-wrap gap-4 justify-center">
-                    {[
-                        { name: 'WhatsApp Business', emoji: '💬' },
-                        { name: 'M-Pesa / Mpesa B2B', emoji: '📲' },
-                        { name: 'KRA iTax', emoji: '🧾' },
-                        { name: 'KEBS', emoji: '🏭' },
-                        { name: 'QuickBooks', emoji: '📊' },
-                        { name: 'Google Sheets', emoji: '📋' },
-                        { name: 'Safaricom Daraja', emoji: '🔗' },
-                        { name: 'FIRS Nigeria', emoji: '🗂️' },
-                    ].map((p, i) => (
-                        <div key={i} className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold"
-                            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.8)' }}>
-                            <span>{p.emoji}</span> {p.name}
-                        </div>
-                    ))}
-                </div>
-            </section>
-
             {/* ─── FAQ ─── */}
-            <section className="py-24 px-6 bg-white">
+            <section className="py-24 px-6 bg-[#141A23]">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-black mb-4"
-                            style={{ fontFamily: 'var(--font-headline)', color: 'var(--color-primary)' }}>
-                            Frequently Asked Questions
+                        <h2 className="text-3xl md:text-4xl font-black mb-4 text-[#F4F1DE]"
+                            style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                            Common Questions
                         </h2>
-                        <p className="text-slate-500">Every question a factory manager asks before starting.</p>
                     </div>
                     <div className="space-y-4">
                         {faqs.map((faq, i) => (
-                            <div key={i} className="rounded-2xl overflow-hidden border" style={{ borderColor: '#e8eef4', background: '#fafcff' }}>
+                            <div key={i} className="rounded-2xl overflow-hidden border border-slate-800 bg-[#0F1419]">
                                 <button
-                                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+                                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-900 transition-colors"
                                     onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                                    <span className="font-bold pr-8" style={{ color: 'var(--color-primary)' }}>{faq.q}</span>
-                                    <ChevronDown size={18} className="flex-shrink-0 transition-transform duration-300"
-                                        style={{
-                                            color: 'var(--color-action)',
-                                            transform: openFaq === i ? 'rotate(180deg)' : 'none'
-                                        }} />
+                                    <span className="font-bold pr-8 text-[#F4F1DE]">{faq.q}</span>
+                                    <ChevronDown size={18} className="flex-shrink-0 transition-transform duration-300 text-[#E07A5F]"
+                                        style={{ transform: openFaq === i ? 'rotate(180deg)' : 'none' }} />
                                 </button>
                                 <div className={`px-6 overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-96 pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                    <p className="text-sm leading-relaxed border-t pt-5" style={{ color: '#7f8c8d', borderColor: '#e8eef4' }}>
+                                    <p className="leading-relaxed border-t border-slate-800 pt-5 text-slate-400">
                                         {faq.a}
                                     </p>
                                 </div>
@@ -342,25 +255,21 @@ export default function HowItWorksPage() {
             </section>
 
             {/* ─── FINAL CTA ─── */}
-            <section className="py-24 px-6" style={{ background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}>
-                <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="text-3xl md:text-5xl font-black text-white mb-5"
-                        style={{ fontFamily: 'var(--font-headline)' }}>
-                        Ready to See It on<br />
-                        <span style={{ color: '#ff6b35' }}>Your Factory Floor?</span>
+            <section className="py-24 px-6 text-center border-t border-slate-800">
+                <div className="max-w-2xl mx-auto">
+                    <h2 className="text-3xl md:text-5xl font-black text-[#F4F1DE] mb-6"
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Unleash Your Factory's Potential
                     </h2>
-                    <p className="text-lg mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                        Book a 30-minute factory demo. We use your actual workflow — no generic slides.
+                    <p className="text-lg mb-10 text-slate-400">
+                        Start a 14-Day Pilot and watch the AI Brain analyze your operations in real time.
                     </p>
                     <button
-                        className="px-10 py-4 rounded-xl font-black text-lg text-white transition-all hover:scale-105 shadow-2xl flex items-center gap-2 mx-auto"
-                        style={{ background: 'var(--color-action)', boxShadow: '0 8px 32px rgba(255,107,53,0.4)' }}
+                        className="px-8 py-4 rounded-full font-bold text-[#F4F1DE] flex items-center gap-2 justify-center transition-all hover:scale-105 shadow-lg mx-auto"
+                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
                         onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
-                        Book Factory Demo <ArrowRight size={20} />
+                        Start Free 14-Day Pilot <ArrowRight size={18} />
                     </button>
-                    <p className="text-xs mt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        No commitment. No sales pitch. Just 30 minutes with a real workflow.
-                    </p>
                 </div>
             </section>
 

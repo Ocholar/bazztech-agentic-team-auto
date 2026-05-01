@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Factory, Truck, ArrowRight, Check, Star, MessageSquare, BarChart3, TrendingUp, Award } from 'lucide-react';
+import { Award, ArrowRight, MessageSquare, TrendingUp, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 const WHATSAPP_URL = 'https://wa.me/15558219787';
@@ -10,144 +10,107 @@ const WHATSAPP_URL = 'https://wa.me/15558219787';
 /* ─── Case Studies ─── */
 const studies = [
     {
-        country: '🇰🇪',
-        industry: 'Food & Beverage',
-        client: 'Nairobi Food Processing Plant',
-        subtitle: '42 employees · Production of 8 SKUs daily',
-        title: 'From WhatsApp Chaos to 98% Order Accuracy in 30 Days',
-        challenge: 'The company was managing 40+ daily orders across 3 WhatsApp groups, an Excel spreadsheet, and verbal instructions on the factory floor. Orders were duplicated, mis-priced, and frequently lost. The operations manager was spending 3+ hours daily just chasing order status.',
-        solution: 'BazzAI centralized all order intake through a structured WhatsApp workflow. Suppliers were connected to an automated delivery confirmation portal. M-Pesa payments were auto-reconciled against invoices in real time.',
+        country: '🇲🇺',
+        industry: 'Packaging & Manufacturing',
+        client: 'Leading Carton Manufacturer',
+        subtitle: 'Leading Carton Manufacturing Case Study',
+        title: 'How Leading Carton Manufacturer Achieved a 1,295% Year 1 ROI with Predictive Operations',
+        challenge: 'Factory managers were spending 3–4 hours per day manually pulling shift reports and reacting to stockouts. HR processes were manual, and sales tracking lacked real-time visibility, leading to operational friction across all departments.',
+        solution: 'BazzAI deployed a secure, predictive intelligence layer across the factory’s data. This included automated inventory signals, AI-driven HR onboarding workflows, and centralized sales intelligence that allowed natural language queries.',
         results: [
-            { metric: '98%', label: 'Order Accuracy (up from 71%)' },
-            { metric: '3hrs', label: 'Saved Daily (ops manager)' },
-            { metric: '18 days', label: 'Payback Period' },
-            { metric: 'KES 0', label: 'Setup Cost (free pilot)' },
+            { metric: '1,295%', label: 'Year 1 ROI' },
+            { metric: '40%', label: 'Reduction in Stockouts' },
+            { metric: '15%', label: 'OEE Improvement' },
+            { metric: '1.2 mos', label: 'Payback Period' },
         ],
-        quote: '"We used to have 3 people chasing WhatsApp orders daily. BazzAI consolidated everything. Our order accuracy went from 71% to 98% in the first month. The ROI was immediate."',
-        role: 'Operations Manager',
-        tags: ['WhatsApp Orders', 'M-Pesa Reconciliation', 'KRA Invoicing', 'Supplier Portal'],
+        quote: '"BazzAI gave us unprecedented visibility into our production lines and business operations. We stopped reacting to anomalies and started predicting them. The cross-departmental impact has been profound."',
+        role: 'Chief Operating Officer',
+        tags: ['Predictive Maintenance', 'HR Automation', 'Sales Intelligence'],
         featured: true,
+        slug: '/case-studies/carton-manufacturer'
+    },
+    {
+        country: '🇰🇪',
+        industry: 'Agro-Processing',
+        client: 'Nairobi Export Processor',
+        subtitle: '60 employees · Export to 4 regional markets',
+        title: 'Customer Inbound Calls Drop 70% with Automated Status AI',
+        challenge: 'The sales team was receiving 80+ inbound calls daily from customers asking "Is my order ready?" Each call took 5–10 minutes to resolve, effectively destroying sales time.',
+        solution: 'BazzAI integrated automated status notification pipelines linked directly to dispatch data. Customers received proactive updates without asking, and the AI managed preliminary inquiries instantly.',
+        results: [
+            { metric: '70%', label: 'Fewer Customer Calls' },
+            { metric: '2hrs', label: 'Freed Per Sales Rep Daily' },
+            { metric: '22%', label: 'Increase in Sales' },
+            { metric: 'Instant', label: 'Data Retrieval' },
+        ],
+        quote: '"Our customers used to call constantly for order updates. BazzAI handles all standard tracking automatically. My team can finally focus exclusively on selling and expanding our client base."',
+        role: 'Head of Sales',
+        tags: ['Customer Intelligence', 'Sales Productivity', 'Order Autopilot'],
+        featured: false,
+        slug: '#'
     },
     {
         country: '🇳🇬',
-        industry: 'Snack Manufacturing',
-        client: 'Lagos Snack Producer',
-        subtitle: '28 employees · 5 SKUs supplied to major retailers',
-        title: 'KRA-Equivalent Invoice Automation Saves 6hrs/Week',
-        challenge: 'The finance team was manually entering invoice data into their tax system every week — a process that took a full day, was error-prone, and created audit risk. Delivery notes often didn\'t match what was ordered.',
-        solution: 'BazzAI automatically generates compliant invoices when orders are dispatched. All delivery note mismatches are flagged before dispatch. FIRS-compliant VAT calculations are automatic.',
+        industry: 'Consumer Goods',
+        client: 'Lagos FMCG Enterprise',
+        subtitle: '150 employees · Supplying 200+ retail points',
+        title: 'Instant Financial Reconciliation & Cross-Department Visibility',
+        challenge: 'Reconciliation of thousands of daily payments was taking 6 hours. Administrative reporting was weeks behind, creating massive cash flow uncertainty.',
+        solution: 'BazzAI connected directly to banking data streams, matching invoices to payments in milliseconds. Admin tasks were automated via AI summarization, bringing reporting back to real-time.',
         results: [
-            { metric: '6hrs', label: 'Saved per Week (accounting)' },
-            { metric: '100%', label: 'Invoice-Delivery Match Rate' },
-            { metric: '3×', label: 'Faster Month-End Close' },
-            { metric: '0', label: 'Tax Compliance Errors' },
+            { metric: 'Real-time', label: 'Financial Matching' },
+            { metric: '6hrs', label: 'Daily Time Eliminated' },
+            { metric: '100%', label: 'Invoice Accuracy' },
+            { metric: '3×', label: 'Faster Month-End' },
         ],
-        quote: '"FIRS filing used to take my accountant a full day every week. Now it takes 20 minutes. BazzAI pulls everything from the orders automatically. I don\'t know how we survived before."',
-        role: 'Finance Director',
-        tags: ['Invoice Automation', 'Tax Compliance', 'Delivery Note Matching', 'Month-End Close'],
-        featured: false,
-    },
-    {
-        country: '🇺🇬',
-        industry: 'Dairy Manufacturing',
-        client: 'Kampala Dairy Producer',
-        subtitle: '55 employees · Fresh dairy delivered to 80+ outlets daily',
-        title: 'Supplier On-Time Delivery Jumps from 58% to 91%',
-        challenge: 'The factory was experiencing repeated production line stoppages because raw milk suppliers were delivering late with no advance warning. The production manager was making 20+ calls daily just to track supplier arrival ETAs.',
-        solution: 'BazzAI\'s supplier WhatsApp portal sends automated morning check-ins to all suppliers. Confirmed ETAs are logged. Any supplier behind schedule triggers an automatic alert to the production manager.',
-        results: [
-            { metric: '91%', label: 'On-Time Supplier Delivery (up from 58%)' },
-            { metric: '80%', label: 'Reduction in Production Stoppages' },
-            { metric: '20+', label: 'Calls Eliminated Daily' },
-            { metric: '12 days', label: 'To Full Deployment' },
-        ],
-        quote: '"Supplier delivery chaos was killing us. With BazzAI\'s supplier WhatsApp portal, our on-time delivery rate jumped from 58% to 91%. Production stops dropped by 80%."',
-        role: 'General Manager',
-        tags: ['Supplier Tracking', 'Production Planning', 'WhatsApp Portal', 'Alert Automation'],
-        featured: false,
-    },
-    {
-        country: '🇬🇭',
-        industry: 'Beverage Manufacturing',
-        client: 'Accra Beverage Company',
-        subtitle: '38 employees · Supplying 150+ retail points',
-        title: 'KES 320K/Month in Unmatched Payments Recovered',
-        challenge: 'M-Pesa payment reconciliation was taking 4+ hours every evening. The finance team was manually cross-referencing M-Pesa statements with Excel invoices. Unmatched payments were being written off or causing disputes.',
-        solution: 'BazzAI auto-matches incoming M-Pesa transactions to open invoices in real time. Unmatched payments are flagged within minutes. An ageing report shows overdue accounts with amounts outstanding.',
-        results: [
-            { metric: 'KES 320K', label: 'Monthly Payments Previously Missing' },
-            { metric: '4hrs', label: 'Daily Reconciliation Time Eliminated' },
-            { metric: 'Real-time', label: 'Payment Matching (was end-of-day)' },
-            { metric: '23%', label: 'Reduction in Overdue Accounts' },
-        ],
-        quote: '"M-Pesa reconciliation was 4 hours every evening. BazzAI does it in real time. We found KES 320,000 in unmatched payments our old process was missing every month."',
+        quote: '"Reconciliation was a nightmare. BazzAI does it in real time, with zero errors. It has completely transformed our administrative and financial efficiency across the board."',
         role: 'Managing Director',
-        tags: ['M-Pesa Reconciliation', 'Payment Matching', 'Ageing Reports', 'Cash Flow'],
+        tags: ['Financial Intelligence', 'Admin Automation'],
         featured: false,
-    },
-    {
-        country: '🇰🇪',
-        industry: 'Export Food Processing',
-        client: 'Mombasa Export Processor',
-        subtitle: '60 employees · Export to 4 regional markets',
-        title: 'Customer Inbound Calls Drop 70% with WhatsApp Status Updates',
-        challenge: 'The sales team was receiving 80+ inbound calls daily from customers asking "Is my order ready?" Each call took 5–10 minutes to resolve — requiring the rep to call production, wait, then call back. Sales time was effectively destroyed.',
-        solution: 'BazzAI sends automatic WhatsApp status updates to customers at each stage: order confirmed, in production, dispatched, delivered. Customers get proactive updates they didn\'t have to ask for.',
-        results: [
-            { metric: '70%', label: 'Fewer Customer Inbound Calls' },
-            { metric: '80+', label: 'Daily Calls Eliminated' },
-            { metric: '2hrs', label: 'Freed Per Sales Rep Daily' },
-            { metric: '22%', label: 'Increase in New Sales Calls Made' },
-        ],
-        quote: '"Our customers used to call constantly for order updates. Since BazzAI sends WhatsApp status updates automatically, inbound customer calls dropped 70%. My team can focus on selling."',
-        role: 'Head of Sales',
-        tags: ['Customer Notifications', 'WhatsApp Updates', 'Order Status', 'Sales Productivity'],
-        featured: false,
-    },
+        slug: '#'
+    }
 ];
 
 const metrics = [
-    { value: '98%', label: 'Avg Order Accuracy' },
-    { value: '20hrs', label: 'Saved per Week' },
+    { value: '1,295%', label: 'Record ROI (Mauritius)' },
+    { value: '20hrs', label: 'Saved per Week Avg' },
     { value: '14 days', label: 'Avg Payback Period' },
-    { value: 'KES 320K', label: 'Payments Recovered / Month' },
+    { value: '3M+', label: 'Operations Automated' },
 ];
 
 export default function CaseStudiesPage() {
     const [expanded, setExpanded] = useState<number | null>(0);
 
     return (
-        <div className="min-h-screen flex flex-col bg-white" style={{ fontFamily: 'var(--font-body)' }}>
+        <div className="min-h-screen flex flex-col" style={{ background: '#0F1419', color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
             <Header />
 
             {/* ─── HERO ─── */}
-            <section style={{ paddingTop: '5rem', background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}
-                className="relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none opacity-8"
-                    style={{ background: 'radial-gradient(circle at 70% 50%, #ff6b35, transparent 60%)' }} />
-                <div className="max-w-5xl mx-auto px-6 py-24 text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-bold mb-7"
-                        style={{ borderColor: 'rgba(255,107,53,0.4)', background: 'rgba(255,107,53,0.12)', color: '#ff6b35' }}>
-                        <Award size={12} /> Real Results. Real Factories.
+            <section className="relative overflow-hidden pt-36 pb-24 px-6 border-b border-slate-800" style={{ background: 'linear-gradient(135deg, #1A202C 0%, #0F1419 100%)' }}>
+                <div className="absolute inset-0 pointer-events-none opacity-20"
+                    style={{ background: 'radial-gradient(circle at 70% 50%, #81B29A, transparent 60%)' }} />
+                <div className="max-w-5xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-xs font-bold mb-7"
+                        style={{ color: '#81B29A' }}>
+                        <Award size={12} /> Live Deployed Intelligence
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight"
-                        style={{ fontFamily: 'var(--font-headline)' }}>
-                        From the Factory Floor<br />
-                        <span style={{ color: '#ff6b35' }}>Across Africa</span>
+                    <h1 className="text-4xl md:text-6xl font-black text-[#F4F1DE] mb-6 leading-tight"
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Transforming Factories<br />
+                        <span style={{ color: '#81B29A' }}>Into Smart Enterprises</span>
                     </h1>
-                    <p className="text-lg max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                        Five case studies from food, dairy, beverage, and snack manufacturers in Kenya, Nigeria, Uganda, and Ghana.
-                        Real metrics, real factory managers, real results.
+                    <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed text-slate-400">
+                        Operational intelligence deployed across Africa’s leading manufacturers. From the Mauritius coast to Lagos, see how AI is turning raw data into extreme business value.
                     </p>
                 </div>
 
                 {/* Stats */}
-                <div style={{ background: 'rgba(0,0,0,0.25)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div className="max-w-4xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div className="mt-8 border-t border-slate-800 pt-8 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                         {metrics.map((m, i) => (
                             <div key={i}>
-                                <p className="text-3xl font-black" style={{ color: '#ff6b35', fontFamily: 'var(--font-headline)' }}>{m.value}</p>
-                                <p className="text-xs font-semibold mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>{m.label}</p>
+                                <p className="text-3xl font-black" style={{ color: '#E07A5F', fontFamily: 'Space Grotesk, sans-serif' }}>{m.value}</p>
+                                <p className="text-xs font-semibold mt-1 text-slate-500 uppercase tracking-widest">{m.label}</p>
                             </div>
                         ))}
                     </div>
@@ -155,88 +118,91 @@ export default function CaseStudiesPage() {
             </section>
 
             {/* ─── CASE STUDY CARDS ─── */}
-            <section className="py-24 px-6" style={{ background: 'var(--color-bg-light)' }}>
+            <section className="py-24 px-6 bg-[#141A23]">
                 <div className="max-w-5xl mx-auto space-y-8">
                     {studies.map((s, i) => (
-                        <div key={i} className="bg-white rounded-2xl border-2 overflow-hidden transition-all hover:shadow-xl"
-                            style={{ borderColor: s.featured ? 'var(--color-action)' : '#e8eef4' }}>
+                        <div key={i} className="bg-[#0F1419] rounded-2xl border transition-all hover:shadow-2xl overflow-hidden"
+                            style={{ borderColor: s.featured ? '#E07A5F' : '#2D3748' }}>
                             {/* Card top bar */}
-                            <div className="flex flex-wrap items-center justify-between px-7 py-4 border-b"
-                                style={{ borderColor: '#e8eef4', background: s.featured ? 'rgba(255,107,53,0.04)' : '#fafcff' }}>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">{s.country}</span>
+                            <div className="flex flex-wrap items-center justify-between px-7 py-5 border-b border-slate-800"
+                                style={{ background: s.featured ? 'rgba(224, 122, 95, 0.05)' : '#1A202C' }}>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-3xl">{s.country}</span>
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--color-action)' }}>{s.industry}</p>
-                                        <p className="font-black text-sm" style={{ color: 'var(--color-primary)' }}>{s.client}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: s.featured ? '#E07A5F' : '#81B29A' }}>{s.industry}</p>
+                                        <p className="font-black text-base text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{s.client}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                     {s.featured && (
-                                        <span className="px-3 py-1 rounded-full text-[10px] font-black text-white"
-                                            style={{ background: 'var(--color-action)' }}>Featured</span>
+                                        <span className="px-3 py-1 rounded-full text-[10px] font-black text-[#0F1419]"
+                                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>Flagship</span>
                                     )}
-                                    <span className="text-xs text-slate-400 hidden md:block">{s.subtitle}</span>
+                                    <span className="text-xs text-slate-500 font-medium hidden md:block">{s.subtitle}</span>
                                 </div>
                             </div>
 
                             {/* Card body */}
-                            <div className="p-7">
-                                <h3 className="text-xl font-black mb-4 leading-snug" style={{ color: 'var(--color-primary)' }}>
+                            <div className="p-8">
+                                <h3 className="text-2xl font-black mb-6 leading-snug text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                                     {s.title}
                                 </h3>
 
                                 {/* Result pills */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                                     {s.results.map((r, j) => (
-                                        <div key={j} className="rounded-xl p-3 text-center"
-                                            style={{ background: 'var(--color-bg-light)', border: '1px solid #d5e3ef' }}>
-                                            <p className="text-xl font-black" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-headline)' }}>{r.metric}</p>
-                                            <p className="text-[10px] font-semibold mt-0.5 leading-tight" style={{ color: '#7f8c8d' }}>{r.label}</p>
+                                        <div key={j} className="rounded-xl p-4 text-center border border-slate-800 bg-[#1A202C]">
+                                            <p className="text-2xl font-black text-[#4299E1]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{r.metric}</p>
+                                            <p className="text-[11px] font-bold mt-1 text-slate-400 uppercase tracking-wide">{r.label}</p>
                                         </div>
                                     ))}
                                 </div>
 
                                 {/* Quote */}
-                                <blockquote className="rounded-xl p-5 mb-5 border-l-4"
-                                    style={{ borderColor: 'var(--color-action)', background: 'rgba(255,107,53,0.04)' }}>
-                                    <p className="text-sm italic leading-relaxed mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                                <blockquote className="rounded-2xl p-6 mb-6 border-l-4"
+                                    style={{ borderColor: '#81B29A', background: 'rgba(129, 178, 154, 0.05)' }}>
+                                    <p className="font-medium italic leading-relaxed mb-3 text-slate-300">
                                         {s.quote}
                                     </p>
-                                    <p className="text-xs font-black" style={{ color: 'var(--color-action)' }}>
+                                    <p className="text-xs font-black uppercase tracking-widest" style={{ color: '#81B29A' }}>
                                         — {s.role}, {s.client}
                                     </p>
                                 </blockquote>
 
                                 {/* Expandable detail */}
-                                <button
-                                    className="text-sm font-bold flex items-center gap-1 mb-4 hover:opacity-70 transition-opacity"
-                                    style={{ color: 'var(--color-secondary)' }}
-                                    onClick={() => setExpanded(expanded === i ? null : i)}>
-                                    {expanded === i ? 'Hide details ▲' : 'See full story ▼'}
-                                </button>
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 pt-6 border-t border-slate-800 pt-5">
+                                    <div className="flex flex-wrap gap-2 mb-4 sm:mb-0">
+                                        {s.tags.map((t, j) => (
+                                            <span key={j} className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-700 bg-[#141A23] text-slate-400">
+                                                {t}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    {s.featured ? (
+                                        <Link href={s.slug} className="text-sm font-bold flex items-center gap-2 hover:opacity-80 transition-opacity" style={{ color: '#E07A5F' }}>
+                                            Read Full Case Study <ArrowRight size={16} />
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            className="text-sm font-bold flex items-center gap-1 hover:opacity-80 transition-opacity text-slate-400"
+                                            onClick={() => setExpanded(expanded === i ? null : i)}>
+                                            {expanded === i ? 'Hide details' : 'See summary'}
+                                        </button>
+                                    )}
+                                </div>
 
-                                {expanded === i && (
-                                    <div className="border-t pt-5 grid md:grid-cols-2 gap-6" style={{ borderColor: '#e8eef4' }}>
+                                {expanded === i && !s.featured && (
+                                    <div className="mt-6 pt-6 grid md:grid-cols-2 gap-8 border-t border-slate-800">
                                         <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: '#7f8c8d' }}>The Challenge</p>
-                                            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>{s.challenge}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest mb-3 text-slate-500">The Challenge</p>
+                                            <p className="text-sm leading-relaxed text-slate-400">{s.challenge}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: '#7f8c8d' }}>The Solution</p>
-                                            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>{s.solution}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest mb-3 text-slate-500">The Solution</p>
+                                            <p className="text-sm leading-relaxed text-[#F4F1DE]">{s.solution}</p>
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-2 mt-4">
-                                    {s.tags.map((t, j) => (
-                                        <span key={j} className="px-3 py-1 rounded-full text-xs font-semibold"
-                                            style={{ background: 'rgba(26,58,82,0.06)', color: 'var(--color-primary)' }}>
-                                            {t}
-                                        </span>
-                                    ))}
-                                </div>
                             </div>
                         </div>
                     ))}
@@ -244,27 +210,27 @@ export default function CaseStudiesPage() {
             </section>
 
             {/* ─── FINAL CTA ─── */}
-            <section className="py-24 px-6" style={{ background: 'linear-gradient(135deg, #1a3a52 0%, #0f2439 100%)' }}>
-                <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="text-3xl md:text-5xl font-black text-white mb-5"
-                        style={{ fontFamily: 'var(--font-headline)' }}>
-                        Want These Results<br />
-                        <span style={{ color: '#ff6b35' }}>At Your Factory?</span>
+            <section className="py-24 px-6 border-t border-slate-800 text-center" style={{ background: '#0F1419' }}>
+                <div className="max-w-3xl mx-auto">
+                    <h2 className="text-3xl md:text-5xl font-black text-[#F4F1DE] mb-6"
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Ready For These Results<br />
+                        <span style={{ color: '#E07A5F' }}>At Your Operations?</span>
                     </h2>
-                    <p className="text-lg mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-                        Start with a free 14-day pilot. We configure BazzAI around your specific workflow — no commitment required.
+                    <p className="text-lg mb-10 text-slate-400">
+                        Start with a free 14-day production pilot. We deploy operational intelligence over your data streams with zero disruption risk.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            className="px-10 py-4 rounded-xl font-black text-lg text-white flex items-center gap-2 justify-center hover:scale-105 transition-all"
-                            style={{ background: 'var(--color-action)', boxShadow: '0 8px 32px rgba(255,107,53,0.4)' }}
+                            className="px-10 py-5 rounded-2xl font-black text-lg text-[#0F1419] flex items-center gap-2 justify-center hover:scale-105 transition-all shadow-2xl"
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
                             onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
-                            Start My Free Pilot <ArrowRight size={20} />
+                            Request Technical Audit <ArrowRight size={20} />
                         </button>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
-                            className="px-10 py-4 rounded-xl font-bold text-lg flex items-center gap-2 justify-center"
-                            style={{ border: '2px solid rgba(255,255,255,0.25)', color: 'white' }}>
-                            <MessageSquare size={20} /> Chat with a Specialist
+                            className="px-10 py-5 rounded-2xl font-bold text-lg flex items-center gap-2 justify-center border border-slate-700 hover:bg-[#1A202C] transition-colors"
+                            style={{ color: '#F4F1DE' }}>
+                            <MessageSquare size={20} /> Discuss Your Use Case
                         </Link>
                     </div>
                 </div>
