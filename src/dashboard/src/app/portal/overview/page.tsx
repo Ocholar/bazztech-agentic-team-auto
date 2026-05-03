@@ -1,4 +1,4 @@
-import { auth } from '../../../auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
@@ -26,8 +26,7 @@ export default async function PortalOverview() {
         redirect('/login');
     }
 
-    const userId = (session.user as any).id;
-
+    const userId = session.user.id;
     const [user, subscriptions, latestLogs] = await Promise.all([
         db.user.findUnique({ where: { id: userId } }),
         db.subscription.findMany({ where: { userId }, orderBy: { startDate: 'desc' } }),
@@ -35,9 +34,6 @@ export default async function PortalOverview() {
     ]);
 
     const isAdmin = user?.role === 'ADMIN';
-
-    const userId = session.user.id;
-    const user = await db.user.findUnique({ where: { id: userId } });
 
     // Calculate trial days (14 days from createdAt)
     const createdAt = user?.createdAt || new Date();

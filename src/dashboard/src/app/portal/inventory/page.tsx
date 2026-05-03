@@ -1,4 +1,4 @@
-import { auth } from '../../../auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
 import { Box, AlertCircle, ShoppingCart, ArrowDown, ArrowUp, BarChart3 } from 'lucide-react';
@@ -64,7 +64,7 @@ export default async function InventoryPage() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${item.status === 'CRITICAL' ? 'bg-red-50 text-red-600' :
-                                                            item.status === 'LOW' ? 'bg-yellow-50 text-yellow-600' : 'bg-green-50 text-green-600'
+                                                        item.status === 'LOW' ? 'bg-yellow-50 text-yellow-600' : 'bg-green-50 text-green-600'
                                                         }`}>{item.status}</span>
                                                 </td>
                                                 <td className="px-6 py-4">

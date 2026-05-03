@@ -1,7 +1,7 @@
-import { auth } from '../../../auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
-import { ShieldCheck, FileText, Download, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { ShieldCheck, FileText, Download, CheckCircle2, Clock, AlertCircle, Zap } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
