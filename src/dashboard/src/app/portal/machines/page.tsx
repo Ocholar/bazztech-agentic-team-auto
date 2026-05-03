@@ -1,4 +1,4 @@
-import { auth } from '../../../auth';
+import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui-card';
@@ -36,7 +36,7 @@ export default async function MachinesPage() {
                         <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
                             <div className="flex items-center gap-2">
                                 <div className={`w-2 h-2 rounded-full ${m.status === 'RUNNING' ? 'bg-green-500 animate-pulse' :
-                                        m.status === 'WARNING' ? 'bg-yellow-500' : 'bg-slate-300'
+                                    m.status === 'WARNING' ? 'bg-yellow-500' : 'bg-slate-300'
                                     }`} />
                                 <CardTitle className="text-sm font-bold">{m.name}</CardTitle>
                             </div>
@@ -56,7 +56,7 @@ export default async function MachinesPage() {
                                 <div className="flex justify-between text-xs">
                                     <span className="text-slate-500">Status</span>
                                     <span className={`font-bold text-[10px] px-2 py-0.5 rounded-full ${m.status === 'RUNNING' ? 'bg-green-50 text-green-700' :
-                                            m.status === 'WARNING' ? 'bg-yellow-50 text-yellow-700' : 'bg-slate-100 text-slate-700'
+                                        m.status === 'WARNING' ? 'bg-yellow-50 text-yellow-700' : 'bg-slate-100 text-slate-700'
                                         }`}>{m.status}</span>
                                 </div>
                                 <div className="flex justify-between text-xs">
