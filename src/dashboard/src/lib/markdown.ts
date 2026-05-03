@@ -54,3 +54,13 @@ export function getAll(subDir: string): Post[] {
 
     return items;
 }
+
+// Blog Aliases
+export const getPostSlugs = () => getSlugs('blogs');
+export const getPostBySlug = (slug: string) => getBySlug('blogs', slug);
+export const getAllPosts = () => getAll('blogs');
+
+// Case Study Aliases
+export const getCaseStudySlugs = () => getSlugs('case-studies');
+export const getCaseStudyBySlug = (slug: string) => getBySlug('case-studies', slug);
+export const getAllCaseStudies = () => getAll('case-studies');
