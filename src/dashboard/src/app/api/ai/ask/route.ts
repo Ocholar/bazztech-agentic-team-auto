@@ -32,6 +32,8 @@ const DEMO_ANSWERS: Record<string, any> = {
     }
 };
 
+import { classifyDemoQuery } from '@/lib/ai-utils';
+
 export async function POST(req: Request) {
     try {
         const session = await auth();
@@ -68,26 +70,7 @@ export async function POST(req: Request) {
         }
 
         // Demo logic fallback
-        const lowerQuery = query.toLowerCase();
-        let result = null;
-
-        if (lowerQuery.includes('stop') || lowerQuery.includes('downtime')) {
-            result = DEMO_ANSWERS['downtime'];
-        } else if (lowerQuery.includes('margin') || lowerQuery.includes('sku')) {
-            result = DEMO_ANSWERS['margin'];
-        } else if (lowerQuery.includes('kraft') || lowerQuery.includes('run out')) {
-            result = {
-                answer: "Inventory Forecast — Kraft Paper Roll\n\nCurrent stock: 4,200 tons | Daily consumption rate: 1,850 tons/day\n\nProjected depletion: Thursday 16:00 ⚠️\n\nAI Action Taken: Auto-drafted WhatsApp message to International Paper Suppliers requesting Wednesday delivery. Awaiting confirmation.",
-                citations: [{ source: "Inventory Forecaster", date: "Real-time" }],
-                confidence: 0.91
-            };
-        } else {
-            result = {
-                answer: "I am analyzing your factory data. For the purpose of this demo, I can answer questions about planned downtime, margin intelligence, and inventory forecasts.\n\nTry asking: 'Will we run out of Kraft paper roll before Friday?'",
-                citations: [],
-                confidence: 1.0
-            };
-        }
+        const result = classifyDemoQuery(query);
 
         return NextResponse.json(result);
     } catch (error) {

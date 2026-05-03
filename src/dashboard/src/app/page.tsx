@@ -376,6 +376,13 @@ export default function HomePage() {
                             Machine performance analytics, fault investigation, and production forecasting — powered by AI, built for African manufacturing.
                         </p>
 
+                        <div className="flex items-center gap-3 mb-6 px-4 py-2 rounded-xl bg-[#F2CC8F]/10 border border-[#F2CC8F]/20 w-fit">
+                            <Star size={14} className="text-[#F2CC8F] animate-pulse" />
+                            <span className="text-xs font-bold text-[#F4F1DE]">
+                                Join 15+ factories live. <span className="text-[#F2CC8F]">Only 4 pilot slots remaining for May.</span>
+                            </span>
+                        </div>
+
                         <div className="flex flex-col sm:flex-row gap-4 mb-8">
                             <Link href="/register"
                                 className="px-8 py-4 rounded-xl font-black text-base text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 pulse-glow"
@@ -546,11 +553,11 @@ export default function HomePage() {
                         <DashboardPreview />
                     </div>
                     <div className="text-center mt-8">
-                        <button onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                        <Link href="/register"
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105"
                             style={{ background: 'rgba(224,122,95,0.15)', border: '1px solid rgba(224,122,95,0.3)', color: '#E07A5F' }}>
                             See Live Dashboard with Your Data <ChevronRight size={16} />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -703,6 +710,9 @@ export default function HomePage() {
                     </h2>
                     <p className="text-xl mb-10" style={{ color: '#718096', lineHeight: 1.7 }}>
                         Start your free pilot today. We&apos;ll configure BazzAI around your actual machines and data — no commitment, no setup fee, cancel anytime.
+                    </p>
+                    <p className="text-sm font-bold text-[#F2CC8F] mb-6 flex items-center justify-center gap-2">
+                        <Zap size={14} /> Only 2 slots remaining for the upcoming cohort
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                         <Link href="/register"

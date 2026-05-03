@@ -2,6 +2,7 @@
 import { Shield, Lock, Award, Server, Eye, Database } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 const controls = [
     {
@@ -78,12 +79,11 @@ export default function SecurityPage() {
             <section className="py-16 px-6 border-t text-center border-slate-800" style={{ background: '#141A23' }}>
                 <h2 className="text-2xl font-black mb-4 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Questions about data handling?</h2>
                 <p className="text-slate-400 mb-6">We are happy to share our Data Processing Agreement and complete a security questionnaire.</p>
-                <button
+                <Link href="/register"
                     className="px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 inline-flex items-center gap-2 shadow-lg"
-                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                    onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
-                    Request Security Review
-                </button>
+                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
+                    Start Your Security Review Pilot
+                </Link>
             </section>
 
             <Footer />

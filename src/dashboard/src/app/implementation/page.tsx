@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CheckCircle, ArrowRight, Clock, ChevronDown, MessageSquare } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 const phases = [
     {
@@ -130,11 +131,10 @@ export default function ImplementationPage() {
             </section>
 
             <section className="py-16 px-6 text-center border-t" style={{ borderColor: '#e8eef4' }}>
-                <button className="px-10 py-4 rounded-xl font-black text-white hover:scale-105 transition-all inline-flex items-center gap-2"
-                    style={{ background: 'var(--color-action)' }}
-                    onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
-                    Start Step 1 — Free Audit <ArrowRight size={18} />
-                </button>
+                <Link href="/register" className="px-10 py-4 rounded-xl font-black text-white hover:scale-105 transition-all inline-flex items-center gap-2"
+                    style={{ background: 'var(--color-action)' }}>
+                    Start Your Free Audit <ArrowRight size={18} />
+                </Link>
             </section>
 
             <Footer />

@@ -13,50 +13,50 @@ import Link from 'next/link';
 const steps = [
     {
         phase: '01',
-        title: 'Connect Existing Data',
-        duration: 'Zero New Hardware',
+        title: 'Secure Path to Ingestion',
+        duration: '24h Connectivity',
         icon: <Database size={22} />,
         color: '#81B29A',
         points: [
-            'We link securely to your existing factory systems—whether it’s an ERP, spreadsheets, or machine sensors.',
-            'Data streams continuously into a secure, encrypted silo dedicated only to your factory.',
-            'No complex implementations or factory floor disruption. We plug into what you already use.',
+            'We establish secure API bridges to your SCADA, PLC, and ERP systems (SAP, Sage, Oracle).',
+            'Data is isolated into a dedicated tenant silo—never mixed with other manufacturers.',
+            'Zero disruption to factory lines. We read existing logs without needing new hardware sensors.',
         ],
     },
     {
         phase: '02',
-        title: 'The AI Learns Your Blueprint',
-        duration: 'Automated Profiling',
+        title: 'The Manufacturing Blueprint',
+        duration: 'Historical Profiling',
         icon: <Network size={22} />,
         color: '#F2CC8F',
         points: [
-            'BazzAI analyzes historical production patterns, downtime reasons, and inventory cycles.',
-            'It builds an operational baseline, learning the unique rhythms of each production line.',
-            'Normal variations are mapped so the system knows exactly when something is an anomaly.',
+            'BazzAI analyzes up to 24 months of historical production and downtime data.',
+            'It maps the unique thermal and mechanical "fingerprint" of your specific production lines.',
+            'Normal operating variances are identified so the AI can spot true anomalies with 99% accuracy.',
         ],
     },
     {
         phase: '03',
-        title: 'Predictive Intelligence',
-        duration: 'Real-Time Insights',
+        title: 'Hybrid RAG Intelligence',
+        duration: 'Instant Querying',
         icon: <Target size={22} />,
         color: '#E07A5F',
         points: [
-            'Get early warnings 48-72 hours before a machine failure or inventory stock-out occurs.',
-            'Instantly query your factory data using natural language ("Why did Line A slow down today?").',
-            'The AI provides clear, actionable answers tailored to your specific operations.',
+            'Machine manuals (PDF), shift logs, and inventory records are embedded into your Factory Brain.',
+            'Query your data in plain English: "Why did the Corrugator stop 3 times during Shift B?"',
+            'Predictive alerts (72h prior) prevent failures before they halt your production run.',
         ],
     },
     {
         phase: '04',
-        title: 'Continuous Improvement',
+        title: 'Operational Reinforcement',
         duration: 'Self-Optimizing',
         icon: <LineChart size={22} />,
         color: '#4299E1',
         points: [
-            'Every week, BazzAI refines its models based on new data and your team’s feedback.',
-            'Predictions become sharper. Maintenance schedules become more efficient.',
-            'You shift from fighting daily operational fires to strategic, data-driven expansion.',
+            'Your engineering team’s feedback fine-tunes the AI models directly from the factory floor.',
+            'Production forecasts automatically adapt to supply chain shifts and seasonal demand.',
+            'Shift from reactive firefighting to a data-driven, strategic manufacturing expansion.',
         ],
     },
 ];
@@ -65,26 +65,26 @@ const steps = [
 const outcomes = [
     {
         icon: <Clock size={24} />,
-        title: 'Bazz-Monitor: Eliminate Downtime',
-        how: 'By catching micro-anomalies early, Bazz-Monitor alerts maintenance teams days before a part fails. Move from reactive break-fix to predictive care.',
+        title: 'Equipment-Telemetry',
+        how: 'Catch micro-anomalies early. Our telemetry engine alerts maintenance teams days before a part fails, moving your factory from reactive break-fix to predictive care.',
         color: '#E07A5F',
     },
     {
         icon: <Target size={24} />,
-        title: 'Bazz-Scale: Precision Forecasting',
-        how: 'Stop overstocking or running out mid-batch. Bazz-Scale anticipates seasonal demand shifts and suggests exact reorder quantities with safety buffers.',
+        title: 'ERP-Bridge',
+        how: 'Precision forecasting integrated with your supply chain. We anticipate seasonal demand shifts and suggest exact reorder quantities with zero-stock buffers.',
         color: '#F2CC8F',
     },
     {
         icon: <Cpu size={24} />,
-        title: 'Bazz-Auto: Factory Intelligence',
-        how: 'No more waiting for analysts to build spreadsheets. Bazz-Auto analyzes your factory logs and provides instant, accurate insights for faster decision making.',
+        title: 'Production-Comms',
+        how: 'The central dashboard for factory intelligence. No more manual spreadsheets—analyze manufacturing logs instantly for faster, data-driven decisions.',
         color: '#81B29A',
     },
     {
         icon: <ShieldCheck size={24} />,
-        title: 'Bazz-Secure: Audit-Ready Compliance',
-        how: 'Quality assurance and compliance records are automatically organized. Bazz-Secure ensures instant report generation to prove adherence to standards.',
+        title: 'Audit-Vision',
+        how: 'Quality assurance and compliance reports automatically generated. Ensure your factory is audit-ready at all times with verified, structured documentation.',
         color: '#4299E1',
     },
 ];
@@ -140,6 +140,13 @@ export default function HowItWorksPage() {
                     <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
                         BazzAI connects silently to your operations, learning your specific factory rhythms to predict issues before they cost you money.
                     </p>
+
+                    <div className="flex items-center gap-3 mb-6 px-4 py-2 rounded-xl bg-[#F2CC8F]/10 border border-[#F2CC8F]/20 w-fit mx-auto">
+                        <LineChart size={14} className="text-[#F2CC8F] animate-pulse" />
+                        <span className="text-xs font-bold text-[#F4F1DE]">
+                            Join 15+ factories live. <span className="text-[#F2CC8F]">Only 4 pilot slots remaining for May.</span>
+                        </span>
+                    </div>
                 </div>
             </section>
 
@@ -265,12 +272,11 @@ export default function HowItWorksPage() {
                     <p className="text-lg mb-10 text-slate-400">
                         Start a 14-Day Pilot and watch the AI Brain analyze your operations in real time.
                     </p>
-                    <button
+                    <Link href="/register"
                         className="px-8 py-4 rounded-full font-bold text-[#F4F1DE] flex items-center gap-2 justify-center transition-all hover:scale-105 shadow-lg mx-auto"
-                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                        onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                         Start Free 14-Day Pilot <ArrowRight size={18} />
-                    </button>
+                    </Link>
                 </div>
             </section>
 
