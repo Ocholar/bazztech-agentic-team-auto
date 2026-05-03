@@ -171,11 +171,11 @@ function AIDemoWidget() {
                     <div className="rounded-xl p-4 text-center chat-bubble-in" style={{ background: 'rgba(242,204,143,0.08)', border: '1px solid rgba(242,204,143,0.2)' }}>
                         <p className="text-xs font-bold mb-1" style={{ color: '#F2CC8F' }}>Demo limit reached 🎯</p>
                         <p className="text-xs mb-3" style={{ color: '#A0AEC0' }}>This is mock data. Want to see it with your real factory data?</p>
-                        <button onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                        <Link href="/register"
                             className="text-xs font-black px-4 py-2 rounded-lg text-white"
                             style={{ background: '#E07A5F' }}>
                             Start Your Free Pilot →
-                        </button>
+                        </Link>
                     </div>
                 )}
 
@@ -377,12 +377,11 @@ export default function HomePage() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                            <button
+                            <Link href="/register"
                                 className="px-8 py-4 rounded-xl font-black text-base text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 pulse-glow"
-                                style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                                onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                                style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                                 Start Your Free AI Pilot — 14 Days <ArrowRight size={18} />
-                            </button>
+                            </Link>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                                 className="px-8 py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2"
                                 style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#F4F1DE' }}
@@ -706,12 +705,11 @@ export default function HomePage() {
                         Start your free pilot today. We&apos;ll configure BazzAI around your actual machines and data — no commitment, no setup fee, cancel anytime.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                        <button
+                        <Link href="/register"
                             className="px-10 py-5 rounded-xl font-black text-lg text-white transition-all hover:scale-105 shadow-2xl flex items-center gap-2 justify-center pulse-glow"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                            onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             Start My Free 14-Day Pilot <ArrowRight size={20} />
-                        </button>
+                        </Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-10 py-5 rounded-xl font-bold text-lg transition-all flex items-center gap-2 justify-center"
                             style={{ border: '1px solid rgba(255,255,255,0.12)', color: '#F4F1DE' }}
@@ -731,12 +729,11 @@ export default function HomePage() {
             {/* Sticky mobile CTA */}
             <div className="sticky-mobile-cta slide-up border-t" style={{ borderColor: '#2D3748', background: '#0F1419' }}>
                 <div className="flex gap-2 p-3">
-                    <button
+                    <Link href="/register"
                         className="flex-1 py-3 rounded-xl text-white font-black text-xs text-center flex items-center justify-center gap-1 pulse-glow"
-                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                        onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                         🚀 Start Free Pilot
-                    </button>
+                    </Link>
                     <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                         className="flex-1 py-3 rounded-xl font-black text-xs flex items-center justify-center gap-1"
                         style={{ background: '#1A1F2E', border: '1px solid #2D3748', color: '#F4F1DE' }}>
