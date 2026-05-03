@@ -1,0 +1,173 @@
+{
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Manual Trigger",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                -16,
+                0
+            ],
+            "id": "466d99ce-ac4e-4f89-a4a7-1edc747d5a2a"
+        },
+        {
+            "parameters": {
+                "filePath": "C:\\Users\\Administrator\\Desktop\\softwareengineerassessmentmanufacturingdataragsystem\\manufacturing_rag_hybrid\\data\\machine_data.csv"
+            },
+            "name": "Read CSV",
+            "type": "n8n-nodes-base.readBinaryFile",
+            "typeVersion": 1,
+            "position": [
+                192,
+                0
+            ],
+            "id": "6d8e60c7-862c-439e-8314-bcf8f4c1485f"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse CSV and create manufacturing-aware chunks\nconst csvData = $input.item.binary.data.toString('utf-8');\nconst lines = csvData.split(/\\r?\\n/).filter(line => line.trim() !== '');\nconst headers = lines[0].split(',').map(h => h.trim());\nconst records = lines.slice(1).map(line => {\n  const values = line.split(',');\n  const obj = {};\n  headers.forEach((header, i) => {\n    obj[header] = values[i] ? values[i].trim() : null;\n  });\n  return obj;\n});\n\nconst items = records.map(record => {\n  const chunk = {\n    timestamp: record.timestamp || new Date().toISOString(),\n    machine_id: record.machine_id || 'UNKNOWN',\n    oee: parseFloat(record.oee) || 0,\n    availability: parseFloat(record.availability) || 0,\n    performance: parseFloat(record.performance) || 0,\n    quality: parseFloat(record.quality) || 0,\n    shift: record.shift || 'DAY',\n    fault_code: record.fault_code || 'NONE',\n    content: `Machine ${record.machine_id}: OEE ${record.oee}% on shift ${record.shift}`,\n    metadata: {\n      source: 'machine_data',\n      machine_id: record.machine_id,\n      oee: parseFloat(record.oee) || 0,\n      shift: record.shift || 'DAY',\n      fault_code: record.fault_code || 'NONE'\n    }\n  };\n  return { json: chunk };\n});\n\nreturn items;"
+            },
+            "name": "Manufacturing Chunking",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                384,
+                0
+            ],
+            "id": "207dc09d-4225-4151-985f-4bce235d6021"
+        },
+        {
+            "parameters": {
+                "batchSize": 50,
+                "options": {}
+            },
+            "name": "Split In Batches",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                592,
+                0
+            ],
+            "id": "267828d5-58fa-455d-82cf-d1abe132efb5"
+        },
+        {
+            "parameters": {
+                "resource": "embedding",
+                "requestOptions": {}
+            },
+            "name": "Generate OpenAI Embedding",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                784,
+                0
+            ],
+            "id": "bc98dbbd-e28b-4350-aeae-6628c699d435",
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://manufacturing-rag-96ag0kp.svc.aped-4627-b74a.pinecone.io/vectors/upsert",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "pineconeApi",
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "name": "Upsert to Pinecone",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                992,
+                0
+            ],
+            "id": "d0209637-62b6-47eb-9788-a45a3c6250d0",
+            "credentials": {
+                "pineconeApi": {
+                    "id": "RZRs3qyOM63laFXP",
+                    "name": "PineconeApi account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Read CSV",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read CSV": {
+            "main": [
+                [
+                    {
+                        "node": "Manufacturing Chunking",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Manufacturing Chunking": {
+            "main": [
+                [
+                    {
+                        "node": "Split In Batches",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split In Batches": {
+            "main": [
+                [],
+                [
+                    {
+                        "node": "Generate OpenAI Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate OpenAI Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Upsert to Pinecone",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upsert to Pinecone": {
+            "main": [
+                [
+                    {
+                        "node": "Split In Batches",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "instanceId": "0ce39b528d21b35f32c24b98f7dfa467653fa3bb4a390982dd2ee515c23ecc9a"
+    }
+}

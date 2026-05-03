@@ -65,29 +65,30 @@ const steps = [
 const outcomes = [
     {
         icon: <Clock size={24} />,
-        title: 'Eliminate Unplanned Downtime',
-        how: 'By catching micro-anomalies early, BazzAI alerts maintenance teams days before a part totally fails. Move from a reactive break-fix model to predictive care.',
+        title: 'Bazz-Monitor: Eliminate Downtime',
+        how: 'By catching micro-anomalies early, Bazz-Monitor alerts maintenance teams days before a part fails. Move from reactive break-fix to predictive care.',
         color: '#E07A5F',
     },
     {
         icon: <Target size={24} />,
-        title: 'Precision Inventory Forecasting',
-        how: 'Stop overstocking materials or running out mid-batch. BazzAI anticipates seasonal demand shifts and suggests exact reorder quantities with safety buffers.',
+        title: 'Bazz-Scale: Precision Forecasting',
+        how: 'Stop overstocking or running out mid-batch. Bazz-Scale anticipates seasonal demand shifts and suggests exact reorder quantities with safety buffers.',
         color: '#F2CC8F',
     },
     {
         icon: <Cpu size={24} />,
-        title: 'Instant Operational Answers',
-        how: 'No more waiting days for the analyst to build a spreadsheet. Ask your factory\'s AI Brain any question and get instant, accurate insights derived directly from your raw data.',
+        title: 'Bazz-Auto: Factory Intelligence',
+        how: 'No more waiting for analysts to build spreadsheets. Bazz-Auto analyzes your factory logs and provides instant, accurate insights for faster decision making.',
         color: '#81B29A',
     },
     {
         icon: <ShieldCheck size={24} />,
-        title: 'Audit-Ready Compliance',
-        how: 'Quality assurance and compliance records are automatically organized. When inspectors or auditors arrive, instant reports prove adherence to rigorous manufacturing standards.',
+        title: 'Bazz-Secure: Audit-Ready Compliance',
+        how: 'Quality assurance and compliance records are automatically organized. Bazz-Secure ensures instant report generation to prove adherence to standards.',
         color: '#4299E1',
     },
 ];
+
 
 /* ─── FAQ ─── */
 const faqs = [

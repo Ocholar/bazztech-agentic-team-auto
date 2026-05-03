@@ -31,14 +31,42 @@ function AIDemoWidget() {
         setMessages(m => [...m, { role: 'user', text: queryText }]);
         setInput('');
         setTyping(true);
-        await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
-        let response = demoIdx !== undefined ? demoQueries[demoIdx] : demoQueries.find(d => d.q === queryText);
-        if (!response) response = demoQueries[0];
-        setTyping(false);
-        setMessages(m => [...m, { role: 'ai', text: response!.a, chart: response!.chart }]);
-        const newCount = count + 1;
-        setCount(newCount);
-        if (newCount >= 3) setTimeout(() => setShowUpgrade(true), 800);
+
+        try {
+            const res = await fetch('/api/ai/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: queryText,
+                    sessionId: 'demo-session-' + count // Simple session tracking for demo
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.status === 429) {
+                setShowUpgrade(true);
+                return;
+            }
+
+            setMessages(m => [...m, {
+                role: 'ai',
+                text: data.answer,
+                chart: data.chart || null
+            }]);
+
+            const newCount = count + 1;
+            setCount(newCount);
+            if (newCount >= 5) setShowUpgrade(true);
+        } catch (err) {
+            console.error('AI Demo Error:', err);
+            setMessages(m => [...m, {
+                role: 'ai',
+                text: "I'm having trouble connecting to the factory brain. Please try again in a moment."
+            }]);
+        } finally {
+            setTyping(false);
+        }
     };
 
     const renderAIText = (text: string) => {

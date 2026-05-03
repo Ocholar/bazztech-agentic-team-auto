@@ -1,0 +1,324 @@
+{
+    "name": "BazzAI_RAG_Forecast_Workflow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "chat",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                864,
+                1632
+            ],
+            "webhookId": "chat-multi-tenant",
+            "id": "efd91fda-45ef-4473-9183-b3760720b50a"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.intent }}",
+                            "value2": "forecast"
+                        }
+                    ]
+                }
+            },
+            "name": "Is Forecast?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1280,
+                1632
+            ],
+            "id": "3b94be6a-ef85-4a3f-9416-e23f04b98b80"
+        },
+        {
+            "parameters": {
+                "jsCode": "const query = $('Parse Intent').item.json.query;\nconst lowerQuery = query.toLowerCase();\nconst paperMatch = lowerQuery.match(/flute|test liner|white top/i);\nconst dimensionMatch = query.match(/(\\d{4})/);\n\nreturn [{\n  json: {\n    paper_type: paperMatch ? paperMatch[0] : 'Flute',\n    dimension: dimensionMatch ? parseInt(dimensionMatch[1]) : 1700,\n    periods: 3\n  }\n}];"
+            },
+            "name": "Extract Forecast Params",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1472,
+                1520
+            ],
+            "id": "ee701bb1-4488-4f47-9024-d1c17165c31f"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://manufacturing-rag-96ag0kp.svc.aped-4627-b74a.pinecone.io/query",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "pineconeApi",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "vector",
+                            "value": "={{ $json.vector }}"
+                        },
+                        {
+                            "name": "topK",
+                            "value": "5"
+                        },
+                        {
+                            "name": "includeMetadata",
+                            "value": "true"
+                        },
+                        {
+                            "name": "namespace",
+                            "value": "={{ $('Webhook').item.json.body.tenantId || 'default' }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "name": "Pinecone Search",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                1840,
+                1728
+            ],
+            "id": "f2e5281b-6a31-45cd-8c4a-458d7a17ccd7"
+        },
+        {
+            "parameters": {
+                "jsCode": "const query = $('Parse Intent').item.json.query;\nconst matches = $input.item.json.matches || [];\n\nlet context = 'Retrieved Manufacturing Data:\\n\\n';\nmatches.forEach((match, i) => {\n  const m = match.metadata || {};\n  context += `[${i+1}] Machine: ${m.machine_id || 'N/A'}, Date: ${m.date || 'N/A'}\\n`;\n  context += `    OEE: ${m.oee || 'N/A'}%, Shift: ${m.shift || 'N/A'}\\n`;\n  if (m.text) context += `    ${m.text}\\n`;\n  context += '\\n';\n});\n\nconst citations = matches.map(m => ({\n  machine_id: m.metadata?.machine_id || 'N/A',\n  date: m.metadata?.date || 'N/A',\n  score: m.score || 0\n}));\n\nreturn [{ json: { query, context, citations } }];"
+            },
+            "name": "Prepare Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2032,
+                1728
+            ],
+            "id": "2eefc284-b147-4d2e-8c90-fcb9378623a4"
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                2720,
+                1664
+            ],
+            "id": "a2b970da-1762-42ad-a63d-51855a2eb829"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ [{\"role\": \"system\", \"content\": \"You are a manufacturing intelligence assistant for tenant \" + ($('Webhook').item.json.body.tenantId || 'General') + \". Answer based on the provided context.\"}, {\"role\": \"user\", \"content\": $('Prepare Context').item.json.context + '\\n\\nQuery: ' + $('Prepare Context').item.json.query}] }}",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3,
+            "position": [
+                2224,
+                1920
+            ],
+            "id": "f0f63d05-c3c0-4e96-b676-cad9d870f9df",
+            "name": "AI Agent"
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o-mini",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                2080,
+                2128
+            ],
+            "id": "6980af9b-02de-45c2-b0c0-87a4aeaf28ba",
+            "name": "OpenAI Chat Model"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "=Analyze the user query: \"{{ $json.body.query || $json.query }}\"\n\n1. Classify intent as either 'forecast' (if asking about future predictions, stock, ordering, or consumption) or 'rag' (if asking about past data, machine status, OEE, or faults).\n2. Extract 'machine_id' (e.g., MC001, MC002) if present.\n3. Extract 'time_range' (yesterday, today, last_week) if present.\n\nReturn ONLY a JSON object:\n{\n  \"intent\": \"forecast\" | \"rag\",\n  \"machine_id\": \"MC...\" | null,\n  \"time_range\": \"...\" | null,\n  \"query\": \"{{ $json.body.query || $json.query }}\"\n}",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3,
+            "position": [
+                1072,
+                1632
+            ],
+            "id": "intent-classifier-agent",
+            "name": "Intent Classifier Agent"
+        },
+        {
+            "parameters": {
+                "jsCode": "const output = $input.all()[0].json.output;\ntry {\n  const parsed = JSON.parse(output);\n  return [{ json: parsed }];\n} catch (e) {\n  return [{\n    json: {\n      intent: output.toLowerCase().includes('forecast') ? 'forecast' : 'rag',\n      query: $input.all()[0].json.input || $input.all()[0].json.query,\n      machine_id: null,\n      time_range: null\n    }\n  }];\n}"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1250,
+                1632
+            ],
+            "id": "parse-intent",
+            "name": "Parse Intent"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.openai.com/v1/embeddings",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "openAiApi",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "model",
+                            "value": "text-embedding-3-small"
+                        },
+                        {
+                            "name": "input",
+                            "value": "={{ $json.query }}"
+                        },
+                        {
+                            "name": "dimensions",
+                            "value": "={{ 768 }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Generate OpenAI Embedding",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                1472,
+                1728
+            ],
+            "id": "generate-openai-embedding"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Holt-Winters with multi-tenant data fetching simulation\nconst params = $('Extract Forecast Params').item.json;\nconst tenantId = $('Webhook').item.json.body.tenantId || 'default';\n// In a real system, we'd fetch from a DB using tenantId\n// For now, we simulate with a safety factor adjustment per tenant\n\nreturn [{ json: { ...params, tenantId } }];"
+            },
+            "name": "Multi-Tenant Logic",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1904,
+                1520
+            ],
+            "id": "multi-tenant-logic"
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Intent Classifier Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Intent Classifier Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Intent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Intent": {
+            "main": [
+                [
+                    {
+                        "node": "Is Forecast?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Forecast?": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Forecast Params",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Generate OpenAI Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate OpenAI Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Pinecone Search",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pinecone Search": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Context": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -7,12 +7,15 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:verify": "ts-node scripts/verify-db.ts"
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/bcryptjs": "^3.0.0",
+    "@upstash/redis": "^1.37.0",
     "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -21,12 +24,15 @@
     "lucide-react": "^0.554.0",
     "next": "14.2.15",
     "next-auth": "5.0.0-beta.30",
+    "openai": "^6.35.0",
+    "playwright": "^1.59.1",
     "rate-limiter-flexible": "^10.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "tailwind-merge": "^3.4.0",
+    "resend": "^6.12.2",
+    "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
