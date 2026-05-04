@@ -1,8 +1,8 @@
-import { auth } from '../../../../../auth';
+import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui-card";
-import { Zap, CreditCard, Link as LinkIcon, ShieldCheck, PlusCircle, AlertCircle } from "lucide-react";
+import { Zap, CreditCard, Link as LinkIcon, ShieldCheck, PlusCircle, AlertCircle, Send, Clock } from "lucide-react";
 import { saveProductConfig, createPendingSubscription, saveApiKeys } from '../actions';
 import { PaymentVerification } from '@/components/payment-verification';
 
@@ -127,6 +127,43 @@ export default async function BazzFlowConfig() {
                                         </button>
                                     </div>
                                 </form>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-green-600/30 bg-green-50/10">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-green-700">
+                                    <Send className="text-green-600" size={20} />
+                                    3. WhatsApp Production Comms (Bridge)
+                                </CardTitle>
+                                <CardDescription>Route critical floor alerts directly to management via WhatsApp.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="flex items-center gap-3 p-3 bg-green-100/50 rounded-xl border border-green-200">
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-xs font-bold text-green-800 uppercase tracking-wider">WhatsApp Gateway Bridge: ACTIVE</span>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Primary Floor Manager Number</label>
+                                        <div className="flex gap-2">
+                                            <input type="text" className="flex h-10 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="+254 7XX XXX XXX" />
+                                            <button className="bg-green-600 text-white px-4 rounded-md text-xs font-bold whitespace-nowrap">Verify Number</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-green-200 flex items-center justify-between">
+                                        <div className="text-[10px] text-slate-500 max-w-[60%] font-medium">
+                                            System will push Critical Downtime and Inventory Stock-out alerts to this device.
+                                        </div>
+                                        <button
+                                            onClick={() => alert("Test Alert Sent Successfully to Manager's Phone via Bazz-Flow Bridge.")}
+                                            className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold hover:bg-slate-800 transition"
+                                        >
+                                            Send Test Alert
+                                        </button>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </div>

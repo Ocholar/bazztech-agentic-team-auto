@@ -3,14 +3,20 @@ import path from 'path';
 import matter from 'gray-matter';
 
 // Point to the local content folder inside the Next.js project
-const BLOGS_DIR = path.join(process.cwd(), 'src/content/blogs');
+const CONTENT_DIR = path.join(process.cwd(), 'src/content');
 
 export interface PostMeta {
     title?: string;
     description?: string;
     keywords?: string;
     author?: string;
-    date?: string; // Optional if we haven't added it
+    date?: string;
+    client?: string;
+    location?: string;
+    industry?: string;
+    hero_image?: string;
+    roi?: string;
+    summary?: string;
 }
 
 export interface Post {
@@ -19,31 +25,42 @@ export interface Post {
     content: string;
 }
 
-export function getPostSlugs() {
-    if (!fs.existsSync(BLOGS_DIR)) return [];
-    return fs.readdirSync(BLOGS_DIR).filter(file => file.endsWith('.md'));
+export function getSlugs(subDir: string) {
+    const dir = path.join(CONTENT_DIR, subDir);
+    if (!fs.existsSync(dir)) return [];
+    return fs.readdirSync(dir).filter(file => file.endsWith('.md'));
 }
 
-export function getPostBySlug(slug: string): Post | null {
+export function getBySlug(subDir: string, slug: string): Post | null {
     const realSlug = slug.replace(/\.md$/, '');
-    const fullPath = path.join(BLOGS_DIR, `${realSlug}.md`);
+    const fullPath = path.join(CONTENT_DIR, subDir, `${realSlug}.md`);
     if (!fs.existsSync(fullPath)) return null;
-    
+
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
 
-    return { 
-        slug: realSlug, 
-        meta: data as PostMeta, 
-        content 
+    return {
+        slug: realSlug,
+        meta: data as PostMeta,
+        content
     };
 }
 
-export function getAllPosts(): Post[] {
-    const slugs = getPostSlugs();
-    const posts = slugs
-        .map((slug) => getPostBySlug(slug))
-        .filter((post): post is Post => post !== null);
-    
-    return posts;
+export function getAll(subDir: string): Post[] {
+    const slugs = getSlugs(subDir);
+    const items = slugs
+        .map((slug) => getBySlug(subDir, slug))
+        .filter((item): item is Post => item !== null);
+
+    return items;
 }
+
+// Blog Aliases
+export const getPostSlugs = () => getSlugs('blogs');
+export const getPostBySlug = (slug: string) => getBySlug('blogs', slug);
+export const getAllPosts = () => getAll('blogs');
+
+// Case Study Aliases
+export const getCaseStudySlugs = () => getSlugs('case-studies');
+export const getCaseStudyBySlug = (slug: string) => getBySlug('case-studies', slug);
+export const getAllCaseStudies = () => getAll('case-studies');

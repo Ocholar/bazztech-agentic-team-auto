@@ -1,0 +1,531 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "chat",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                -720,
+                112
+            ],
+            "webhookId": "chat-allinone",
+            "id": "b166298c-5363-4be3-941b-a810333df274"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.intent }}",
+                            "value2": "forecast"
+                        }
+                    ]
+                }
+            },
+            "name": "Is Forecast?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                -160,
+                112
+            ],
+            "id": "3a61e763-c8e8-4545-a2ea-cb2fe24a829b"
+        },
+        {
+            "parameters": {
+                "jsCode": "const query = $('Parse Intent').item.json.query;\nconst lowerQuery = query.toLowerCase();\nconst paperMatch = lowerQuery.match(/flute|test liner|white top/i);\nconst dimensionMatch = query.match(/(\\d{4})/);\n\nreturn [{\n  json: {\n    paper_type: paperMatch ? paperMatch[0] : 'Flute',\n    dimension: dimensionMatch ? parseInt(dimensionMatch[1]) : 1700,\n    periods: 3\n  }\n}];"
+            },
+            "name": "Extract Forecast Params",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                0,
+                0
+            ],
+            "id": "8f0d2931-b00d-4b39-b2a9-b8430740036b"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://manufacturing-rag-96ag0kp.svc.aped-4627-b74a.pinecone.io/query",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "pineconeApi",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "vector",
+                            "value": "={{ $json.vector }}"
+                        },
+                        {
+                            "name": "topK",
+                            "value": "5"
+                        },
+                        {
+                            "name": "includeMetadata",
+                            "value": "true"
+                        }
+                    ]
+                },
+                "options": {
+                    "timeout": 15000
+                }
+            },
+            "name": "Pinecone Search",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                368,
+                208
+            ],
+            "id": "5138ffb5-32a1-4020-8789-9ad8dd8d918f",
+            "credentials": {
+                "pineconeApi": {
+                    "id": "RZRs3qyOM63laFXP",
+                    "name": "PineconeApi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const query = $('Parse Intent').item.json.query;\nconst matches = $input.item.json.matches || [];\n\nlet context = 'Retrieved Manufacturing Data:\\n\\n';\nmatches.forEach((match, i) => {\n  const m = match.metadata || {};\n  context += `[${i+1}] Machine: ${m.machine_id || 'N/A'}, Date: ${m.date || 'N/A'}\\n`;\n  context += `    OEE: ${m.oee || 'N/A'}%, Shift: ${m.shift || 'N/A'}\\n`;\n  if (m.text) context += `    ${m.text}\\n`;\n  context += '\\n';\n});\n\nconst citations = matches.map(m => ({\n  machine_id: m.metadata?.machine_id || 'N/A',\n  date: m.metadata?.date || 'N/A',\n  score: m.score || 0\n}));\n\nreturn [{ json: { query, context, citations } }];"
+            },
+            "name": "Prepare Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                560,
+                208
+            ],
+            "id": "af5de142-b7fa-4c45-973d-f8345a68a644"
+        },
+        {
+            "parameters": {
+                "jsCode": "const llmResponse = $input.item.json.output || $input.item.json.response || 'Unable to generate response.';\nconst citations = $('Prepare Context').item.json.citations || [];\n\nreturn [{ json: { answer: llmResponse, sources: citations } }];"
+            },
+            "name": "Format RAG Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1040,
+                400
+            ],
+            "id": "9c6186cf-cf9a-4e57-b2b7-cd6f7fadadd8"
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1248,
+                144
+            ],
+            "id": "f848362d-007d-4783-9f33-5fdfea078970"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ [{\"role\": \"system\", \"content\": \"You are a manufacturing intelligence assistant. Answer based on the provided context.\"}, {\"role\": \"user\", \"content\": $('Prepare Context').item.json.context + '\\n\\nQuery: ' + $('Prepare Context').item.json.query}] }}",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3,
+            "position": [
+                752,
+                400
+            ],
+            "id": "e23336ad-a421-40bb-8c0c-a05132b5ef13",
+            "name": "AI Agent"
+        },
+        {
+            "parameters": {
+                "sessionIdType": "customKey",
+                "sessionKey": "default"
+            },
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1.3,
+            "position": [
+                816,
+                624
+            ],
+            "id": "2e563f6c-1f68-41e4-8cf4-6bfcda58c28c",
+            "name": "Simple Memory"
+        },
+        {
+            "parameters": {
+                "model": {
+                    "__rl": true,
+                    "value": "gpt-3.5-turbo",
+                    "mode": "list",
+                    "cachedResultName": "gpt-3.5-turbo"
+                },
+                "builtInTools": {},
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1.3,
+            "position": [
+                608,
+                608
+            ],
+            "id": "1f201e7b-618a-4d55-86c9-f26add56e8c6",
+            "name": "OpenAI Chat Model",
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "=Analyze the user query: \"{{ $json.body.query || $json.query }}\"\n\n1. Classify intent as either 'forecast' (if asking about future predictions, stock, ordering, or consumption) or 'rag' (if asking about past data, machine status, OEE, or faults).\n2. Extract 'machine_id' (e.g., MC001, MC002) if present.\n3. Extract 'time_range' (yesterday, today, last_week) if present.\n\nReturn ONLY a JSON object:\n{\n  \"intent\": \"forecast\" | \"rag\",\n  \"machine_id\": \"MC...\" | null,\n  \"time_range\": \"...\" | null,\n  \"query\": \"{{ $json.body.query || $json.query }}\"\n}",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 3,
+            "position": [
+                -560,
+                112
+            ],
+            "id": "cb16555d-3252-468f-b7b8-4b10d48f9288",
+            "name": "Intent Classifier Agent"
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                -576,
+                336
+            ],
+            "id": "aae7e820-a929-4502-a7fb-4220689d97cc",
+            "name": "Intent Classifier Model",
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const output = $input.all()[0].json.output;\ntry {\n  const parsed = JSON.parse(output);\n  return [{ json: parsed }];\n} catch (e) {\n  // Fallback if LLM didn't return perfect JSON\n  return [{\n    json: {\n      intent: output.toLowerCase().includes('forecast') ? 'forecast' : 'rag',\n      query: $input.all()[0].json.input || $input.all()[0].json.query,\n      machine_id: null,\n      time_range: null\n    }\n  }];\n}"
+            },
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                -288,
+                112
+            ],
+            "id": "002cd7a0-b7d4-49b0-903a-5683fefe7969",
+            "name": "Parse Intent"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://api.openai.com/v1/embeddings",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "openAiApi",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "model",
+                            "value": "text-embedding-3-small"
+                        },
+                        {
+                            "name": "input",
+                            "value": "={{ $json.query }}"
+                        },
+                        {
+                            "name": "dimensions",
+                            "value": "={{ 768 }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Generate OpenAI Embedding",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                0,
+                208
+            ],
+            "id": "cc461764-febe-4c3f-983f-637688998aaf",
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Holt-Winters Triple Exponential Smoothing Implementation\n// Get forecast params from 'Extract Forecast Params'\nconst params = $('Extract Forecast Params').item.json;\nconst paperType = params.paper_type || 'Flute';\nconst dimension = params.dimension || 1700;\nconst periods = params.periods || 3;\n\n// Get inventory data from binary property 'data'\nconst binaryData = $input.item.binary.data;\nconst inventoryData = JSON.parse(Buffer.from(binaryData.data, 'base64').toString('utf8'));\n\n// Filter consumption history\nconst history = inventoryData.consumption_history\n  .filter(h => h.type.toLowerCase() === paperType.toLowerCase() && h.dimension_in_mm === dimension)\n  .sort((a, b) => (a.year * 12 + a.month) - (b.year * 12 + b.month));\n\nif (history.length < 3) {\n    const avgVal = history.length > 0 ? history.reduce((sum, h) => sum + h.consume_in_kg, 0) / history.length : 0;\n    const forecast_kg = Array(periods).fill(Math.round(avgVal));\n    return [{\n        json: {\n            forecast: {\n                paper_type: paperType,\n                dimension_mm: dimension,\n                forecast_kg: forecast_kg,\n                lower_bound_kg: forecast_kg.map(v => Math.round(v * 0.8)),\n                upper_bound_kg: forecast_kg.map(v => Math.round(v * 1.2)),\n                model_type: \"Simple Average (Insufficient Data)\"\n            },\n            recommendation: {\n                status: \"INSUFFICIENT DATA\",\n                reasoning: \"Not enough historical data for Holt-Winters smoothing.\"\n            }\n        }\n    }];\n}\n\n// Holt-Winters Logic\nconst values = history.map(h => h.consume_in_kg);\nconst n = values.length;\nconst alpha = 0.5; \nconst beta = 0.4;  \nconst gamma = 0.3; \nconst seasonLength = 4; \n\nlet level = values[0];\nlet trend = (values[1] - values[0]);\nconst seasonal = [];\nfor (let i = 0; i < seasonLength; i++) seasonal[i] = values[i] / (values.reduce((a, b) => a + b) / n);\n\nfor (let t = seasonLength; t < n; t++) {\n    const oldLevel = level;\n    const seasonalIndex = (t % seasonLength);\n    level = alpha * (values[t] / seasonal[seasonalIndex]) + (1 - alpha) * (oldLevel + trend);\n    trend = beta * (level - oldLevel) + (1 - beta) * trend;\n    seasonal[seasonalIndex] = gamma * (values[t] / level) + (1 - gamma) * seasonal[seasonalIndex];\n}\n\nconst forecast_kg = [];\nfor (let p = 1; p <= periods; p++) {\n    const seasonalIndex = ((n - 1 + p) % seasonLength);\n    const forecast = (level + trend * p) * seasonal[seasonalIndex];\n    forecast_kg.push(Math.round(forecast));\n}\n\n// Confidence Intervals\nconst stdDev = Math.sqrt(values.map(v => Math.pow(v - (values.reduce((a,b) => a+b) / n), 2)).reduce((a,b) => a+b) / n);\nconst lower_bound_kg = forecast_kg.map(v => Math.round(v - 1.96 * stdDev));\nconst upper_bound_kg = forecast_kg.map(v => Math.round(v + 1.96 * stdDev));\n\nconst total_forecast = forecast_kg[0];\nconst safetyFactor = 1.2;\nconst reorder_point = total_forecast * safetyFactor;\n\nreturn [{\n    json: {\n        forecast: {\n            paper_type: paperType,\n            dimension_mm: dimension,\n            forecast_kg: forecast_kg,\n            lower_bound_kg: lower_bound_kg,\n            upper_bound_kg: upper_bound_kg,\n            model_type: \"Holt-Winters (Pure n8n)\"\n        },\n        recommendation: {\n            status: \"CALCULATED\",\n            reasoning: `Forecasted ${total_forecast}kg for next month with ${Math.round((safetyFactor-1)*100)}% safety stock.`,\n            reorder_point_kg: Math.round(reorder_point)\n        }\n    }\n}];"
+            },
+            "name": "Pure n8n Forecast",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                432,
+                0
+            ],
+            "id": "b97e9377-cd21-4d15-a483-9c63efd345aa"
+        },
+        {
+            "parameters": {
+                "jsCode": "const output = $input.item.json;\n\nconst forecast = output.forecast;\nconst rec = output.recommendation;\n\nconst answer = `**📈 ${forecast.paper_type} ${forecast.dimension_mm}mm Forecast (Pure n8n)**\n\n📊 **Next Month:** ${forecast.forecast_kg[0]} kg\n📉 **CI (95%):** ${forecast.lower_bound_kg[0]} - ${forecast.upper_bound_kg[0]} kg\n🛒 **Status:** ${rec.status}\n📝 **Reasoning:** ${rec.reasoning}\n\n_Model: ${forecast.model_type}_`;\n\nreturn [{ json: { answer, forecast: output } }];"
+            },
+            "name": "Format Forecast",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                640,
+                0
+            ],
+            "id": "f4ff2d09-d339-485e-9e37-c85a38d3b42b"
+        },
+        {
+            "parameters": {
+                "filePath": "c:/Users/Administrator/Desktop/softwareengineerassessmentmanufacturingdataragsystem/manufacturing_rag_hybrid/data/paper_inventory_data.json"
+            },
+            "name": "Read Inventory Data",
+            "type": "n8n-nodes-base.readBinaryFile",
+            "typeVersion": 1,
+            "position": [
+                208,
+                0
+            ],
+            "id": "a72992f6-510d-4f12-858d-4e0c6f004899"
+        },
+        {
+            "parameters": {
+                "jsCode": "const data = $input.item.json.data || [];\nif (data.length > 0 && data[0].embedding) {\n  return [{ json: { vector: data[0].embedding } }];\n}\n\n// Check for nested format in some OpenAI node versions or direct API response\nconst nested = $input.item.json.embeddings || [];\nif (nested.length > 0) {\n  return [{ json: { vector: nested[0] } }];\n}\n\n// Handle direct OpenAI API 'data' array if HTTP Request is used\nif ($input.item.json.data && Array.isArray($input.item.json.data)) {\n  return [{ json: { vector: $input.item.json.data[0].embedding } }];\n}\n\nreturn [{ json: { error: \"Failed to extract embedding vector\", raw: $input.item.json } }];"
+            },
+            "id": "cb893c6f-c8e4-45bf-9472-10337df01922",
+            "name": "Extract Embedding",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                192,
+                208
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Intent Classifier Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Forecast?": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Forecast Params",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Generate OpenAI Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Forecast Params": {
+            "main": [
+                [
+                    {
+                        "node": "Read Inventory Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pinecone Search": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Context": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format RAG Response": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Format RAG Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_memory",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Intent Classifier Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Intent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Intent Classifier Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Intent Classifier Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Intent": {
+            "main": [
+                [
+                    {
+                        "node": "Is Forecast?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate OpenAI Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pure n8n Forecast": {
+            "main": [
+                [
+                    {
+                        "node": "Format Forecast",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Forecast": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read Inventory Data": {
+            "main": [
+                [
+                    {
+                        "node": "Pure n8n Forecast",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Pinecone Search",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "meta": {
+        "instanceId": "0ce39b528d21b35f32c24b98f7dfa467653fa3bb4a390982dd2ee515c23ecc9a"
+    }
+}

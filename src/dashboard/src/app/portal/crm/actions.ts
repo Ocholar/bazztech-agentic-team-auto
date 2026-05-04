@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from '../../../../auth';
+import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { LeadStage } from '@prisma/client';

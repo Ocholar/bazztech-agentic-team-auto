@@ -191,12 +191,11 @@ export default function AboutPage() {
                         <p className="mb-10 max-w-xl mx-auto font-medium text-lg leading-relaxed text-slate-400">
                             Schedule a technical briefing. We'll show you exactly how our machine learning models will intersect with your raw factory telemetry.
                         </p>
-                        <button
+                        <Link href="/register"
                             className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-black transition-transform hover:scale-105 shadow-xl text-base"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)', color: '#F4F1DE' }}
-                            onClick={() => window.dispatchEvent(new Event("openBookingModal"))}>
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)', color: '#F4F1DE' }}>
                             Request Technical Audit <ArrowRight size={20} />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>

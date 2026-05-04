@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ChevronDown, MessageSquare } from 'lucide-react';
+import { ChevronDown, MessageSquare, Search, Filter, ThumbsUp, ThumbsDown } from 'lucide-react';
 import Link from 'next/link';
 
 const faqs = [
@@ -57,10 +57,39 @@ const faqs = [
 
 export default function FAQPage() {
     const [openIndex, setOpenIndex] = useState<string | null>("0-0");
+    const [search, setSearch] = useState('');
+    const [activeCategory, setActiveCategory] = useState<string | 'All'>('All');
+    const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
+
+    const handleFeedback = (id: string, type: 'up' | 'down') => {
+        setFeedback(prev => ({ ...prev, [id]: type }));
+    };
 
     const toggleOpen = (id: string) => {
         setOpenIndex(openIndex === id ? null : id);
     };
+
+    const categories = ['All', ...faqs.map(f => f.category)];
+
+    const filteredFaqs = faqs.map((cat, catIdx) => {
+        const matchesCategory = activeCategory === 'All' || activeCategory === cat.category;
+        if (!matchesCategory) return null;
+
+        const filteredQuestions = cat.questions.filter(q =>
+            q.q.toLowerCase().includes(search.toLowerCase()) ||
+            q.a.toLowerCase().includes(search.toLowerCase())
+        );
+
+        if (filteredQuestions.length === 0) return null;
+
+        return {
+            ...cat,
+            id: catIdx,
+            questions: filteredQuestions
+        };
+    }).filter(Boolean);
+
+    const hasResults = filteredFaqs.length > 0;
 
     return (
         <div className="min-h-screen flex flex-col" style={{ background: '#0F1419', color: '#A0AEC0', fontFamily: 'Inter, sans-serif' }}>
@@ -70,17 +99,43 @@ export default function FAQPage() {
                 <h1 className="text-4xl md:text-5xl font-black mb-6 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     Frequently Asked Questions
                 </h1>
-                <p className="text-slate-400 max-w-2xl mx-auto">Everything you need to know about setting up BazzAI on your factory floor.</p>
+                <p className="text-slate-400 max-w-2xl mx-auto mb-10">Everything you need to know about setting up BazzAI on your factory floor.</p>
+
+                {/* SEARCH & FILTER */}
+                <div className="max-w-2xl mx-auto space-y-6">
+                    <div className="relative group">
+                        <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[#E07A5F] transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="Search keywords (e.g. 'ERP', 'Pilot', 'Security')..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-14 pr-6 py-4 bg-[#0F1419] border border-slate-800 rounded-2xl focus:outline-none focus:border-[#E07A5F] transition-all text-white font-medium"
+                        />
+                    </div>
+
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {categories.map(cat => (
+                            <button
+                                key={cat}
+                                onClick={() => setActiveCategory(cat)}
+                                className={`px-5 py-2 rounded-full text-xs font-bold transition-all border ${activeCategory === cat ? 'bg-[#E07A5F] text-white border-[#E07A5F] shadow-lg shadow-[#E07A5F]/20' : 'bg-[#1A202C] text-slate-400 border-slate-700 hover:border-slate-500'}`}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </section>
 
-            <section className="py-16 px-6 relative overflow-hidden">
+            <section className="py-16 px-6 relative overflow-hidden min-h-[400px]">
                 <div className="max-w-3xl mx-auto space-y-12 relative z-10">
-                    {faqs.map((cat, catIdx) => (
-                        <div key={catIdx}>
-                            <h2 className="text-xl font-black mb-6 text-[#E07A5F]">{cat.category}</h2>
+                    {hasResults ? filteredFaqs.map((cat, catIdx) => (
+                        <div key={cat!.id}>
+                            <h2 className="text-xl font-black mb-6 text-[#E07A5F]">{cat!.category}</h2>
                             <div className="space-y-4">
-                                {cat.questions.map((faq, qIdx) => {
-                                    const id = `${catIdx}-${qIdx}`;
+                                {cat!.questions.map((faq, qIdx) => {
+                                    const id = `${cat!.id}-${qIdx}`;
                                     return (
                                         <div key={qIdx} className="border rounded-2xl overflow-hidden transition-all" style={{ background: '#1A202C', borderColor: '#2D3748' }}>
                                             <button
@@ -94,24 +149,48 @@ export default function FAQPage() {
                                                 <p className="text-sm leading-relaxed border-t pt-5 border-slate-700 text-slate-400">
                                                     {faq.a}
                                                 </p>
+                                                <div className="mt-6 flex items-center justify-between border-t border-slate-700 pt-4">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Was this helpful?</span>
+                                                    <div className="flex gap-4">
+                                                        <button
+                                                            onClick={() => handleFeedback(id, 'up')}
+                                                            className={`flex items-center gap-2 transition-all hover:scale-110 ${feedback[id] === 'up' ? 'text-[#81B29A]' : 'text-slate-600 hover:text-slate-400'}`}
+                                                            aria-label="Thumbs Up"
+                                                        >
+                                                            <ThumbsUp size={14} className={feedback[id] === 'up' ? 'fill-[#81B29A]' : ''} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleFeedback(id, 'down')}
+                                                            className={`flex items-center gap-2 transition-all hover:scale-110 ${feedback[id] === 'down' ? 'text-[#E07A5F]' : 'text-slate-600 hover:text-slate-400'}`}
+                                                            aria-label="Thumbs Down"
+                                                        >
+                                                            <ThumbsDown size={14} className={feedback[id] === 'down' ? 'fill-[#E07A5F]' : ''} />
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     );
                                 })}
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="text-center py-20">
+                            <Filter size={48} className="mx-auto text-slate-700 mb-4 opacity-20" />
+                            <p className="text-lg font-bold text-slate-500">No matching questions found.</p>
+                            <button onClick={() => { setSearch(''); setActiveCategory('All'); }} className="text-[#E07A5F] text-sm font-bold mt-2 hover:underline">Clear all filters</button>
+                        </div>
+                    )}
                 </div>
             </section>
 
             <section className="py-16 px-6 border-t text-center border-slate-800" style={{ background: '#141A23' }}>
                 <h2 className="text-2xl font-black mb-4 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Ready for intelligent operations?</h2>
-                <button
+                <Link href="/register"
                     className="inline-flex px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 items-center gap-2 shadow-lg mt-2"
-                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                    onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                    style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                     Start Free Pilot <MessageSquare size={18} />
-                </button>
+                </Link>
             </section>
 
             <Footer />

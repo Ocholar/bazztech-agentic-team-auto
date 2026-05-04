@@ -1,0 +1,106 @@
+{
+    "name": "BazzAI_Data_Ingestion_Workflow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "ingest",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "ingest-multi-tenant"
+        },
+        {
+            "parameters": {
+                "jsCode": "const csvData = $input.item.binary.data.toString('utf-8');\nconst tenantId = $('Webhook').item.json.body.tenantId || 'default';\nconst lines = csvData.split(/\\r?\\n/).filter(line => line.trim() !== '');\nconst headers = lines[0].split(',').map(h => h.trim());\n\nreturn lines.slice(1).map(line => {\n  const values = line.split(',');\n  const obj = { tenantId };\n  headers.forEach((header, i) => {\n    obj[header] = values[i] ? values[i].trim() : null;\n  });\n  return { json: obj };\n});"
+            },
+            "name": "Manufacturing Chunking",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "embedding",
+                "model": "text-embedding-3-small",
+                "input": "=Machine {{ $json.machine_id }}: OEE {{ $json.oee }}% on shift {{ $json.shift }}"
+            },
+            "name": "Generate OpenAI Embedding",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://manufacturing-rag-96ag0kp.svc.aped-4627-b74a.pinecone.io/vectors/upsert",
+                "method": "POST",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "pineconeApi",
+                "jsonParameters": true,
+                "options": {},
+                "bodyParametersJson": "={\n  \"vectors\": [{\n    \"id\": \"{{ $json.machine_id }}_{{ $json.timestamp }}\",\n    \"values\": {{ $json.embedding }},\n    \"metadata\": {\n      \"machine_id\": \"{{ $json.machine_id }}\",\n      \"shift\": \"{{ $json.shift }}\",\n      \"oee\": {{ $json.oee }}\n    }\n  }],\n  \"namespace\": \"{{ $json.tenantId }}\"\n}"
+            },
+            "name": "Upsert to Pinecone",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                850,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Manufacturing Chunking",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Manufacturing Chunking": {
+            "main": [
+                [
+                    {
+                        "node": "Generate OpenAI Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate OpenAI Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Upsert to Pinecone",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

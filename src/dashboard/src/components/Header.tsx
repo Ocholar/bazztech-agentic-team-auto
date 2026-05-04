@@ -81,12 +81,11 @@ export default function Header() {
                             </Link>
                         ))}
 
-                        <button
+                        <Link href="/register"
                             className="px-5 py-2.5 rounded-full text-white font-bold transition-all shadow-lg text-sm hover:scale-105 active:scale-95"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                            onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             Start Free Pilot
-                        </button>
+                        </Link>
                     </nav>
 
                     {/* Mobile hamburger */}
@@ -106,12 +105,11 @@ export default function Header() {
                                 {l.label}
                             </Link>
                         ))}
-                        <button
-                            onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new Event('openBookingModal')); }}
-                            className="w-full mt-4 py-3 rounded-xl font-bold text-white transition-transform active:scale-95"
+                        <Link href="/register" onClick={() => setIsMenuOpen(false)}
+                            className="w-full mt-4 py-3 rounded-xl font-bold text-white transition-transform active:scale-95 text-center block"
                             style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             Start Free Pilot
-                        </button>
+                        </Link>
                     </div>
                 )}
             </header>

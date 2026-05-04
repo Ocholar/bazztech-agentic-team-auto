@@ -24,11 +24,10 @@ export default function CartonManufacturerCaseStudy() {
                         How <span style={{ color: '#E07A5F' }}>Predictive Intelligence and Cross-Department Automation</span> transformed operational noise into a 1,295% Year 1 ROI.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <button className="px-8 py-5 font-black rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 hover:scale-105 text-[#0F1419]"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                            onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                        <Link href="/register" className="px-8 py-5 font-black rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 hover:scale-105 text-[#0F1419]"
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             <ArrowRight size={20} /> Request Your Own Audit
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -171,11 +170,10 @@ export default function CartonManufacturerCaseStudy() {
                         Your enterprise already possesses the data required to achieve these results. We provide the AI framework to act on it.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button className="px-8 py-4 font-black rounded-xl transition-transform flex items-center justify-center text-[#0F1419] hover:scale-105"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                            onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openBookingModal")); }}>
+                        <Link href="/register" className="px-8 py-4 font-black rounded-xl transition-transform flex items-center justify-center text-[#0F1419] hover:scale-105"
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             Request Executive Briefing
-                        </button>
+                        </Link>
                         <a href="#" className="px-8 py-4 border border-slate-600 hover:border-slate-400 text-slate-300 font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
                             Download PDF Version <Download size={18} />
                         </a>

@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/dashboard-shell";
-import { auth } from '../../../auth';
+import { auth } from '@/auth';
 
 export default async function AdminLayout({
     children,

@@ -31,14 +31,42 @@ function AIDemoWidget() {
         setMessages(m => [...m, { role: 'user', text: queryText }]);
         setInput('');
         setTyping(true);
-        await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
-        let response = demoIdx !== undefined ? demoQueries[demoIdx] : demoQueries.find(d => d.q === queryText);
-        if (!response) response = demoQueries[0];
-        setTyping(false);
-        setMessages(m => [...m, { role: 'ai', text: response!.a, chart: response!.chart }]);
-        const newCount = count + 1;
-        setCount(newCount);
-        if (newCount >= 3) setTimeout(() => setShowUpgrade(true), 800);
+
+        try {
+            const res = await fetch('/api/ai/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: queryText,
+                    sessionId: 'demo-session-' + count // Simple session tracking for demo
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.status === 429) {
+                setShowUpgrade(true);
+                return;
+            }
+
+            setMessages(m => [...m, {
+                role: 'ai',
+                text: data.answer,
+                chart: data.chart || null
+            }]);
+
+            const newCount = count + 1;
+            setCount(newCount);
+            if (newCount >= 5) setShowUpgrade(true);
+        } catch (err) {
+            console.error('AI Demo Error:', err);
+            setMessages(m => [...m, {
+                role: 'ai',
+                text: "I'm having trouble connecting to the factory brain. Please try again in a moment."
+            }]);
+        } finally {
+            setTyping(false);
+        }
     };
 
     const renderAIText = (text: string) => {
@@ -143,11 +171,11 @@ function AIDemoWidget() {
                     <div className="rounded-xl p-4 text-center chat-bubble-in" style={{ background: 'rgba(242,204,143,0.08)', border: '1px solid rgba(242,204,143,0.2)' }}>
                         <p className="text-xs font-bold mb-1" style={{ color: '#F2CC8F' }}>Demo limit reached 🎯</p>
                         <p className="text-xs mb-3" style={{ color: '#A0AEC0' }}>This is mock data. Want to see it with your real factory data?</p>
-                        <button onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                        <Link href="/register"
                             className="text-xs font-black px-4 py-2 rounded-lg text-white"
                             style={{ background: '#E07A5F' }}>
                             Start Your Free Pilot →
-                        </button>
+                        </Link>
                     </div>
                 )}
 
@@ -348,13 +376,19 @@ export default function HomePage() {
                             Machine performance analytics, fault investigation, and production forecasting — powered by AI, built for African manufacturing.
                         </p>
 
+                        <div className="flex items-center gap-3 mb-6 px-4 py-2 rounded-xl bg-[#F2CC8F]/10 border border-[#F2CC8F]/20 w-fit">
+                            <Star size={14} className="text-[#F2CC8F] animate-pulse" />
+                            <span className="text-xs font-bold text-[#F4F1DE]">
+                                Join 15+ factories live. <span className="text-[#F2CC8F]">Only 4 pilot slots remaining for May.</span>
+                            </span>
+                        </div>
+
                         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                            <button
+                            <Link href="/register"
                                 className="px-8 py-4 rounded-xl font-black text-base text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 pulse-glow"
-                                style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                                onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                                style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                                 Start Your Free AI Pilot — 14 Days <ArrowRight size={18} />
-                            </button>
+                            </Link>
                             <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                                 className="px-8 py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2"
                                 style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#F4F1DE' }}
@@ -519,11 +553,11 @@ export default function HomePage() {
                         <DashboardPreview />
                     </div>
                     <div className="text-center mt-8">
-                        <button onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                        <Link href="/register"
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105"
                             style={{ background: 'rgba(224,122,95,0.15)', border: '1px solid rgba(224,122,95,0.3)', color: '#E07A5F' }}>
                             See Live Dashboard with Your Data <ChevronRight size={16} />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -677,13 +711,15 @@ export default function HomePage() {
                     <p className="text-xl mb-10" style={{ color: '#718096', lineHeight: 1.7 }}>
                         Start your free pilot today. We&apos;ll configure BazzAI around your actual machines and data — no commitment, no setup fee, cancel anytime.
                     </p>
+                    <p className="text-sm font-bold text-[#F2CC8F] mb-6 flex items-center justify-center gap-2">
+                        <Zap size={14} /> Only 2 slots remaining for the upcoming cohort
+                    </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                        <button
+                        <Link href="/register"
                             className="px-10 py-5 rounded-xl font-black text-lg text-white transition-all hover:scale-105 shadow-2xl flex items-center gap-2 justify-center pulse-glow"
-                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                            onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                            style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                             Start My Free 14-Day Pilot <ArrowRight size={20} />
-                        </button>
+                        </Link>
                         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                             className="px-10 py-5 rounded-xl font-bold text-lg transition-all flex items-center gap-2 justify-center"
                             style={{ border: '1px solid rgba(255,255,255,0.12)', color: '#F4F1DE' }}
@@ -703,12 +739,11 @@ export default function HomePage() {
             {/* Sticky mobile CTA */}
             <div className="sticky-mobile-cta slide-up border-t" style={{ borderColor: '#2D3748', background: '#0F1419' }}>
                 <div className="flex gap-2 p-3">
-                    <button
+                    <Link href="/register"
                         className="flex-1 py-3 rounded-xl text-white font-black text-xs text-center flex items-center justify-center gap-1 pulse-glow"
-                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                        onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                         🚀 Start Free Pilot
-                    </button>
+                    </Link>
                     <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                         className="flex-1 py-3 rounded-xl font-black text-xs flex items-center justify-center gap-1"
                         style={{ background: '#1A1F2E', border: '1px solid #2D3748', color: '#F4F1DE' }}>

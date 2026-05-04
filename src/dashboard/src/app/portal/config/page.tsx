@@ -1,4 +1,4 @@
-import { auth } from '../../../../auth';
+import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui-card';
 import { Settings, Bot, Database, Zap, CheckCircle2 } from 'lucide-react';

@@ -3,6 +3,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowRight, Database, MessageSquare, Briefcase } from 'lucide-react';
+import Link from 'next/link';
 
 const integrations = [
     {
@@ -73,12 +74,11 @@ export default function IntegrationsPage() {
                 <div className="max-w-3xl mx-auto">
                     <h2 className="text-3xl font-black mb-6 text-[#F4F1DE]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Need a custom SCADA/ERP integration?</h2>
                     <p className="text-slate-400 mb-8">We construct custom data pipelines for legacy Oracle, SAP, and Siemens systems.</p>
-                    <button
+                    <Link href="/register"
                         className="px-8 py-4 rounded-xl font-bold text-white transition-all hover:scale-105 inline-flex items-center gap-2 shadow-lg"
-                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}
-                        onClick={() => window.dispatchEvent(new Event('openBookingModal'))}>
+                        style={{ background: 'linear-gradient(135deg, #E07A5F, #C5654A)' }}>
                         Discuss Custom Architecture <ArrowRight size={18} />
-                    </button>
+                    </Link>
                 </div>
             </section>
 

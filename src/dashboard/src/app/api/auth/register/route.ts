@@ -9,8 +9,10 @@ export async function POST(req: Request) {
         const { name, companyName, email, phone, password, product, currency, qty } = await req.json();
 
         if (!process.env.DATABASE_URL) {
-            console.error('[register] CRITICAL: DATABASE_URL is not defined in environment variables.');
-            return NextResponse.json({ error: 'Database configuration missing. Please check Vercel environment variables.' }, { status: 500 });
+            console.error('[register] CRITICAL: DATABASE_URL is not defined.');
+            return NextResponse.json({
+                error: 'System temporarily unavailable (DB_CONFIG_MISSING). Please book a technical audit if error persists.'
+            }, { status: 500 });
         }
 
         if (!email || !password || !name) {
@@ -77,7 +79,7 @@ export async function POST(req: Request) {
                 const finalQuantity = qty && qty > 0 ? Number(qty) : 1;
                 const totalFee = baseFee * finalQuantity;
 
-                await db.subscription.create({
+                const sub = await db.subscription.create({
                     data: {
                         userId: user.id,
                         productType: product as any,
@@ -89,11 +91,22 @@ export async function POST(req: Request) {
                     }
                 });
 
+                // Provision Initial "Floor System" Configuration
+                await db.productConfig.create({
+                    data: {
+                        userId: user.id,
+                        subscriptionId: sub.id,
+                        productType: product,
+                        systemPrompt: "You are a BazzAI Manufacturing Intelligence assistant.",
+                        tokenQuotaInt: 50000,
+                    }
+                });
+
                 const configPaths: Record<string, string> = {
-                    'BAZZ_CONNECT': '/portal/config/bazz-connect',
-                    'BAZZ_FLOW': '/portal/config/bazz-flow',
-                    'BAZZ_DOC': '/portal/config/bazz-doc',
-                    'BAZZ_LEAD': '/portal/config/bazz-lead',
+                    'BAZZ_CONNECT': '/portal/config/equipment-telemetry',
+                    'BAZZ_FLOW': '/portal/config/erp-bridge',
+                    'BAZZ_DOC': '/portal/config/audit-vision',
+                    'BAZZ_LEAD': '/portal/config/production-comms',
                 };
 
                 redirectUrl = `/login?registered=true&callbackUrl=${encodeURIComponent(configPaths[product])}`;
