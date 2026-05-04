@@ -20,10 +20,10 @@ export default async function ConfigPage() {
     const isSubPending = (type: string) => activeSubs.some(s => s.productType === type && s.status === 'INACTIVE');
 
     const products = [
-        { id: 'BAZZ_CONNECT', title: 'Bazz-Connect', path: '/portal/config/bazz-connect', icon: Bot, desc: 'WhatsApp & Meta API Configuration', color: 'text-green-600', linkText: 'Configure WhatsApp Brain' },
-        { id: 'BAZZ_FLOW', title: 'Bazz-Flow Unified', path: '/portal/config/bazz-flow', icon: Zap, desc: 'Fintech & ERP Ledger Automation', color: 'text-blue-600', linkText: 'Configure Portal' },
-        { id: 'BAZZ_DOC', title: 'Bazz-Doc AI', path: '/portal/config/bazz-doc', icon: Database, desc: 'Vision OCR Structured Parsing', color: 'text-purple-600', linkText: 'Define JSON Schema' },
-        { id: 'BAZZ_LEAD', title: 'Bazz-Lead Agent', path: '/portal/config/bazz-lead', icon: Settings, desc: 'Social Media & Meeting Scheduling', color: 'text-orange-600', linkText: 'Configure CRM Agent' },
+        { id: 'BAZZ_CONNECT', title: 'Equipment Telemetry', path: '/portal/config/equipment-telemetry', icon: Bot, desc: 'Real-time sensor sync & WhatsApp alerts', color: 'text-green-600', linkText: 'Configure Telemetry' },
+        { id: 'BAZZ_FLOW', title: 'ERP Bridge', path: '/portal/config/erp-bridge', icon: Zap, desc: 'Fintech & ERP ledger automation', color: 'text-blue-600', linkText: 'Configure ERP Bridge' },
+        { id: 'BAZZ_DOC', title: 'Audit Vision', path: '/portal/config/audit-vision', icon: Database, desc: 'Automated compliance & OCR processing', color: 'text-purple-600', linkText: 'Configure Audit Vision' },
+        { id: 'BAZZ_LEAD', title: 'Production Comms', path: '/portal/config/production-comms', icon: Settings, desc: 'CRM & production communication', color: 'text-orange-600', linkText: 'Configure Comms' },
     ];
 
     return (

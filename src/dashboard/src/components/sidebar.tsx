@@ -112,7 +112,7 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                             pathname === telemetryHref ? activeCls : inactiveCls
                         )}
                         style={pathname === telemetryHref ? activeStyle : {}}>
-                        <Zap className="h-4 w-4 text-[#F2CC8F]" /> Bazz-Compute
+                        <Zap className="h-4 w-4 text-[#F2CC8F]" /> Equipment Telemetry
                     </Link>
 
                     <Link href={bridgeHref} onClick={onClose}
@@ -121,7 +121,7 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                             pathname === bridgeHref ? activeCls : inactiveCls
                         )}
                         style={pathname === bridgeHref ? activeStyle : {}}>
-                        <Globe className="h-4 w-4 text-[#81B29A]" /> Bazz-Bridge
+                        <Globe className="h-4 w-4 text-[#81B29A]" /> ERP Bridge
                     </Link>
 
                     <Link href={visionHref} onClick={onClose}
@@ -130,7 +130,7 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                             pathname === visionHref ? activeCls : inactiveCls
                         )}
                         style={pathname === visionHref ? activeStyle : {}}>
-                        <Bot className="h-4 w-4 text-[#E07A5F]" /> Bazz-Vision
+                        <Bot className="h-4 w-4 text-[#E07A5F]" /> Audit Vision
                     </Link>
 
                     <Link href={commsHref} onClick={onClose}
@@ -139,7 +139,7 @@ export function Sidebar({ isOpen, onClose, className, role = 'CLIENT' }: Sidebar
                             pathname === commsHref ? activeCls : inactiveCls
                         )}
                         style={pathname === commsHref ? activeStyle : {}}>
-                        <Send className="h-4 w-4 text-[#E07A5F]" /> Bazz-Flow
+                        <Send className="h-4 w-4 text-[#E07A5F]" /> Production Comms
                     </Link>
 
                 </nav>
