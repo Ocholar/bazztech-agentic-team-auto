@@ -43,25 +43,13 @@ export default async function BazzDocConfig() {
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {/* --- PAYMENT VERIFICATION --- */}
-                {!isActive && sub && (
+                {!isActive && (
                     <div className="md:col-span-1 lg:col-span-1 space-y-4">
                         <PaymentVerification
-                            subscriptionId={sub.id}
-                            productName="Bazz-Doc"
-                            amount={amount}
-                            status={sub.status as any}
-                            expiresAt={sub.expiresAt?.toISOString()}
+                            productName="Growth Package"
+                            status={sub?.status as any || 'INACTIVE'}
+                            expiresAt={sub?.expiresAt?.toISOString()}
                         />
-                    </div>
-                )}
-
-                {/* No subscription yet */}
-                {!isActive && !sub && (
-                    <div className="md:col-span-1 lg:col-span-1">
-                        <div className="flex items-center gap-2 text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
-                            <AlertCircle size={16} />
-                            No Subscription Found. Return to Hub to subscribe.
-                        </div>
                     </div>
                 )}
 

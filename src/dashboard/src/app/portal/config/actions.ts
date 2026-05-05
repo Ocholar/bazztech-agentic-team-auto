@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { getPayPalOrderDetails } from '@/lib/paypal';
 
 const saveConfigSchema = z.object({
     configId: z.string().optional(),
@@ -264,4 +265,89 @@ export async function activateSubscription(subscriptionId: string) {
 
     revalidatePath('/portal/config');
     return { success: true };
+}
+
+export async function verifyAndActivateGrowthPackage(orderId: string) {
+    const session = await auth();
+    if (!session || !session.user || !session.user.id) throw new Error("Unauthorized");
+    const userId = session.user.id;
+
+    // Server-side validation with PayPal API
+    let isValid = false;
+    try {
+        const orderData = await getPayPalOrderDetails(orderId);
+        if (orderData.status === 'COMPLETED' || orderData.status === 'APPROVED') {
+            isValid = true;
+        } else {
+            console.error(`Order status is ${orderData.status}`);
+            throw new Error(`Order incomplete.`);
+        }
+    } catch (e: any) {
+        // Fallback for development/demo environments without real PayPal keys
+        if (!process.env.PAYPAL_CLIENT_ID) {
+            console.warn("MOCK PAYMENT VALIDATION (No PAYPAL_CLIENT_ID found)");
+            isValid = true;
+        } else {
+            throw new Error("Could not securely verify PayPal order.");
+        }
+    }
+
+    if (isValid) {
+        // 1. Check for double-spending
+        const existingTx = await db.processedTransaction.findUnique({
+            where: { transactionId: orderId }
+        });
+        
+        if (existingTx) throw new Error("Duplicate transaction. Already processed.");
+
+        // 2. Commit transaction atomically
+        await db.$transaction(async (tx) => {
+            await tx.processedTransaction.create({
+                data: {
+                    transactionId: orderId,
+                    amount: 250,
+                    reference: "GROWTH_PACKAGE_MONTHLY"
+                }
+            });
+
+            const products = ['BAZZ_CONNECT', 'BAZZ_FLOW', 'BAZZ_DOC', 'BAZZ_LEAD'];
+            const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days expiry
+
+            for (const p of products) {
+                const existingSub = await tx.subscription.findFirst({
+                    where: { userId, productType: p as any }
+                });
+
+                if (existingSub) {
+                    await tx.subscription.update({
+                        where: { id: existingSub.id },
+                        data: {
+                            status: 'ACTIVE',
+                            expiresAt,
+                            oneTimeFee: 35000,
+                            monthlyMaintenanceRate: 0
+                        }
+                    });
+                } else {
+                    await tx.subscription.create({
+                        data: {
+                            userId,
+                            productType: p as any,
+                            status: 'ACTIVE',
+                            expiresAt,
+                            oneTimeFee: 35000,
+                            monthlyMaintenanceRate: 0,
+                            paymentReference: `GROWTH-${Date.now()}-${p}`
+                        }
+                    });
+                }
+            }
+        });
+
+        revalidatePath('/portal');
+        revalidatePath('/portal/config');
+        return { success: true };
+    } else {
+        throw new Error("Payment validation failed.");
+    }
 }
